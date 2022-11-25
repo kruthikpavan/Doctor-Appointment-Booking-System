@@ -1,0 +1,27 @@
+{
+    "name": "group34_final_webproject",
+    "version": "1.0.0",
+    "description": "final project",
+    "main": "app.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "nodemon ./bin/www"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/kruthikpavan/Doctor-Appointment-Boooking-System.git"
+    },
+    "author": "group34",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/kruthikpavan/Doctor-Appointment-Boooking-System/issues"
+    },
+    "homepage": "https://github.com/kruthikpavan/Doctor-Appointment-Boooking-System#readme",
+    "dependencies": {
+        "apos-to-lex-form": "^1.0.5",
+        "natural": "^5.2.3",
+        "nodemon": "^2.0.20",
+        "spelling-corrector": "^3.0.0",
+        "stopword": "^2.0.5"
+    }
+}
