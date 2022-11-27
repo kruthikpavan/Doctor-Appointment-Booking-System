@@ -20,8 +20,8 @@ app.use(
     })
 );
 
-console.log(new Date());
 configRoutes(app);
+
 
 app.listen(3000, () => {
     console.log("We've now got a server!");

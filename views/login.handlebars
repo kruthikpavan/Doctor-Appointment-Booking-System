@@ -1,0 +1,22 @@
+<form action={{{path}}} method="post" id="login-form">
+  {{!-- <div class="error">
+    {{error}}
+
+</div> --}}
+{{#if    doctor     }}
+    <div>Welcome Doctor</div>
+{{else}}
+    <div>Welcome User</div>
+{{/if}}
+
+
+  <div class="container">
+    <label for="usernameInput"><span>Username</span></label>
+    <input type="text" placeholder="Enter Username" name="usernameInput"  id="usernameInput">
+    <label for="passwordInput"><span>Password</span></label>
+    <input type="password" placeholder="Enter Password" name="passwordInput"  id="passwordInput">
+    <button type="submit">Login</button>
+  </div>
+
+  
+</form>
