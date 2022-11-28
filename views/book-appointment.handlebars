@@ -1,0 +1,12 @@
+<form method="get" action="/users/book-appointment"  class="date-form">
+    <div>
+<label for="date">Select date</label>
+
+<input type="date" id="date" name="book-start"
+       value={{{today}}}
+       min={{{today}}} max={{{lastDate}}}>
+<button id="slot-check-button" type="submit">Look for available slots</button>
+</div>
+</form>
+<div id="available-slots"></div>
+ <script src="/public/js/slotAvailability.js"></script>
