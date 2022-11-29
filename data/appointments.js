@@ -5,7 +5,9 @@ async function createAppointment(){
 
 }
 
-async function getAppointmentByID(){
+async function getAppointmentByID(id){
+    if(!id) throw 'Appointment ID is invalid';
+    
 
 }
 
