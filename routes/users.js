@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
     return res.redirect('/users/home')
     })
   router.get('/home',async (req, res) => {
-    res.render('userhomepage')
+    res.render('users/userhomepage')
     })
   
 
@@ -31,13 +31,20 @@ router.get("/", async (req, res) => {
     router
     .route('/book-appointment')
     .get(async (req, res) => {
-      let todayDate=  `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}`
       let date = new Date();
-let result = date.setDate(date.getDate() + 30);
-let lastDay= new Date(result)
-let finalDate=  `${lastDay.getFullYear()}-${lastDay.getMonth()+1}-${lastDay.getDate()}`
-      console.log(todayDate);
-      res.render('book-appointment',{today:todayDate,lastDate:finalDate})
+      let currentMonth= `${new Date().getMonth()+1}`
+      if(currentMonth.toString().length==1) currentMonth=`0${currentMonth}`
+      let currentDay= `${new Date().getDate()}`
+      if(currentDay.toString().length==1) currentDay=`0${currentDay}`
+      let currentDate= `${new Date().getFullYear()}-${currentMonth}-${currentDay}`
+      let result = date.setDate(date.getDate() + 30);
+      let lastDate= new Date(result)
+      let lastMonth= `${lastDate.getMonth()+1}`
+      if(lastMonth.toString().length==1) lastMonth=`0${lastMonth}`
+      let lastDay= `${lastDate.getDate()}`
+      if(lastDay.toString().length==1) lastDay=`0${lastDay}`
+      lastDate= `${lastDate.getFullYear()}-${lastMonth}-${lastDay}`
+      res.render('users/book-appointment',{today:currentDate,lastDate:lastDate})
       })
       .post(async(req,res)=> {
       return res.redirect('/users/home')
