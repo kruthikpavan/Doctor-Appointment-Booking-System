@@ -1,26 +1,34 @@
 
 const express = require("express");
 const router = express.Router();
-
+const authMiddleware = (req,res,next)=>{
+    if(req.session.doctors){
+        next()
+    }
+    else{
+        return res.redirect('/doctors')
+    }
+}
 router
 .route('/')
 .get(async (req, res) => {
-  res.render('login',{doctor:true,path:'/doctors'})
+    if(req.session.doctors) return res.redirect('/doctors/home')
+  return res.render('login',{doctor:true,path:'/doctors'})
+
   })
   .post(async(req,res)=> {
+    req.session.doctors= 'doctorLoggedIn'
   return res.redirect('/doctors/home')
    
   })
 
-  router.get("/home", async (req, res) => {
-    res.render('doctorhomepage')
+  router.get("/home", authMiddleware, async (req, res) => {
+    res.render('doctors/doctorhomepage')
     });
    
-router.get("/profile", async (req, res) => {
+router.get("/profile", authMiddleware,async (req, res) => {
     //sample
-    if(!req.session.user){
-        res.send("Please login to continue")
-    }
+   res.render('doctors/doctorProfile')
     });
   
 module.exports = router;
