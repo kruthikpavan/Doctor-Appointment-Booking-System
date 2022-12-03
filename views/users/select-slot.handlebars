@@ -1,0 +1,19 @@
+<form method="post" action="/users/select-slot" >
+<div>
+    {{error}}
+</div>
+<table>
+
+<tr>
+    {{#each availableSlots.slots}}
+<input type="checkbox" id={{this.time}} name={{this.time}}>
+<label class="toggle-control" for="b">{{this.time}}</label>
+
+{{/each}}
+</tr>
+    
+</table>
+<button type="submit">Book This slot!</button>
+
+</form>
+
