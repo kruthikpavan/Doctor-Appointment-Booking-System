@@ -47,9 +47,55 @@ router.get("/", async (req, res) => {
       res.render('users/book-appointment',{today:currentDate,lastDate:lastDate})
       })
       .post(async(req,res)=> {
-      return res.redirect('/users/home')
+        const date= req.body.date
+        //to-do
+        //Need to check if date is provided or not. If not re-render same page with error specified
+        //Next step is to fetch available slots for specified date. Will use dummy data for now---pk
+        //If available slots are empty, redirect to book-appointment route. User has to select a different date to proceed
+        req.session.availableSlots= {
+          slots: [{time: 9, available: true},{time: 10,available:false},{time:11,available:true},{time:12,available:false}]
+        }
+        return res.render('users/select-slot',{availableSlots:req.session.availableSlots})
+
+
       })
  
-    
+      router
+      .route('/select-slot')
+      .get(async (req, res) => {
+        return res.redirect('/users/book-appointment')
+        })
+        .post(async(req,res)=> {
+          //to-do
+          //if req.body is empty redirect to /select-slot page with error . User has to select atleast one slot
+          if(Object.keys(req.body).length === 0) 
+          {
+            //todo- fetch a
+            return res.render('users/select-slot',{error:'You need to select atleast one slot to complete the booking',availableSlots:req.session.availableSlots})
+          }
+          if(Object.keys(req.body).length >1){
+            return res.render('users/select-slot',{error:'You cant select multiple slots. Please select only one available slot',availableSlots:req.session.availableSlots})
+          }
+          const data= req.body
+          res.send('Booking Success!!')
+
+          
+        })
+   
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 module.exports = router;
