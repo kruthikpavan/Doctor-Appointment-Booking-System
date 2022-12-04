@@ -1,0 +1,57 @@
+    <h1 class="signup-title">Sign up your Account Now</h1>
+    <form id = "signup-form" action = "/signup" method = "POST">
+        <div class="form-group-firstname">
+            <label for="firstNameSignUp">Enter Your First Name Here</label>
+            <input type="text" class="form-control" id="firstNameSignUp" name="firstName" placeholder="First Name">
+        </div>
+        <div class="form-group-lastnameSignUp">
+            <label for="lastNameSignUp">Enter Your Last Name here!</label>
+            <input type="text" class="form-control" id="lastNameSignUp" name="lastName" placeholder="Last Name">
+        </div>
+        <div class="form-group-username">
+            <label for="usernameSignUp">Enter Your Username Here</label>
+            <input type="text" class="form-control" id="usernameSignUp" name="username" placeholder="Username">
+        </div>
+        <div class="form-group-password">
+            <label for="passwordSignUp">Enter Your Password here!<br/> (At least 8 characters, 1 capital letter, and 1 number)</label>
+            <input type="password" class="form-control" id="passwordSignUp" name="password" placeholder="Password">
+        </div>
+        <div class="form-group-email">
+            <label for="emailSignUp">Enter Your E-Mail Here!</label>
+            <input type="text" class="form-control" id="emailSignUp" name="email" placeholder="E-mail Address">
+        </div>
+        <div class="form-group-gender">
+            <label for="genderSignUp">Enter Your E-Mail Here!</label>
+            <input type="radio" name="gender" value="male" checked> Male<br>
+            <input type="radio" name="gender" value="female"> Female<br>
+            <input type="radio" name="gender" value="other"> Other
+        </div>
+        <div class="form-group-city">
+            <label for="citySignUp">Enter Your E-Mail Here!</label>
+            <input type="text" class="form-control" id="citySignUp" name="city" placeholder="city">
+        </div>
+        <div class="form-group-state">
+            <label for="emailSignUp">Enter Your E-Mail Here!</label>
+            <input type="text" class="form-control" id="stateSignUp" name="state" placeholder="state">
+        </div>
+        <div class="form-group-age">
+            <label for="emailSignUp">Enter Your E-Mail Here!</label>
+            <input type="number" class="form-control" id="ageSignUp" name="age" placeholder="age">
+        </div>
+        <div class="form-group-birthday">
+            <label for="dateOfBirthSignUp">Enter Your Birthday Here</label>
+            <input type="date" class="form-control" id="dateOfBirthSignUp" name="dateOfBirth">
+        </div>
+        <input type="submit" class="btn btn-default" value = "Submit">
+      <div class="form-group">
+        <div class="alert alert-danger" hidden>
+          
+          <ul id = "results">
+            <li class = "errormessage">{{error}}</li>
+          </ul>
+        </div>
+      </div>
+      <div class="success alert-success" hidden>
+      </div>
+    </form>
+    <script src="/public/js/signup.js"></script>
