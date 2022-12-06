@@ -66,3 +66,33 @@ async function checkUserDetails(firstName,lastName,userName,password,email,gende
         age:checkAge(age),
     }
 }
+
+async function checkReviewDetails(reviewData,doctorID,userID,appointmentID,date,time)
+{
+    return{
+        reviewData:checkData(reviewData),
+        doctorID:checkID(doctorID),
+        userID:checkID(userID),
+        appointmentID:checkID(appointmentID),
+        date:checkDate(date),
+        time:checkTime(time)
+    }
+}
+async function checkData(data)
+{
+
+}
+
+async function checkID(id)
+{
+
+}
+async function checkDate(date)
+{
+
+}
+
+async function checkTime(time)
+{
+
+}
