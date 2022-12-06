@@ -7,7 +7,7 @@
 <tr>
     {{#each availableSlots.slots}}
 <input type="checkbox" id={{this.time}} name={{this.time}}>
-<label class="toggle-control" for="b">{{this.time}}</label>
+<label class="toggle-control" for={{this.time}}>{{this.time}}</label>
 
 {{/each}}
 </tr>

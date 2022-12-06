@@ -5,18 +5,54 @@
 </div> --}}
 {{#if    doctor     }}
     <div>Welcome Doctor</div>
+    <form class="login-form">
+    <div class="form-group">
+      <label for="username-login">Enter Username Here!</label>
+      <input type="text" class="form-control" id="username-login" name="username" placeholder="Username">
+    </div>
+    <div class="form-group1">
+      <div class="form-group1">
+        <label for="password-login">Enter Password Here!</label>
+        <input type="password" class="form-control" id="password-login" name="password" placeholder="Password">
+      </div>
+      <button type="submit" class="btn btn-default">Login</button>
+      <div class="error-group alert alert-danger" hidden>
+          <ul id = "results-login">
+            {{#if errors}}
+              <li>{{errors}}</li>
+            {{/if}}
+          </ul>
+      </div>
+    </div>
+  </form>
+  <form action = "/signup" class="signup-form">
+    <div>Don't have an account? Sign-Up Here!</div>
+    <input type = "submit" class = "btn btn-default" value = "Sign-Up"/>
+  </form>
 {{else}}
-    <div>Welcome User</div>
-{{/if}}
-
-
-  <div class="container">
-    <label for="usernameInput"><span>Username</span></label>
-    <input type="text" placeholder="Enter Username" name="usernameInput"  id="usernameInput">
-    <label for="passwordInput"><span>Password</span></label>
-    <input type="password" placeholder="Enter Password" name="passwordInput"  id="passwordInput">
-    <button type="submit">Login</button>
-  </div>
-
-  
+     <form class="login-form">
+    <div class="form-group">
+      <label for="username-login">Enter Username Here!</label>
+      <input type="text" class="form-control" id="username-login" name="username" placeholder="Username">
+    </div>
+    <div class="form-group1">
+      <div class="form-group1">
+        <label for="password-login">Enter Password Here!</label>
+        <input type="password" class="form-control" id="password-login" name="password" placeholder="Password">
+      </div>
+      <button type="submit" class="btn btn-default">Login</button>
+      <div class="error-group alert alert-danger" hidden>
+          <ul id = "results-login">
+            {{#if errors}}
+              <li>{{errors}}</li>
+            {{/if}}
+          </ul>
+      </div>
+    </div>
+  </form>
+  <form action = "/signup" class="signup-form">
+    <div>Don't have an account? Sign-Up Here!</div>
+    <input type = "submit" class = "btn btn-default" value = "Sign-Up"/>
+  </form>
+{{/if}} 
 </form>
