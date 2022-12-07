@@ -1,8 +1,9 @@
 const mongoCollections = require("../config/mongoCollections");
 const doctors = mongoCollections.doctors;
-
+const helpers = require("../helpers");
+const bcrypt = require("bcryptjs");
+const saltRounds = 16;
 async function createDoctor(
-    doctor_id,
     docName,
     category,
     qualification,
@@ -14,15 +15,14 @@ async function createDoctor(
     password){
     try {
         
-        let dataCheck  = helpers.checkUserDetails(doctor_id,docName,category,qualification,hospital_id,dob,
-                                    gender,email,phoneNumber,password);
+        //Add validation
         const doctorCollection  = await doctors();
-        let docData = doctorCollection.findOne({doctor_id: doctor_id});
-        if(docData != null || docData != undefined) throw 'This E-mail has already been used to register';
+
+        let userData = await doctorCollection.findOne({email: email.toLowerCase()});
+        if(userData != null || userData != undefined) throw 'This E-mail has already been used to register';
         let hashed = await bcrypt.hash(password, saltRounds);
 
         let newUser = {
-            doctor_id: doctor_id,
             name: docName,
             category: category,
             qualification:qualification,
@@ -35,11 +35,7 @@ async function createDoctor(
         }
         
         const insertDoc = await doctorCollection.insertOne(newUser);
-        if(!insertDoc.acknowledged || !insertDoc.insertedId)
-        docData = await doctorCollection.findOne(newUser);
-        docData['_id'] = docData['_id'].toString();
-
-        return userData;
+       
         } catch (e) {
             console.log(e);
         }

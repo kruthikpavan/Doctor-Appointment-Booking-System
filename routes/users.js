@@ -1,5 +1,9 @@
 const express = require("express");
+const xss = require('xss')
+const data = require('../data');
+const validator=require("../validation") 
 const router = express.Router();
+const userData = data.users;
 
 
 router.get("/", async (req, res) => {
@@ -33,10 +37,7 @@ router.post("/signup", async (req, res) => {
     username: xss(req.body.username.toLowerCase().trim()),
     password: xss(req.body.password.trim()),
     email: xss(req.body.email.toLowerCase().trim()),
-    gender: xss(req.body.gender.toLowerCase().trim()),
-    city: xss(req.body.city.toLowerCase().trim()),
-    state: xss(req.body.state.toLowerCase().trim()),
-    age: xss(req.body.age.toLowerCase().trim()),
+    phoneNumber: xss(req.body.phoneNumber.trim()),
     dateOfBirth: dateOfBirthConvert,
   };
   console.log("NEW USER: ");
@@ -53,25 +54,14 @@ router.post("/signup", async (req, res) => {
   if (!validator.validEmail(newUser.email)) errors.push("Invalid email.");
   if (!validator.validDate(newUser.dateOfBirth))
     errors.push("Invalid Date of Birth.");
-  if (!validator.validAge(newUser.dateOfBirth)) errors.push("Invalid Age.");
-
-  console.log("HERE WE GO.Z");
-
-  const userCheck = await userData.getUserByID(newUser._id);
-  try {
-    if (userCheck) throw "Username already in use.";
-  } catch (e) {
-    errors.push(e);
-    // return res.status(401).render("users/signup", {
-    //   title: "Sign Up",
-    //   errors: errors,
-    //   signupInfo: newUser,
-    // });
-  }
 
   if (errors.length > 0) {
     console.log(errors);
-    return res.status(401).json({ errors: errors });
+    return res.status(401).render("signup", {
+      title: "Sign Up",
+      userInfo: newUser,
+      errors: errors,
+    });
   }
 
   try {
@@ -81,32 +71,14 @@ router.post("/signup", async (req, res) => {
       newUser.username,
       newUser.password,
       newUser.email,
-      newUser.gender,
-      newUser.city,
-      newUser.state,
-      newUser.age,
+      newUser.phoneNumber,
       newUser.dateOfBirth
     );
-
-    req.session.user = {
-      _id: addedUser._id,
-      firstName: addedUser.firstName,
-      lastName: addedUser.lastName,
-      username: addedUser.username,
-      email: addedUser.email,
-      gender: addedUser.gender,
-      city: addedUser.city,
-      state: addedUser.state,
-      age: addedUser.age,
-      dateOfBirth: addedUser.dateOfBirth,
-      appointments: addedUser.appointments,
-    };
-    console.log(req.session.user);
-    res.redirect("book-appoinment");
+    res.redirect("login");
   } catch (e) {
     errors.push(e);
-    res.status(403).render("/signup", {
-      title: signUp,
+    res.status(403).render("signup", {
+      title: "Sign Up",
       userInfo: newUser,
       errors: errors,
     });
