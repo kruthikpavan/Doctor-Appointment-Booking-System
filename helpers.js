@@ -52,19 +52,9 @@ async function checkAge(age)
     }   
 }
 
-async function checkUserDetails(firstName,lastName,userName,password,email,gender,city,state,age)
+async function checkUserDetails(firstName,lastName,username,password,email,phoneNumber,dateOfBirth)
 {
-    return {
-        firstName:checkName(firstName),
-        lastName:checkName(lastName),
-        userName:checkUserName(userName),
-        password:checkPassword(password),
-        email:checkEmail(email),
-        gender:checkGender(gender),
-        city:checkName(city),
-        state:checkName(state),
-        age:checkAge(age),
-    }
+   
 }
 
 async function checkReviewDetails(reviewData,doctorID,userID,appointmentID,date,time)
@@ -95,4 +85,7 @@ async function checkDate(date)
 async function checkTime(time)
 {
 
+}
+module.exports = {
+    checkUserDetails
 }
