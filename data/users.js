@@ -5,39 +5,39 @@ const bcrypt = require("bcryptjs");
 const saltRounds = 16;
 
 async function createUser(
-    patientName,
-    dob,
-    email,
-    password,
-    age
+      firstName,
+      lastName,
+      username,
+      password,
+      email,
+      phoneNumber,
+      dateOfBirth
     ){
 
         try {
         
-        let dataCheck  = helpers.checkUserDetails(patientName,dob,email,phoneNumber,password,age);
+        let dataCheck  = await helpers.checkUserDetails(firstName,lastName,username,password,email,phoneNumber,dateOfBirth);
         const userCollection  = await users();
-        let userData = userCollection.findOne({email: email.toLowerCase()});
+        let userData = await userCollection.findOne({email: email.toLowerCase()});
         if(userData != null || userData != undefined) throw 'This E-mail has already been used to register';
         let hashed = await bcrypt.hash(password, saltRounds);
 
         let newUser = {
-            name: patientName,
-            dob: dob,
-            email: email,
-            phoneNumber: phoneNumber,
-            password: hashed,
-            age: age,
+            firstName:firstName,
+            lastName:lastName,
+            username:username,
+            password:password,
+            email:email,
+            phoneNumber:phoneNumber,
+            dateOfBirth:dateOfBirth,
             appointments: []
         }
         
         const insertUser = await userCollection.insertOne(newUser);
-        if(!insertUser.acknowledged || !insertUser.insertedId)
-        userData = await userCollection.findOne(newUser);
-        userData['_id'] = userData['_id'].toString();
-
-        return userData;
+    
         } catch (e) {
             console.log(e);
+            throw e;
         }
         
 }

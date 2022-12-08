@@ -1,16 +1,17 @@
     <h1 class="signup-title">Sign up your Account Now</h1>
     <form id = "signup-form" action = "signup" method = "POST">
-        <div class="form-group-firstname">
-            <label for="firstNameSignUp">Enter Your First Name Here</label>
-            <input type="text" class="form-control" id="firstNameSignUp" name="firstName" placeholder="First Name" value="{{userInfo.firstName}}">
+        <div class="form-group-name">
+            <label for="nameSignUp">Enter Your Name Here</label>
+            <input type="text" class="form-control" id="nameSignUp" name="name" placeholder="Name" value="{{userInfo.name}}">
         </div>
-        <div class="form-group-lastnameSignUp">
-            <label for="lastNameSignUp">Enter Your Last Name here!</label>
-            <input type="text" class="form-control" id="lastNameSignUp" name="lastName" placeholder="Last Name" value="{{userInfo.lastName}}">
+    
+        <div class="form-group-category">
+            <label for="categorySignUp">Enter Your Category Here</label>
+            <input type="text" class="form-control" id="categorySignUp" name="category" placeholder="category" value="{{userInfo.category}}">
         </div>
-        <div class="form-group-username">
-            <label for="usernameSignUp">Enter Your Username Here</label>
-            <input type="text" class="form-control" id="usernameSignUp" name="username" placeholder="Username" value="{{userInfo.username}}">
+         <div class="form-group-qualification">
+            <label for="qualificationSignUp">Enter Your Qualification Here</label>
+            <input type="text" class="form-control" id="qualificationSignUp" name="qualification" placeholder="qualification" value="{{userInfo.qualification}}">
         </div>
         <div class="form-group-password">
             <label for="passwordSignUp">Enter Your Password here!<br/> (At least 8 characters, 1 capital letter, and 1 number)</label>
