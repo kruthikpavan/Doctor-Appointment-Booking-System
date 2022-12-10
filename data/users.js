@@ -94,14 +94,14 @@ const checkUser = async (username, password) => {
     if(passwordFound){
       let match= bcrypt.compareSync(password,passwordFound.password)
        if(match){
-        return true
+        return passwordFound;
        }else{
-        return false
+        return null
        }
       }
     
     
-      return false
+      return null
     
   
    };

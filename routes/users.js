@@ -34,9 +34,9 @@ router
     res.render('login',{error:'Username should have atleast 4 characters'})
     return
   }
- const authorized= await userData.checkUser(username,password)
- if(authorized){
-  req.session.user=username
+ const userInfo= await userData.checkUser(username,password)
+ if(userInfo){
+  req.session.user=userInfo;
   res.redirect('/users/home')
   return
  }
