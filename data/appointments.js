@@ -11,22 +11,28 @@ const appointments = mongoCollections.appointments;
 //         "status": 'pending'
 //     } 
 
-async function createAppointment(userID,doctorId,date,time){
-
-
-
-
+async function createAppointment(userID,doctorId,timeSlot,date){
+    const newAppointment=  {    
+        userID,
+        doctorId,
+        timeSlot,
+        date
+    }
+    const appointmentsCollection=await  appointments()
+    const createdAppointment = await appointmentsCollection.insertOne(newAppointment);
+    return {appointmentInserted: true}
 }
 
 async function getAppointmentByID(id){
     if(!id) throw 'Appointment ID is invalid';
     
-
 }
+
 
 async function removeAppointment(){
 
 }
+
 
 async function getAppointmentByUser(){
     

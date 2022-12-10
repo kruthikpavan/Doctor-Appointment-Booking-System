@@ -34,13 +34,9 @@ router
     res.render('login',{error:'Username should have atleast 4 characters'})
     return
   }
-  const regex= new RegExp('^(?=.*?[A-Z])(?=.*?[0-9])(?=.*[^\da-zA-Z]).{6,}$')
-  
-
  const authorized= await userData.checkUser(username,password)
- console.log(authorized);
  if(authorized){
-  req.session.user={username: username }
+  req.session.user=username
   res.redirect('/users/home')
   return
  }
@@ -72,8 +68,8 @@ router.post("/signup", async (req, res) => {
     phoneNumber: xss(req.body.phoneNumber.trim()),
     dateOfBirth: dateOfBirthConvert,
   };
-  console.log("NEW USER: ");
-  console.log(newUser);
+ 
+ 
 
   if (!validator.validString(newUser.firstName))
     errors.push("Invalid first name.");
@@ -95,7 +91,6 @@ router.post("/signup", async (req, res) => {
       errors: errors,
     });
   }
-
   try {
     const addedUser = await userData.createUser(
       newUser.firstName,
