@@ -4,7 +4,7 @@ const data = require('../data');
 const validator=require("../validation") 
 const router = express.Router();
 const userData = data.users;
-
+const appointmentData= data.appointments
 
 router.get("/", async (req, res) => {
   res.redirect("/");
@@ -15,8 +15,36 @@ router
   .get(async (req, res) => {
     res.render("login", { doctor: false, path: "/users/login" });
   })
-  .post(async (req, res) => {
-    return res.redirect("/users/home");
+  .post(async (req, res) => 
+  {const {username,password}= req.body
+
+  if(!username || !password) {
+    res.status(400)
+    res.render('login',{error:'Both username and password needs to be provided'})
+    return
+  }
+  if(!/^[a-z0-9]+$/i.test(username)){
+    res.status(400)
+
+    res.render('login',{error:'Only alpha numeric characters should be provided as username.No other characters or empty spaces are allowed'})
+    return
+  }
+  if(username.length<4){
+    res.status(400)
+    res.render('login',{error:'Username should have atleast 4 characters'})
+    return
+  }
+ const userInfo= await userData.checkUser(username,password)
+ if(userInfo){
+  req.session.user=userInfo;
+  res.redirect('/users/home')
+  return
+ }
+ else{
+  res.render('login',{error:'Not a valid username and password '})
+  return
+ }
+
   });
 router.get("/home", async (req, res) => {
   res.render("users/userhomepage");
@@ -40,8 +68,8 @@ router.post("/signup", async (req, res) => {
     phoneNumber: xss(req.body.phoneNumber.trim()),
     dateOfBirth: dateOfBirthConvert,
   };
-  console.log("NEW USER: ");
-  console.log(newUser);
+ 
+ 
 
   if (!validator.validString(newUser.firstName))
     errors.push("Invalid first name.");
@@ -63,7 +91,6 @@ router.post("/signup", async (req, res) => {
       errors: errors,
     });
   }
-
   try {
     const addedUser = await userData.createUser(
       newUser.firstName,
@@ -74,7 +101,7 @@ router.post("/signup", async (req, res) => {
       newUser.phoneNumber,
       newUser.dateOfBirth
     );
-    res.redirect("login");
+    res.redirect("/users/home");
   } catch (e) {
     errors.push(e);
     res.status(403).render("signup", {
@@ -142,7 +169,6 @@ router
     //to-do
     //if req.body is empty redirect to /select-slot page with error . User has to select atleast one slot
     if (Object.keys(req.body).length === 0) {
-   
       return res.render("users/select-slot", {
         error: "You need to select atleast one slot to complete the booking",
         availableSlots: req.session.availableSlots,
@@ -156,14 +182,15 @@ router
       });
     }
     let timeSlot= undefined
-          for(const key in req.body){
+        for(const key in req.body){
              timeSlot= parseInt(key)
           }
           req.session.timeSlot= timeSlot
           //to-do
           //store this timeslot and date from req.session.date as appointment info in database
+          const doctorId= 'randomDoctor'
+          const appointment= appointmentData.createAppointment(req.session.user, doctorId, timeSlot, req.session.date)
           res.render('users/my-appointments',{timeSlot:timeSlot,date:req.session.date})
-
   });
   router
       .route('/my-appointments')
@@ -184,9 +211,7 @@ router
          req.session.date=undefined
          req.session.timeSlot=undefined
           return res.redirect('/users/home')
-
-  
-          
+ 
         })
 
 module.exports = router;
