@@ -4,7 +4,7 @@ const data = require('../data');
 const validator=require("../validation") 
 const router = express.Router();
 const userData = data.users;
-
+const appointmentData= data.appointments
 
 router.get("/", async (req, res) => {
   res.redirect("/");
@@ -48,6 +48,7 @@ router
   res.render('login',{error:'Not a valid username and password '})
   return
  }
+
   });
 router.get("/home", async (req, res) => {
   res.render("users/userhomepage");
@@ -173,7 +174,6 @@ router
     //to-do
     //if req.body is empty redirect to /select-slot page with error . User has to select atleast one slot
     if (Object.keys(req.body).length === 0) {
-   
       return res.render("users/select-slot", {
         error: "You need to select atleast one slot to complete the booking",
         availableSlots: req.session.availableSlots,
@@ -187,14 +187,15 @@ router
       });
     }
     let timeSlot= undefined
-          for(const key in req.body){
+        for(const key in req.body){
              timeSlot= parseInt(key)
           }
           req.session.timeSlot= timeSlot
           //to-do
           //store this timeslot and date from req.session.date as appointment info in database
+          const doctorId= 'randomDoctor'
+          const appointment= appointmentData.createAppointment(req.session.user, doctorId, timeSlot, req.session.date)
           res.render('users/my-appointments',{timeSlot:timeSlot,date:req.session.date})
-
   });
   router
       .route('/my-appointments')
@@ -215,9 +216,7 @@ router
          req.session.date=undefined
          req.session.timeSlot=undefined
           return res.redirect('/users/home')
-
-  
-          
+ 
         })
 
 module.exports = router;
