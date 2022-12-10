@@ -188,21 +188,5 @@ router
   
           
         })
-   
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module.exports = router;

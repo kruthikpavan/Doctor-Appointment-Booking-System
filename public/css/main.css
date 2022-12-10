@@ -1,110 +1,43 @@
-body {
-    background: #fff;
-    font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+.navbar-light .navbar-brand {
+  padding-right: 30px;
+  border-right: 1px solid #ddd;
 }
+.navbar-light .navbar-brand:hover{
+  color: #09e5ab;
 
-#available-slots{
-    display: flex;
 }
-
-.box{
-    margin: 10px;
-    padding: 10px;
-    height: 20px;
-    width: 25px;
-    background-color: aquamarine;
-    cursor: pointer;
+.navbar .nav-item
+{
+  font-weight:bold;
 }
-
-.active{
-    background-color: red;
+.navbar .nav-item .nav-link:hover
+{
+  color: #09e5ab;
 }
-
-.topnav {
-    background-color: #282828;
-    overflow: hidden;
-    padding-left: 10px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-  }
-
-  .topnav .logo {
-    float: left;
-    max-width: 3%;
-    height: auto;
-  }
-  
-  /* Style the links inside the navigation bar */
-  .topnav a {
-    float: left;
-    color: #f2f2f2;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-    font-size: 17px;
-  }
-
-  .login-title {
-    padding-top: 50px;
-    padding-bottom: 50px;
-    text-align: center;
-  }
-  
-  .login-page {
-    padding-top: 100px;
-    font-weight: bold;
-  }
-
-
-.form-group input,
-.form-group1 input {
-  max-width: 30%;
-  margin: auto;
-  margin-bottom: 20px;
+.navbar .nav-item.active .nav-link
+{
+  color: #09e5ab;
 }
-
-.login-form {
-  margin-bottom: 20px;
+main
+{
+  min-height: 600px;
 }
-
-.btn {
-    padding: 10px 20px;
-    background: #45a049;
-    border-radius: 4px;
-    color: white;
-    border: 1px solid #347737;
+.btn-outline-primary
+{
+  color: #09e5ab;
+  border-color: #09e5ab;
 }
-
-
-.signup-form {
-    margin-bottom: 20px;
-  }
-  
-  .signup-title {
-    text-align: center;
-  }
-  
-  #signup-form input {
-    max-width: 30%;
-    margin: auto;
-    margin-bottom: 20px;
+.link-primary,.link-primary:hover
+{
+  color: #09e5ab;
 }
+.btn-outline-primary:hover
+{
+  background-color: #09e5ab;
+  border-color: #09e5ab;
 
-.form {
-  text-align: center;
-  display: block;
-  margin-top: 0em;
 }
-
-input[type="checkbox"] {
-
-  padding: 10px;
-  width: 3rem;
-  height: 3rem;
-}
-
-input[type="checkbox"]:before {
-
-  content: "click here";
-  width: 3rem;
+.footer
+{
+  margin-top: 20px;
 }

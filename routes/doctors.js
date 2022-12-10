@@ -37,9 +37,10 @@ router
     let newUser = {
       name: xss(req.body.name.trim()),
       password: xss(req.body.password.trim()),
-      email: xss(req.body.email.toLowerCase().trim()),
+      email: xss(req.body.email.trim()),
       phoneNumber: xss(req.body.phoneNumber.trim()),
       dateOfBirth: dateOfBirthConvert,
+      gender: xss(req.body.gender.trim()),
       category: xss(req.body.category.trim()),
       qualification: xss(req.body.qualification.trim()),
     };
@@ -73,7 +74,7 @@ router
         newUser.qualification,
         "",//hospital
         newUser.dateOfBirth,
-        "",//gender
+        newUser.gender,//gender
         newUser.email,
         newUser.phoneNumber,
         newUser.password
