@@ -21,12 +21,13 @@ async function createUser(
         let userData = await userCollection.findOne({email: email.toLowerCase()});
         if(userData != null || userData != undefined) throw 'This E-mail has already been used to register';
         let hashed = await bcrypt.hash(password, saltRounds);
+        username= username.toUpperCase()
 
         let newUser = {
             firstName:firstName,
             lastName:lastName,
             username:username,
-            password:password,
+            password:hashed,
             email:email,
             phoneNumber:phoneNumber,
             dateOfBirth:dateOfBirth,
@@ -88,10 +89,11 @@ async function getAllUsers(){
 }
 const checkUser = async (username, password) => {
     const userCollection = await users();
+    username= username.toUpperCase()
     let passwordFound= await userCollection.findOne({username})
     if(passwordFound){
-    //   let match= bcrypt.compareSync(password,passwordFound.password)
-       if(password==passwordFound.password){
+      let match= bcrypt.compareSync(password,passwordFound.password)
+       if(match){
         return true
        }else{
         return false

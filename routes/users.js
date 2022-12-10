@@ -101,7 +101,7 @@ router.post("/signup", async (req, res) => {
       newUser.phoneNumber,
       newUser.dateOfBirth
     );
-    res.redirect("login");
+    res.redirect("/users/home");
   } catch (e) {
     errors.push(e);
     res.status(403).render("signup", {
