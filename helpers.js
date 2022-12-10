@@ -1,3 +1,5 @@
+const ObjectId=require('mongodb').ObjectId;
+
 async function checkName(name)
 {
     if(!name) throw "Name is not present";
@@ -75,6 +77,7 @@ async function checkData(data)
 
 async function checkID(id)
 {
+    return ObjectId.isValid(id)
 
 }
 async function checkDate(date)
@@ -87,5 +90,6 @@ async function checkTime(time)
 
 }
 module.exports = {
-    checkUserDetails
+    checkUserDetails,
+    checkID
 }

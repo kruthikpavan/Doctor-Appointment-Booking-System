@@ -2,6 +2,7 @@ const mongoCollections = require("../config/mongoCollections");
 const users = mongoCollections.users;
 const helpers = require("../helpers");
 const bcrypt = require("bcryptjs");
+const { ObjectID } = require("bson");
 const saltRounds = 16;
 
 async function createUser(
@@ -20,6 +21,8 @@ async function createUser(
         const userCollection  = await users();
         let userData = await userCollection.findOne({email: email.toLowerCase()});
         if(userData != null || userData != undefined) throw 'This E-mail has already been used to register';
+        userData = await userCollection.findOne({username: username.toLowerCase()});
+        if(userData != null || userData != undefined) throw 'This username has already been used to register';
         let hashed = await bcrypt.hash(password, saltRounds);
         username= username.toUpperCase()
 
@@ -89,11 +92,12 @@ async function getAllUsers(){
 }
 const checkUser = async (username, password) => {
     const userCollection = await users();
-    username= username.toUpperCase()
+    username= username.toLowerCase()
     let passwordFound= await userCollection.findOne({username})
     if(passwordFound){
       let match= bcrypt.compareSync(password,passwordFound.password)
        if(match){
+        passwordFound._id=passwordFound._id.toString();
         return passwordFound;
        }else{
         return null
@@ -105,11 +109,48 @@ const checkUser = async (username, password) => {
     
   
    };
+   async function updateProfile(
+            id,
+            firstName,
+            lastName,
+            username,
+            email,
+            phoneNumber,
+            dateOfBirth
+  ){
+
+      try {
+      
+      const userCollection  = await users();
+      let userData = await userCollection.findOne({email: email.toLowerCase()});
+      if((userData != null || userData != undefined) && userData._id.toString()!=id) throw 'This E-mail has already exist';
+      userData = await userCollection.findOne({username: username.toLowerCase()});
+      if((userData != null || userData != undefined) && userData._id.toString()!=id)  throw 'This username has already exist';
+      let updateUser = {
+          firstName:firstName,
+          lastName:lastName,
+          username:username,
+          email:email,
+          phoneNumber:phoneNumber,
+          dateOfBirth:dateOfBirth,
+      }
+      const updatedInfo = await userCollection.updateOne({ _id: ObjectID(id) }, { $set: updateUser });
+      if (updatedInfo.modifiedCount === 0) return null;
+      return await this.getUserByID(id);
+      } catch (e) {
+          console.log(e);
+          throw e;
+      }
+      
+}
+
+     
 
 module.exports = {
     createUser,
     getUserByID,
     removeUser,
     getAllUsers,
-    checkUser
+    checkUser,
+    updateProfile
 }
