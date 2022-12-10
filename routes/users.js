@@ -15,8 +15,39 @@ router
   .get(async (req, res) => {
     res.render("login", { doctor: false, path: "/users/login" });
   })
-  .post(async (req, res) => {
-    return res.redirect("/users/home");
+  .post(async (req, res) => 
+  {const {username,password}= req.body
+
+  if(!username || !password) {
+    res.status(400)
+    res.render('login',{error:'Both username and password needs to be provided'})
+    return
+  }
+  if(!/^[a-z0-9]+$/i.test(username)){
+    res.status(400)
+
+    res.render('login',{error:'Only alpha numeric characters should be provided as username.No other characters or empty spaces are allowed'})
+    return
+  }
+  if(username.length<4){
+    res.status(400)
+    res.render('login',{error:'Username should have atleast 4 characters'})
+    return
+  }
+  const regex= new RegExp('^(?=.*?[A-Z])(?=.*?[0-9])(?=.*[^\da-zA-Z]).{6,}$')
+  
+
+ const authorized= await userData.checkUser(username,password)
+ console.log(authorized);
+ if(authorized){
+  req.session.user={username: username }
+  res.redirect('/users/home')
+  return
+ }
+ else{
+  res.render('login',{error:'Not a valid username and password '})
+  return
+ }
   });
 router.get("/home", async (req, res) => {
   res.render("users/userhomepage");

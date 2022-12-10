@@ -86,10 +86,28 @@ async function getAllUsers(){
         console.log('Error: Could not fetch all UserDetails');
     }
 }
+const checkUser = async (username, password) => {
+    const userCollection = await users();
+    let passwordFound= await userCollection.findOne({username})
+    if(passwordFound){
+    //   let match= bcrypt.compareSync(password,passwordFound.password)
+       if(password==passwordFound.password){
+        return true
+       }else{
+        return false
+       }
+      }
+    
+    
+      return false
+    
+  
+   };
 
 module.exports = {
     createUser,
     getUserByID,
     removeUser,
-    getAllUsers
+    getAllUsers,
+    checkUser
 }
