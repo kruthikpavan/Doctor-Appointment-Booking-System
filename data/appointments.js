@@ -11,6 +11,7 @@ const appointments = mongoCollections.appointments;
 //         "status": 'pending'
 //     } 
 
+
 async function createAppointment(userID,doctorId,timeSlot,date){
     const newAppointment=  {    
         userID,
@@ -25,7 +26,15 @@ async function createAppointment(userID,doctorId,timeSlot,date){
 
 async function getAppointmentByID(id){
     if(!id) throw 'Appointment ID is invalid';
-    
+    const appointmentsCollection=await  appointments()
+    const appointment = await appointmentsCollection.find({userID:id})
+    if(appointment){
+        return appointment
+    }
+    return null
+
+
+
 }
 
 

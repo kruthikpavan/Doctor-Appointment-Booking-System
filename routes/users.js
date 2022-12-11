@@ -199,8 +199,7 @@ router
         .post(async(req,res)=> {
           //to-do
           //Implement logic to remove appointment from database . timeslot and date are present in req.session
-         req.session.date=undefined
-         req.session.timeSlot=undefined
+         const appointmentDeleted= await appointmentData.removeAppointment()
           return res.redirect('/users/home')
  
         })
@@ -231,9 +230,6 @@ router
           phoneNumber: xss(req.body.phoneNumber.trim()),
           dateOfBirth: xss(req.body.dateOfBirth.trim()),
         };
-       
-       
-      
         if (!validator.validString(userInfo.firstName))
           errors.push("Invalid first name.");
         if (!validator.validString(userInfo.lastName))
