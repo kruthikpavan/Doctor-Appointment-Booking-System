@@ -1,0 +1,57 @@
+    <h1 class="Profile-title">Doctor Profile</h1>
+    <form id = "profile-form" action = "profile" method = "POST">
+        <div class="form-group-name">
+            <label for="nameprofile">Name</label>
+            <input type="text" class="form-control" id="nameprofile" name="name" placeholder="Name" value="{{userInfo.name}}">
+        </div>
+        <div class="form-group-category">
+            <label for="categoryprofile">Category</label>
+            <input type="text" class="form-control" id="categoryprofile" name="category" placeholder="category" value="{{userInfo.category}}">
+        </div>
+         <div class="form-group-qualification">
+            <label for="qualificationprofile">Qualification</label>
+            <input type="text" class="form-control" id="qualificationprofile" name="qualification" placeholder="qualification" value="{{userInfo.qualification}}">
+        </div>
+       
+        <div class="form-group-email">
+            <label for="emailprofile">E-Mail!</label>
+            <input type="text" class="form-control" id="emailprofile" name="email" placeholder="E-mail Address" value="{{userInfo.email}}">
+        </div>
+        <div class="form-group-gender">
+            <label for="genderprofile">Gender: </label>
+            <select id="genderprofile" name="gender">
+              <option value="Male">Male</option>
+              <option value="Male">Female</option>
+            </select>
+         </div>
+         <div class="form-group-phoneNumber">
+            <label for="phoneNumberprofile">Phone!</label>
+            <input type="text" class="form-control" id="phoneNumberprofile" name="phoneNumber" placeholder="Phone Number" value="{{userInfo.phoneNumber}}">
+        </div>
+        <div class="form-group-birthday">
+            <label for="dateOfBirthprofile">Birthday</label>
+            <input type="text" class="form-control" id="dateOfBirthprofile" name="dateOfBirth" value="{{userInfo.dateOfBirth}}">
+        </div>
+        <input type="submit" class="btn btn-default" value = "Submit">
+      <div class="form-group">
+        <div class="alert alert-danger">
+          
+          <ul id = "results">
+             {{#each errors}}
+
+            <li class = "errormessage">{{this}}</li>
+                {{/each}}
+
+          </ul>
+        </div>
+      </div>
+      <div class="success alert-success" hidden>
+      </div>
+      {{/if}}
+        {{#if msg}}
+      <div class="info alert-info">
+        {{msg}}
+      </div>
+        {{/if}}
+    </form>
+  
