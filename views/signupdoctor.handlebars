@@ -20,11 +20,15 @@
             <label for="emailSignUp">Enter Your E-Mail Here!</label>
             <input type="text" class="form-control" id="emailSignUp" name="email" placeholder="E-mail Address" value="{{userInfo.email}}">
         </div>
-        <div class="form-group-gender">
+                <div class="form-group-gender">
             <label for="genderSignUp">Gender: </label>
-            <input type="text" class="form-control" id="genderSignUp" name="gender" placeholder="male" value="{{userInfo.gender}}">   
+            <select id="genderSignUp" name="gender">
+              <option value="Male">Male</option>
+              <option value="Male">Female</option>
+            </select>
          </div>
-         <div class="form-group-phoneNumber">
+
+         <div class="form-group-phone">
             <label for="phoneNumberSignUp">Enter Your Phome Here!</label>
             <input type="text" class="form-control" id="phoneNumberSignUp" name="phoneNumber" placeholder="Phone Number" value="{{userInfo.phoneNumber}}">
         </div>

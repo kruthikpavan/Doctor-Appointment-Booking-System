@@ -9,7 +9,6 @@ const appointmentData= data.appointments
 router.get("/", async (req, res) => {
   res.redirect("/");
 });
-
 router
   .route("/login")
   .get(async (req, res) => {
@@ -17,7 +16,6 @@ router
   })
   .post(async (req, res) => 
   {const {username,password}= req.body
-
   if(!username || !password) {
     res.status(400)
     res.render('login',{error:'Both username and password needs to be provided'})
@@ -36,7 +34,7 @@ router
   }
  const userInfo= await userData.checkUser(username,password)
  if(userInfo){
-  req.session.user=userInfo;
+  req.session.user=username;
   res.redirect('/users/home')
   return
  }
@@ -112,12 +110,6 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-router.get("/profile", async (req, res) => {
-  //sample
-  if (!req.session.user) {
-    res.send("Please login to continue");
-  }
-});
 
 router
   .route("/book-appointment")
@@ -189,21 +181,20 @@ router
           //to-do
           //store this timeslot and date from req.session.date as appointment info in database
           const doctorId= 'randomDoctor'
-          const appointment= appointmentData.createAppointment(req.session.user, doctorId, timeSlot, req.session.date)
-          res.render('users/my-appointments',{timeSlot:timeSlot,date:req.session.date})
+          const appointment= await appointmentData.createAppointment(req.session.user, doctorId, timeSlot, req.session.date)
+          res.redirect('/users/my-appointments')
   });
   router
       .route('/my-appointments')
       .get(async (req, res) => {
         //appointment data need to be fetched from the database and displayed to the user
-        const timeSlot= req.session.timeSlot
-        const date= req.session.date     //these are temporary. date and timeSlot needs to be fetched from database not session
-        
-        if(!timeSlot || !date){
+        const appointmentInfo= await appointmentData.getAppointmentByID(req.session.user)
+        if(!appointmentInfo){
           return res.send('You dont have any appointments right now!')
         }
-        res.render('users/my-appointments',{timeSlot:timeSlot,date:req.session.date})
-    
+        const timeSlot= appointmentInfo.timeSlot
+        const date= appointmentInfo.date    //these are temporary. date and timeSlot needs to be fetched from database not session
+        res.render('users/my-appointments',{timeSlot,date})
         })
         .post(async(req,res)=> {
           //to-do
@@ -214,4 +205,98 @@ router
  
         })
 
+        router.get("/profile", async (req, res) => {
+          if (!req.session.user) {
+      
+              return res.redirect("login");
+          }
+          let user = await userData.getUserByID(req.session.user._id);
+          if (user === null) {
+              return res.render('error/404');
+          }
+          return res.render('users/Profile', {
+              layout: 'main',
+              title: "My Profile",
+              userInfo: user,
+          });
+      });
+      router.post("/profile", async (req, res) => {
+        let errors = [];
+      
+        let userInfo = {
+          firstName: xss(req.body.firstName.trim()),
+          lastName: xss(req.body.lastName.trim()),
+          username: xss(req.body.username.toLowerCase().trim()),
+          email: xss(req.body.email.toLowerCase().trim()),
+          phoneNumber: xss(req.body.phoneNumber.trim()),
+          dateOfBirth: xss(req.body.dateOfBirth.trim()),
+        };
+       
+       
+      
+        if (!validator.validString(userInfo.firstName))
+          errors.push("Invalid first name.");
+        if (!validator.validString(userInfo.lastName))
+          errors.push("Invalid last name.");
+        if (!validator.validString(userInfo.username))
+          errors.push("Invalid username.");
+      
+        if (!validator.validEmail(userInfo.email)) errors.push("Invalid email.");
+        if (!validator.validDate(userInfo.dateOfBirth))
+        {
+          userInfo.dateOfBirth=req.body.dateOfBirth.trim();
+          errors.push("Invalid Date of Birth.");
+        }
+      
+        if (!req.session.user) {
+            res.redirect("login")
+        }
+        if (errors.length > 0) {
+          console.log(errors);
+          return res.status(401).render("users/profile", {
+            title: "My Profile",
+            userInfo: userInfo,
+            errors: errors,
+          });
+        }
+
+        try {
+          const updatedUser = await userData.updateProfile(
+            req.session.user._id,
+            userInfo.firstName,
+            userInfo.lastName,
+            userInfo.username,
+            userInfo.email,
+            userInfo.phoneNumber,
+            userInfo.dateOfBirth
+          );
+          if(updatedUser)
+          {
+            req.session.user=updatedUser;
+            res.status(200).render("users/profile", {
+              title: "My Profile",
+              userInfo: updatedUser,
+              errors: errors,
+              msg:"Successfully updated"
+            });
+          }
+          else{
+            
+            res.render("users/profile", {
+              title: "My Profile",
+              userInfo: userInfo,
+              msg: "Could not  update your profile.",
+            });
+          }
+         
+        } catch (e) {
+          errors.push(e);
+          res.status(403).render("users/profile", {
+            title: "My Profile",
+            userInfo: userInfo,
+            errors: errors,
+          });
+        }
+      });
+      
 module.exports = router;

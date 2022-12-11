@@ -1,0 +1,49 @@
+    <h1 class="Profile-title">User Profile</h1>
+    <form id = "Profile-form" action = "profile" method = "POST">
+        <div class="form-group-firstname">
+            <label for="firstNameProfile">First Name </label>
+            <input type="text" class="form-control" id="firstNameProfile" name="firstName" placeholder="First Name" value="{{userInfo.firstName}}">
+        </div>
+        <div class="form-group-lastnameProfile">
+            <label for="lastNameProfile">Last Name</label>
+            <input type="text" class="form-control" id="lastNameProfile" name="lastName" placeholder="Last Name" value="{{userInfo.lastName}}">
+        </div>
+        <div class="form-group-username">
+            <label for="usernameProfile">Username</label>
+            <input type="text" class="form-control" id="usernameProfile" name="username" placeholder="Username" value="{{userInfo.username}}">
+        </div>
+       
+        <div class="form-group-email">
+            <label for="emailProfile">E-Mail</label>
+            <input type="text" class="form-control" id="emailProfile" name="email" placeholder="E-mail Address" value="{{userInfo.email}}">
+        </div>
+         <div class="form-group-email">
+            <label for="emailProfile">Phome</label>
+            <input type="text" class="form-control" id="phoneNumberProfile" name="phoneNumber" placeholder="Phone Number" value="{{userInfo.phoneNumber}}">
+        </div>
+        <div class="form-group-birthday">
+            <label for="dateOfBirthProfile">Birthday Here</label>
+            <input type="text" class="form-control" id="dateOfBirthProfile" name="dateOfBirth" value="{{userInfo.dateOfBirth}}">
+        </div>
+        <input type="submit" class="btn btn-default" value = "Submit">
+      {{#if errors}}
+      <div class="form-group">
+        <div class="alert alert-danger">
+          
+          <ul id = "results">
+             {{#each errors}}
+
+            <li class = "errormessage">{{this}}</li>
+                {{/each}}
+
+          </ul>
+        </div>
+      </div>
+      {{/if}}
+        {{#if msg}}
+      <div class="info alert-info">
+        {{msg}}
+      </div>
+        {{/if}}
+    </form>
+  
