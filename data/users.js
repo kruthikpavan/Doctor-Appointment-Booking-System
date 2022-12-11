@@ -94,7 +94,7 @@ async function getAllUsers(){
 }
 const checkUser = async (username, password) => {
     const userCollection = await users();
-    username= username.toLowerCase()
+    username= username.toUpperCase()
     let passwordFound= await userCollection.findOne({username})
     if(passwordFound){
       let match= bcrypt.compareSync(password,passwordFound.password)
