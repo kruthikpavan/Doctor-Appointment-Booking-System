@@ -36,7 +36,7 @@ router
   }
  const userInfo= await userData.checkUser(username,password)
  if(userInfo){
-  req.session.user=userInfo;
+  req.session.user=username;
   res.redirect('/users/home')
   return
  }
