@@ -6,13 +6,13 @@ const { ObjectID } = require("bson");
 const saltRounds = 16;
 
 async function createUser(
-      firstName,
-      lastName,
-      username,
-      password,
-      email,
-      phoneNumber,
-      dateOfBirth
+        firstName,
+        lastName,
+        username,
+        password,
+        email,
+        phoneNumber,
+        dateOfBirth
     ){
 
         try {
@@ -38,7 +38,9 @@ async function createUser(
         }
         
         const insertUser = await userCollection.insertOne(newUser);
-    
+        if (!insertUser.acknowledged || !insertUser.insertedId) throw "Could not add user";
+            newUser = await userCollection.findOne(newUser);
+            return newUser;
         } catch (e) {
             console.log(e);
             throw e;

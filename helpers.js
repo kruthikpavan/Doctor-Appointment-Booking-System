@@ -1,4 +1,5 @@
 const ObjectId=require('mongodb').ObjectId;
+const validator=require("./validation") 
 
 async function checkName(name)
 {
@@ -56,7 +57,13 @@ async function checkAge(age)
 
 async function checkUserDetails(firstName,lastName,username,password,email,phoneNumber,dateOfBirth)
 {
-   
+    if(!validator.validString(firstName)) throw 'Invalid FirstName'
+    if(!validator.validString(lastName)) throw 'Invalid FirstName'
+    if(!validator.validString(username)) throw 'Invalid FirstName'
+    if(!validator.validPassword(password)) throw 'Invalid FirstName'
+    if(!validator.validEmail(email)) throw 'Invalid FirstName'
+    if(!validator.validPhoneNumber(phoneNumber)) throw 'Invalid FirstName'
+    return true;
 }
 
 async function checkReviewDetails(reviewData,doctorID,userID,appointmentID,date,time)
