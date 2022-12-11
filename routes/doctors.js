@@ -17,14 +17,30 @@ router
     if (req.session.doctors) return res.redirect("/doctors/home");
     return res.render("login", { doctor: true, path: "/doctors" });
   })
-  .post(async (req, res) => {
-    req.session.doctors = "doctorLoggedIn";
-    return res.redirect("/doctors/home");
+  .post(async (req, res) => {const {username,password}= req.body
+    if(!username || !password) {
+      res.status(400)
+      res.render('login',{error:'Both username and password needs to be provided'})
+      return
+    }
+    if(username.length<4){
+      res.status(400)
+      res.render('login',{error:'Username should have atleast 4 characters'})
+      return
+    }
+   const docInfo= await userData.checkDoctor(username,password)
+   if(docInfo){
+    req.session.doctors=username;
+    res.redirect('/doctors/home')
+    return
+   }
+   else{
+    res.render('login',{error:'Not a valid username and password '})
+    return
+   }
+  
+    
   });
-
-router.get("/signup", async (req, res) => {
-  res.render("signupdoctor", { title: "Sign Up" });
-});
 
 router.post("/signup", async (req, res) => {
   let errors = [];

@@ -34,7 +34,7 @@ async function createDoctor(
       hospital_id: hospital_id,
       dob: dob,
       gender: gender,
-      email: email,
+      email: email.toLowerCase(),
       phoneNumber: phoneNumber,
       password: hashed,
     };
@@ -73,6 +73,25 @@ async function removeDoctor(id) {
     console.log("Could not fetch user by id" + e);
   }
 }
+const checkDoctor = async (username, password) => {
+  const doctorCollection = await doctors();
+  username= username.toLowerCase()
+  let passwordFound= await doctorCollection.findOne({email: username.toLowerCase(),})
+  if(passwordFound){
+    let match= bcrypt.compareSync(password,passwordFound.password)
+     if(match){
+      passwordFound._id=passwordFound._id.toString();
+      return passwordFound;
+     }else{
+      return null
+     }
+    }
+  
+  
+    return null
+  
+
+ };
 
 async function updateProfile(
   id,
@@ -121,4 +140,5 @@ module.exports = {
   getDoctorByID,
   removeDoctor,
   updateProfile,
+  checkDoctor,
 };
