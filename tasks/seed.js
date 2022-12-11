@@ -10,7 +10,7 @@ async function dataFiller() {
     const db = await connection.dbConnection();
     await db.dropDatabase();
 
-    await dbConnection.closeConnection();
+    // await connection.closeConnection();
 
     console.log('Creating User - 1');
 
