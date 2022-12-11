@@ -57,11 +57,20 @@ function validPassword(password) {
     return true
 }
 
+function validPhoneNumber(phone)
+{
+    regex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
+    if(!phone) return false;
+    if(phone.trim() == "") return false;
+    return regex.test(phone);
+}
+
 module.exports = {
     validString,
     validEmail,
     validDate,
     validId,
     validAge,
-    validPassword
+    validPassword,
+    validPhoneNumber
 }

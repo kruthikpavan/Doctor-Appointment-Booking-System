@@ -9,7 +9,6 @@ const appointmentData= data.appointments
 router.get("/", async (req, res) => {
   res.redirect("/");
 });
-
 router
   .route("/login")
   .get(async (req, res) => {
@@ -17,7 +16,6 @@ router
   })
   .post(async (req, res) => 
   {const {username,password}= req.body
-
   if(!username || !password) {
     res.status(400)
     res.render('login',{error:'Both username and password needs to be provided'})
@@ -183,21 +181,20 @@ router
           //to-do
           //store this timeslot and date from req.session.date as appointment info in database
           const doctorId= 'randomDoctor'
-          const appointment= appointmentData.createAppointment(req.session.user, doctorId, timeSlot, req.session.date)
-          res.render('users/my-appointments',{timeSlot:timeSlot,date:req.session.date})
+          const appointment= await appointmentData.createAppointment(req.session.user, doctorId, timeSlot, req.session.date)
+          res.redirect('/users/my-appointments')
   });
   router
       .route('/my-appointments')
       .get(async (req, res) => {
         //appointment data need to be fetched from the database and displayed to the user
-        const timeSlot= req.session.timeSlot
-        const date= req.session.date     //these are temporary. date and timeSlot needs to be fetched from database not session
-        
-        if(!timeSlot || !date){
+        const appointmentInfo= await appointmentData.getAppointmentByID(req.session.user)
+        if(!appointmentInfo){
           return res.send('You dont have any appointments right now!')
         }
-        res.render('users/my-appointments',{timeSlot:timeSlot,date:req.session.date})
-    
+        const timeSlot= appointmentInfo.timeSlot
+        const date= appointmentInfo.date    //these are temporary. date and timeSlot needs to be fetched from database not session
+        res.render('users/my-appointments',{timeSlot,date})
         })
         .post(async(req,res)=> {
           //to-do
