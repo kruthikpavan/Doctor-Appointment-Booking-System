@@ -19,9 +19,10 @@ async function createDoctor(
   try {
     //Add validation
     const doctorCollection = await doctors();
+    email= email.toLowerCase();
 
     let userData = await doctorCollection.findOne({
-      email: email.toLowerCase(),
+      email: email,
     });
     if (userData != null || userData != undefined)
       throw "This E-mail has already been used to register";
@@ -105,9 +106,10 @@ async function updateProfile(
   phoneNumber
 ) {
   try {
+    email= email.toLowerCase();
     const doctorCollection = await doctors();
     let userData = await doctorCollection.findOne({
-      email: email.toLowerCase(),
+      email: email,
     });
     if (
       (userData != null || userData != undefined) &&

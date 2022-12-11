@@ -16,15 +16,16 @@ async function createUser(
     ){
 
         try {
-        
+        username= username.toLowerCase();
+        email= email.toLowerCase();
         let dataCheck  = await helpers.checkUserDetails(firstName,lastName,username,password,email,phoneNumber,dateOfBirth);
         const userCollection  = await users();
-        let userData = await userCollection.findOne({email: email.toLowerCase()});
+        let userData = await userCollection.findOne({email: email});
         if(userData != null || userData != undefined) throw 'This E-mail has already been used to register';
-        userData = await userCollection.findOne({username: username.toLowerCase()});
+        userData = await userCollection.findOne({username: username});
         if(userData != null || userData != undefined) throw 'This username has already been used to register';
         let hashed = await bcrypt.hash(password, saltRounds);
-        username= username.toLowerCase();
+        
         let newUser = {
             firstName:firstName,
             lastName:lastName,
@@ -121,11 +122,12 @@ const checkUser = async (username, password) => {
   ){
 
       try {
-      
+      username= username.toLowerCase();
+      email= email.toLowerCase();
       const userCollection  = await users();
-      let userData = await userCollection.findOne({email: email.toLowerCase()});
+      let userData = await userCollection.findOne({email: email});
       if((userData != null || userData != undefined) && userData._id.toString()!=id) throw 'This E-mail has already exist';
-      userData = await userCollection.findOne({username: username.toLowerCase()});
+      userData = await userCollection.findOne({username: username});
       if((userData != null || userData != undefined) && userData._id.toString()!=id)  throw 'This username has already exist';
       let updateUser = {
           firstName:firstName,
