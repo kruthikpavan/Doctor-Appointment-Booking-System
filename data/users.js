@@ -24,8 +24,7 @@ async function createUser(
         userData = await userCollection.findOne({username: username.toLowerCase()});
         if(userData != null || userData != undefined) throw 'This username has already been used to register';
         let hashed = await bcrypt.hash(password, saltRounds);
-        username= username.toUpperCase()
-
+        username= username.toLowerCase();
         let newUser = {
             firstName:firstName,
             lastName:lastName,
@@ -94,7 +93,7 @@ async function getAllUsers(){
 }
 const checkUser = async (username, password) => {
     const userCollection = await users();
-    username= username.toUpperCase()
+    username= username.toLowerCase();
     let passwordFound= await userCollection.findOne({username})
     if(passwordFound){
       let match= bcrypt.compareSync(password,passwordFound.password)
