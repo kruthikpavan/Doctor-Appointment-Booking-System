@@ -3,6 +3,10 @@ const { LoggerLevel } = require("mongodb");
 const xss = require("xss");
 const data = require("../data");
 const validator = require("../validation");
+const { LoggerLevel } = require("mongodb");
+const xss = require("xss");
+const data = require("../data");
+const validator = require("../validation");
 const router = express.Router();
 const userData = data.users;
 const appointmentData = data.appointments;
@@ -27,7 +31,40 @@ router
     }
     if (!/^[a-z0-9]+$/i.test(username)) {
       res.status(400);
+  .post(async (req, res) => {
+    const { username, password } = req.body;
+    if (!username || !password) {
+      res.status(400);
+      res.render("login", {
+        error: "Both username and password needs to be provided",
+      });
+      return;
+    }
+    if (!/^[a-z0-9]+$/i.test(username)) {
+      res.status(400);
 
+      res.render("login", {
+        error:
+          "Only alpha numeric characters should be provided as username.No other characters or empty spaces are allowed",
+      });
+      return;
+    }
+    if (username.length < 4) {
+      res.status(400);
+      res.render("login", {
+        error: "Username should have atleast 4 characters",
+      });
+      return;
+    }
+    const userInfo = await userData.checkUser(username, password);
+    if (userInfo) {
+      req.session.user = username;
+      res.redirect("/users/home");
+      return;
+    } else {
+      res.render("login", { error: "Not a valid username and password " });
+      return;
+    }
       res.render("login", {
         error:
           "Only alpha numeric characters should be provided as username.No other characters or empty spaces are allowed",
@@ -134,6 +171,8 @@ router
     lastDate = `${lastDate.getFullYear()}-${lastMonth}-${lastDay}`;
     req.session.today= currentDate
     req.session.lastDate= lastDate
+    req.session.today= currentDate
+    req.session.lastDate= lastDate
     res.render("users/book-appointment", {
       today: currentDate,
       lastDate: lastDate,
@@ -141,6 +180,16 @@ router
   })
   .post(async (req, res) => {
     const date = req.body.date;
+    const checkIfBooked = await appointmentData.checkStatus(req.session.user)
+    if(checkIfBooked) {
+      return res.render("users/book-appointment", {
+        error:'You already have an existing slot.',
+        today: req.session.today,
+      lastDate: req.session.lastDate,
+      });
+
+    }
+
     const checkIfBooked = await appointmentData.checkStatus(req.session.user)
     if(checkIfBooked) {
       return res.render("users/book-appointment", {
@@ -244,6 +293,16 @@ router
     if (!appointmentInfo) {
       return res.send("You dont have any appointments right now!");
     }
+router
+  .route("/my-appointments")
+  .get(async (req, res) => {
+    //appointment data need to be fetched from the database and displayed to the user
+    const appointmentInfo = await appointmentData.getAppointmentByID(
+      req.session.user
+    );
+    if (!appointmentInfo) {
+      return res.send("You dont have any appointments right now!");
+    }
 
     res.render("users/my-appointments", { appointments: appointmentInfo });
   })
@@ -253,7 +312,20 @@ router
     const appointmentDeleted = await appointmentData.removeAppointment(req.session.user);
     return res.redirect("/users/home");
   });
+    res.render("users/my-appointments", { appointments: appointmentInfo });
+  })
+  .post(async (req, res) => {
+    //to-do
+    //Implement logic to remove appointment from database . timeslot and date are present in req.session
+    const appointmentDeleted = await appointmentData.removeAppointment(req.session.user);
+    return res.redirect("/users/home");
+  });
 
+router.get("/profile", async (req, res) => {
+  if (!req.session.user) {
+    return res.redirect("login");
+  }
+  let user = await userData.getUserByUn(req.session.user);
 router.get("/profile", async (req, res) => {
   if (!req.session.user) {
     return res.redirect("login");
@@ -304,6 +376,84 @@ router.post("/profile", async (req, res) => {
       errors: errors,
     });
   }
+  if (user === null) {
+    return res.render("error/404");
+  }
+  return res.render("users/Profile", {
+    layout: "main",
+    title: "My Profile",
+    userInfo: user,
+  });
+});
+router.post("/profile", async (req, res) => {
+  let errors = [];
+
+  let userInfo = {
+    firstName: xss(req.body.firstName.trim()),
+    lastName: xss(req.body.lastName.trim()),
+    username: xss(req.body.username.toLowerCase().trim()),
+    email: xss(req.body.email.toLowerCase().trim()),
+    phoneNumber: xss(req.body.phoneNumber.trim()),
+    dateOfBirth: xss(req.body.dateOfBirth.trim()),
+  };
+  if (!validator.validString(userInfo.firstName))
+    errors.push("Invalid first name.");
+  if (!validator.validString(userInfo.lastName))
+    errors.push("Invalid last name.");
+  if (!validator.validString(userInfo.username))
+    errors.push("Invalid username.");
+
+  if (!validator.validEmail(userInfo.email)) errors.push("Invalid email.");
+  if (!validator.validDate(userInfo.dateOfBirth)) {
+    userInfo.dateOfBirth = req.body.dateOfBirth.trim();
+    errors.push("Invalid Date of Birth.");
+  }
+
+  if (!req.session.user) {
+    res.redirect("login");
+  }
+  if (errors.length > 0) {
+    console.log(errors);
+    return res.status(401).render("users/profile", {
+      title: "My Profile",
+      userInfo: userInfo,
+      errors: errors,
+    });
+  }
+
+  try {
+    let updatedUser = await userData.updateProfile(
+      userInfo.firstName,
+      userInfo.lastName,
+      userInfo.username,
+      userInfo.email,
+      userInfo.phoneNumber,
+      userInfo.dateOfBirth
+    );
+    if (updatedUser) {
+      req.session.user = updatedUser;
+      res.status(200).render("users/profile", {
+        title: "My Profile",
+        userInfo: updatedUser,
+        errors: errors,
+        msg: "Successfully updated",
+      });
+    } else {
+      res.render("users/profile", {
+        title: "My Profile",
+        userInfo: userInfo,
+        msg: "Could not  update your profile.",
+      });
+    }
+  } catch (e) {
+    errors.push(e);
+    res.status(403).render("users/profile", {
+      title: "My Profile",
+      userInfo: userInfo,
+      errors: errors,
+    });
+  }
+});
 
   try {
     let updatedUser = await userData.updateProfile(

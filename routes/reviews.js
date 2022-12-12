@@ -3,41 +3,44 @@ const router = express.Router();
 const data = require("../data");
 const validate = require("../validation");
 
+
 const reviewData = data.reviews;
 
 router.route('/')
 .get(async(req,res)=>
 {
-    let reviewDetails = req.body;
-    try {
-        let id = req.session.user._id;
-        if(req.session.user)
-            res.redirect('/users');
-        const getReviews = await data.getAllUserReviews(id);
-        res.status(200).json(getReviews);
-    } catch (e) {
-        res.status(500).json(e);
-    }
+    // let reviewDetails = req.body;
+    // try {
+    //     let id = req.session.user._id;
+    //     if(req.session.user)
+    //         res.redirect('/users');
+    //     const getReviews = await data.getAllUserReviews(id);
+    //     res.status(200).json(getReviews);
+    // } catch (e) {
+    //     res.status(500).json(e);
+    // }
+    res.render('review');
 })
 .post(async (req,res) =>{
     try{
-        let id = req.session.user._id;
-        const reviewData = req.body;
-        if (!ObjectId.isValid(doctorID)) throw 'Invalid Doctor ID';
-        if (!ObjectId.isValid(userID)) throw 'Invalid User ID';
-        if (!ObjectId.isValid(appointmentID)) throw 'Invalid Appointment ID';
-        doctorID = reviewData.doctorID;
-        userID = reviewData.userID;
-        review = reviewData.review;
-        appointmentID = reviewData.appointmentID;
-        let doctorIDrate = validator.Validid(doctorID);
-        let userIDrate = validator.Validid(userID);
-        let appointmentIDrate = validator.Validid(appointmentID);
-        let reviewrate = validator.validString(review);
-        if(doctorIDrate == false || userIDrate == false || appointmentIDrate== false || reviewrate == false)
-        {
-            return res.render('reviews',{error:'Not a valid username and password '});
-        }
+        let id = req.sessionID;
+        // let id = req.session.user._id;
+        // const reviewData = req.body;
+        // if (!ObjectId.isValid(doctorID)) throw 'Invalid Doctor ID';
+        // if (!ObjectId.isValid(userID)) throw 'Invalid User ID';
+        // if (!ObjectId.isValid(appointmentID)) throw 'Invalid Appointment ID';
+        // doctorID = reviewData.doctorID;
+        // userID = reviewData.userID;
+        review = req.body['review-form'];
+        // appointmentID = reviewData.appointmentID;
+        // let doctorIDrate = validator.Validid(doctorID);
+        // let userIDrate = validator.Validid(userID);
+        // let appointmentIDrate = validator.Validid(appointmentID);
+        // let reviewrate = validator.validString(review);
+        // if(doctorIDrate == false || userIDrate == false || appointmentIDrate== false || reviewrate == false)
+        // {
+        //     return res.render('reviews',{error:'Not a valid username and password '});
+        // }
     }
     catch(e)
     {
@@ -48,8 +51,11 @@ router.route('/')
     }
 
     try {
-        
-        const newReview = await reviewData.createReview(reviewData,doctorID,userID,appointmentID);
+        doctorID = '5ce819935e539c343f141ece';
+        userID = '5ce819935e539c343f141ece';
+        appointmentID = '5ce819935e539c343f141ece';
+
+        const newReview = await reviewData.createReview(review,doctorID,userID,appointmentID);
         if (!newReview.acknowledged || !newReview.insertedId) throw "Could not add review";
         newReview = await userCollection.findOne(newReview);
         res.status(200).redirect("/");
