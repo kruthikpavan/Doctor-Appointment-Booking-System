@@ -193,6 +193,7 @@ router
           return res.send('You dont have any appointments right now!')
         }
         const timeSlot= appointmentInfo.timeSlot
+
         const date= appointmentInfo.date    //these are temporary. date and timeSlot needs to be fetched from database not session
         res.render('users/my-appointments',{timeSlot,date})
         })
