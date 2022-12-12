@@ -1,6 +1,5 @@
 const mongoCollections = require("../config/mongoCollections");
 const appointments = mongoCollections.appointments;
-
 //schema
 // { 
 //     "_id":"1b6789b3-c0d4-4f8c-b20a-6a1d4b5b1234", 
@@ -11,34 +10,29 @@ const appointments = mongoCollections.appointments;
 //         "status": 'pending'
 //     } 
 
-
 async function createAppointment(userID,doctorId,timeSlot,date){
+    const status= 'pending'
     const newAppointment=  {    
         userID,
         doctorId,
         timeSlot,
-        date
+        date,
+        status
     }
     const appointmentsCollection=await  appointments()
     const createdAppointment = await appointmentsCollection.insertOne(newAppointment);
     return {appointmentInserted: true}
 }
-
 async function getAppointmentByID(id){
     if(!id) throw 'Appointment ID is invalid';
-    const appointmentsCollection=await  appointments()
-    const appointment = await appointmentsCollection.find({userID:id})
+    const appointmentsCollection=await appointments()
+    const appointment = await appointmentsCollection.find({userID:id}).toArray()
     if(appointment){
         return appointment
     }
     return null
-
-
-
 }
-
-
-async function removeAppointment(){
+async function removeAppointment(id){
 
 }
 
