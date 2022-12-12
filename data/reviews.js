@@ -59,9 +59,7 @@ async function getAllUserReviews(id){
     } catch (e) {
         return e;
     }
-
 }
-
 async function getAllDoctorReviews(id){
     if(!id) throw 'ID is not present to get Doctor Reviews';
     if (!ObjectId.isValid(id)) throw 'Invalid Doctor ID';
@@ -92,7 +90,6 @@ async function getReviewById(id){
     try {
         let idCheck = helpers.checkID(id);
         id = id.trim();
-
         const reviewCollection = await reviews();
         let reviews = await reviewCollection.find(
             {_id:ObjectId(id)}
