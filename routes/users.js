@@ -175,7 +175,7 @@ router
     }
     let timeSlot= undefined
         for(const key in req.body){
-             timeSlot= parseInt(key)
+          timeSlot= parseInt(key)
           }
           req.session.timeSlot= timeSlot
           //to-do
@@ -199,9 +199,9 @@ router
         .post(async(req,res)=> {
           //to-do
           //Implement logic to remove appointment from database . timeslot and date are present in req.session
-         const appointmentDeleted= await appointmentData.removeAppointment()
+          const appointmentDeleted= await appointmentData.removeAppointment()
           return res.redirect('/users/home')
- 
+
         })
 
         router.get("/profile", async (req, res) => {

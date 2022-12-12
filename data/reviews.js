@@ -3,8 +3,8 @@ const reviews = mongoCollections.reviews;
 const { ObjectId } = require('mongodb');
 const helpers = require("../helpers");
 
-async function createReview(reviewData,doctorID,userID,appointmentID,date,time){
-    if(!reviewData || !doctorID || !userID || !appointmentID || !date || !time) throw 'All fields are mandatory for post review';
+async function createReview(reviewData,doctorID,userID,appointmentID){
+    if(!reviewData || !doctorID || !userID || !appointmentID) throw 'All fields are mandatory for post review';
     if (!ObjectId.isValid(doctorID)) throw 'Invalid Doctor ID';
     if (!ObjectId.isValid(userID)) throw 'Invalid User ID';
     if (!ObjectId.isValid(appointmentID)) throw 'Invalid Appointment ID';

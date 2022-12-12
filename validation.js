@@ -65,6 +65,13 @@ function validPhoneNumber(phone)
     return regex.test(phone);
 }
 
+// function validString(data){
+//     if(!string) return false;
+//     if(data.trim().length === 0) return false;
+//     if(typeof data != 'string') return false;
+//     if(data instanceof String) return false;
+//     return true;
+// }
 module.exports = {
     validString,
     validEmail,
@@ -72,5 +79,5 @@ module.exports = {
     validId,
     validAge,
     validPassword,
-    validPhoneNumber
+    validPhoneNumber,
 }
