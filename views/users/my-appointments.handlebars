@@ -1,15 +1,24 @@
 <div>
     <b>Hey user! You have these appointments scheduled</b>
 </div>
-<div>
-    You're appointment is on <b>{{date}}</b> at <b>{{timeSlot}}</b>
-</div>
+
+{{#each appointments}}
+
 <form method="POST" action="/users/my-appointments">
+<div>
+<h3>You have an appointment at</h3> <h2>{{this.timeSlot}}</h2> <h3>on</h3> <h2>{{this.date}}</h2> <h3>with</h3> <h2>{{this.doctorId}}</h2>
+</div>
+
     <div>
-        
+      
    <button type="submit">Cancel this appointment</button> 
 </div>
+</form>
+
 </form>
 <div>
     <a href="">Request for a reschedule</a>
 </div>
+ 
+{{/each}}
+

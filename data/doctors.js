@@ -27,6 +27,7 @@ async function createDoctor(
     if (userData != null || userData != undefined)
       throw "This E-mail has already been used to register";
     let hashed = await bcrypt.hash(password, saltRounds);
+    let blockedSlots=[]
 
     let newUser = {
       name: docName,
@@ -38,6 +39,7 @@ async function createDoctor(
       email: email.toLowerCase(),
       phoneNumber: phoneNumber,
       password: hashed,
+      blockedSlots: blockedSlots
     };
 
     const insertDoc = await doctorCollection.insertOne(newUser);
@@ -94,6 +96,29 @@ const checkDoctor = async (username, password) => {
 
  };
 
+ async function blockAppointment(name,date,time){
+  const doctorCollection = await doctors();
+  const appointmentBlock= doctorCollection.update({name:name},{
+    $push: {
+      blockedSlots: {date,time}
+  }
+  })
+  return 
+
+
+ }
+
+ async function checkSlot(date,time){
+  //check if this time is blocked
+  const doctorCollection = await doctors();
+  console.log(date);
+  console.log(time);
+  const notAvailable= await doctorCollection.findOne({'blockedSlots.date': date,'blockedSlots.time':parseInt(time)})
+  console.log(notAvailable);
+  if(notAvailable) return false
+  return true
+ }
+
 async function updateProfile(
   id,
   docName,
@@ -143,4 +168,6 @@ module.exports = {
   removeDoctor,
   updateProfile,
   checkDoctor,
+  checkSlot,
+  blockAppointment
 };
