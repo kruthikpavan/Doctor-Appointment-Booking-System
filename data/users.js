@@ -3,7 +3,7 @@ const users = mongoCollections.users;
 const helpers = require("../helpers");
 const bcrypt = require("bcryptjs");
 const { ObjectID } = require("bson");
-const saltRounds = 16;
+const saltRounds = 10;
 
 async function createUser(
         firstName,

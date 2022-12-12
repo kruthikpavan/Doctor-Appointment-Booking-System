@@ -8,7 +8,7 @@ const SW = require('stopword');
 const router = express.Router();
 
 router.post('/s-analyzer', function(req, res, next) {
-    const { review } = req.body;
+//    const { review } = req.body;
     const lexedReview = aposToLexForm(review);
     const casedReview = lexedReview.toLowerCase();
     const alphaOnlyReview = casedReview.replace(/[^a-zA-Z\s]+/g, '');

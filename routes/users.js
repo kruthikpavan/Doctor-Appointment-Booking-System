@@ -6,6 +6,7 @@ const validator = require("../validation");
 const router = express.Router();
 const userData = data.users;
 const appointmentData = data.appointments;
+const doctorData= data.doctors
 
 router.get("/", async (req, res) => {
   res.redirect("/");
@@ -103,6 +104,7 @@ router.post("/signup", async (req, res) => {
       newUser.phoneNumber,
       newUser.dateOfBirth
     );
+    req.session.user= newUser.username
     res.redirect("/users/home");
   } catch (e) {
     errors.push(e);
@@ -123,7 +125,7 @@ router
     let currentDay = `${new Date().getDate()}`;
     if (currentDay.toString().length == 1) currentDay = `0${currentDay}`;
     let currentDate = `${new Date().getFullYear()}-${currentMonth}-${currentDay}`;
-    let result = date.setDate(date.getDate() + 30);
+    let result = date.setDate(date.getDate() + 14);
     let lastDate = new Date(result);
     let lastMonth = `${lastDate.getMonth() + 1}`;
     if (lastMonth.toString().length == 1) lastMonth = `0${lastMonth}`;
@@ -153,17 +155,42 @@ router
     //Next step is to fetch available slots for specified date. Will use dummy data for now---pk
     //If available slots are empty, redirect to book-appointment route. User has to select a different date to proceed
     req.session.date = date;
-    req.session.availableSlots = {
+    let availableSlots=[]
+    let AllSlots = {
       slots: [
-        { time: 9, available: true },
-        { time: 10, available: false },
-        { time: 11, available: true },
-        { time: 12, available: false },
+        { time: '10' },
+        { time: '10.30' },
+        { time: '11' },
+        { time: '11.30' },
+        { time: '12' },
+        { time: '12.30' },
+        { time: '1' },
+        { time: '1.30' },
+        { time: '4' },
+        { time: '4.30' },
+        { time: '5' },
+        { time: '5.30' },
+        { time: '6' },
+        { time: '6.30' },
+        { time: '7' },
+        { time: '7.30' },
+        { time: '8' }
       ],
     };
+    for (const slot of AllSlots.slots) {
+      let doctorAvailable= await doctorData.checkSlot(req.session.date,slot.time)
+      if(doctorAvailable){
+        let obj={time: slot.time}
+        availableSlots.push(obj)
+
+      }
+    }
+    let allAvailableSlots= {slots:availableSlots}
     return res.render("users/select-slot", {
-      availableSlots: req.session.availableSlots,
+      availableSlots: allAvailableSlots,
     });
+  
+   
   });
 
 router
@@ -174,6 +201,8 @@ router
   .post(async (req, res) => {
     //to-do
     //if req.body is empty redirect to /select-slot page with error . User has to select atleast one slot
+    
+
     if (Object.keys(req.body).length === 0) {
       return res.render("users/select-slot", {
         error: "You need to select atleast one slot to complete the booking",
@@ -194,13 +223,15 @@ router
     req.session.timeSlot = timeSlot;
     //to-do
     //store this timeslot and date from req.session.date as appointment info in database
-    const doctorId = "randomDoctor";
+    const doctorId = "Kenneth";
     const appointment = await appointmentData.createAppointment(
       req.session.user,
       doctorId,
       timeSlot,
       req.session.date
     );
+    //push this appointment date and time into doctors db
+    const blockDate= await doctorData.blockAppointment(doctorId,req.session.date,timeSlot)
     res.redirect("/users/my-appointments");
   });
 router
