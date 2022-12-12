@@ -33,12 +33,7 @@ async function getAppointmentByID(id){
     return null
 }
 async function removeAppointment(id){
-    const appointmentsCollection=await appointments()
-    const appointment = await appointmentsCollection.deleteMany({userID:id,status:'pending'})
-    return 
-    //send success status
 
- 
 }
 
 
@@ -46,17 +41,6 @@ async function getAppointmentByUser(){
     
 }
 
-async function checkStatus(id){
-    const appointmentsCollection=await appointments()
-    const appointment = await appointmentsCollection.findOne({userID:id,status:'pending'})
-    if(appointment) return true
-    return false
-
-
-
-
-    
-}
 
 
 module.exports = {
@@ -64,6 +48,5 @@ module.exports = {
     getAppointmentByID,
     removeAppointment,
     removeAppointment,
-    getAppointmentByUser,
-    checkStatus
+    getAppointmentByUser
 }
