@@ -113,7 +113,7 @@ const checkDoctor = async (username, password) => {
   const doctorCollection = await doctors();
   console.log(date);
   console.log(time);
-  const notAvailable= await doctorCollection.findOne({'blockedSlots.date': date,'blockedSlots.time':parseInt(time)})
+  const notAvailable= await doctorCollection.findOne({'blockedSlots.date': date,'blockedSlots.time':parseFloat(time)})
   console.log(notAvailable);
   if(notAvailable) return false
   return true
