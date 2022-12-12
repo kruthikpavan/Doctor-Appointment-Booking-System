@@ -209,7 +209,8 @@ router
       
               return res.redirect("login");
           }
-          let user = await userData.getUserByID(req.session.user._id);
+          let user = await userData.getUserByUn(req.session.user);
+
           if (user === null) {
               return res.render('error/404');
           }
@@ -257,8 +258,7 @@ router
         }
 
         try {
-          const updatedUser = await userData.updateProfile(
-            req.session.user._id,
+          let updatedUser = await userData.updateProfile(
             userInfo.firstName,
             userInfo.lastName,
             userInfo.username,
