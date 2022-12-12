@@ -16,15 +16,17 @@ async function createUser(
     ){
 
         try {
-        
+        username= username.toLowerCase();
+        email= email.toLowerCase();
         let dataCheck  = await helpers.checkUserDetails(firstName,lastName,username,password,email,phoneNumber,dateOfBirth);
         const userCollection  = await users();
-        let userData = await userCollection.findOne({email: email.toLowerCase()});
+      
+        let userData = await userCollection.findOne({email: email});
         if(userData != null || userData != undefined) throw 'This E-mail has already been used to register';
-        userData = await userCollection.findOne({username: username.toLowerCase()});
+        userData = await userCollection.findOne({username: username});
         if(userData != null || userData != undefined) throw 'This username has already been used to register';
         let hashed = await bcrypt.hash(password, saltRounds);
-        username= username.toLowerCase();
+        
         let newUser = {
             firstName:firstName,
             lastName:lastName,
@@ -58,6 +60,20 @@ async function getUserByID(id){
         return userData;
     } catch (e) {
         console.log('Could not fetch user by id' + e);
+    }
+}
+
+async function getUserByUn(id){
+    try {
+        // let checkID = helpers.checkID(id);
+        // if(checkID === false) throw 'ID provided is invalid';
+        const userCollection = await users();
+        let userData = await userCollection.findOne({username: id});
+        if(userData == null) throw `No user with this username - ${id}`
+        userData['_id'] = userData['_id'].toString();
+        return userData;
+    } catch (e) {
+        console.log('Could not fetch user by username' + e);
     }
 }
 
@@ -111,7 +127,6 @@ const checkUser = async (username, password) => {
   
    };
    async function updateProfile(
-            id,
             firstName,
             lastName,
             username,
@@ -121,12 +136,11 @@ const checkUser = async (username, password) => {
   ){
 
       try {
-      
+      username= username.toLowerCase();
+      email= email.toLowerCase();
       const userCollection  = await users();
-      let userData = await userCollection.findOne({email: email.toLowerCase()});
-      if((userData != null || userData != undefined) && userData._id.toString()!=id) throw 'This E-mail has already exist';
-      userData = await userCollection.findOne({username: username.toLowerCase()});
-      if((userData != null || userData != undefined) && userData._id.toString()!=id)  throw 'This username has already exist';
+      let userData = await userCollection.findOne({email: email});
+      if((userData != null || userData != undefined) && userData.username!=username) throw 'This E-mail has already exist';
       let updateUser = {
           firstName:firstName,
           lastName:lastName,
@@ -135,9 +149,9 @@ const checkUser = async (username, password) => {
           phoneNumber:phoneNumber,
           dateOfBirth:dateOfBirth,
       }
-      const updatedInfo = await userCollection.updateOne({ _id: ObjectID(id) }, { $set: updateUser });
+      const updatedInfo = await userCollection.updateOne({ username: username }, { $set: updateUser });
       if (updatedInfo.modifiedCount === 0) return null;
-      return await this.getUserByID(id);
+      return await this.getUserByUn(username);
       } catch (e) {
           console.log(e);
           throw e;
@@ -153,5 +167,6 @@ module.exports = {
     removeUser,
     getAllUsers,
     checkUser,
-    updateProfile
+    updateProfile,
+    getUserByUn
 }
