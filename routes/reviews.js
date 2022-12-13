@@ -31,7 +31,7 @@ router.route('/')
         // if (!ObjectId.isValid(appointmentID)) throw 'Invalid Appointment ID';
         // doctorID = reviewData.doctorID;
         // userID = reviewData.userID;
-        review = req.body['review-form'];
+        review = req.body['review-form'].trim();
         // appointmentID = reviewData.appointmentID;
         // let doctorIDrate = validator.Validid(doctorID);
         // let userIDrate = validator.Validid(userID);
@@ -56,9 +56,8 @@ router.route('/')
         appointmentID = '5ce819935e539c343f141ece';
 
         const newReview = await reviewData.createReview(review,doctorID,userID,appointmentID);
-        if (!newReview.acknowledged || !newReview.insertedId) throw "Could not add review";
-        newReview = await userCollection.findOne(newReview);
-        res.status(200).redirect("/");
+        if (!newReview.acknowledged) throw "Could not add review";
+        res.status(200).redirect("/users/home");
         } catch (e) {
         if(typeof e !== 'object')
         return res.status(500).json("Internal server error");

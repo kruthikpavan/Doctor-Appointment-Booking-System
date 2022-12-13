@@ -5,6 +5,15 @@ const bcrypt = require("bcryptjs");
 const saltRounds = 16;
 const { ObjectID } = require("bson");
 
+async function getAllDoctorDetails(){
+  const doctorCollection = await doctors();
+  docDetails =  await doctorCollection.find({}).toArray();
+  return docDetails
+}
+
+
+
+
 async function createDoctor(
   docName,
   category,
@@ -89,15 +98,15 @@ const checkDoctor = async (username, password) => {
       return null
      }
     }
-  
-  
+
     return null
   
-
  };
 
  async function blockAppointment(name,date,time){
   const doctorCollection = await doctors();
+  // await doctorCollection.update({'name': name}, {"$set": {"blockedSlots": []}})
+ 
   const appointmentBlock= doctorCollection.update({name:name},{
     $push: {
       blockedSlots: {date,time}
@@ -105,16 +114,12 @@ const checkDoctor = async (username, password) => {
   })
   return 
 
-
  }
 
  async function checkSlot(date,time){
   //check if this time is blocked
   const doctorCollection = await doctors();
-  console.log(date);
-  console.log(time);
   const notAvailable= await doctorCollection.findOne({'blockedSlots.date': date,'blockedSlots.time':parseFloat(time)})
-  console.log(notAvailable);
   if(notAvailable) return false
   return true
  }
@@ -169,5 +174,6 @@ module.exports = {
   updateProfile,
   checkDoctor,
   checkSlot,
-  blockAppointment
+  blockAppointment,
+  getAllDoctorDetails
 };

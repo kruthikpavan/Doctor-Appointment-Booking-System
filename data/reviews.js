@@ -18,8 +18,10 @@ async function createReview(reviewContent,doctorID,userID,appointmentID){
     if(arguments.length != 4) throw 'Invalid number of Parameters';
 
     try {
+        const reviewCollection = await reviews();
         let dataCheck = validator.validString(reviewContent);
-        analysedReview = await Analyser(review);
+        reviewContent = reviewContent;
+        analysedReview = await Analyser(reviewContent);
         const newId = ObjectId();
         let date = new Date();
         let newReview = {
@@ -28,20 +30,23 @@ async function createReview(reviewContent,doctorID,userID,appointmentID){
             appointment_id: appointmentID,
             date: date.toDateString(),
             time: date.getHours(),
-            review: reviewContent
+            review: reviewContent,
+            score: analysedReview['analysis']
         }
 
-        const reviewCollection = await reviews();
-        let reviews = await reviewCollection.find(
-            {"doctor_id":ObjectId(id)}
-        );
-        if(reviews ==  null){
-            const updatedReviewData = await reviewCollection.updateOne({_id: ObjectId(newId)},{$set: newReview}); //  need to check this
-            if(!updatedReviewData.acknowledged || !updatedReviewData.modifiedCount) throw 'Review could not be added';
+        // let reviews = await reviewCollection.find(
+        //     {"doctor_id":ObjectId(id)}
+        // );
+            const insertedReview = await reviewCollection.insertOne(newReview); //  need to check this
+            if(!insertedReview.acknowledged || !insertedReview.insertedId) throw 'Review could not be added';
 
-            const review = await reviews.getReviewById(newId)
+            const review = await getReviewById(insertedReview.insertedId)
+            review['imgSource'] = analysedReview['imgSource'] ;
+            review['color'] =analysedReview['color'] ;
+            review['acknowledged'] =true ;
+
             return review;
-        }
+        
 
     } catch (e) {
         return e;
@@ -75,7 +80,7 @@ async function getAllDoctorReviews(id){
     if(arguments.length!=1) throw 'Invalid number of parameters to retrieve all Doctor Reviews';
 
     try {
-        let idCheck = helpers.checkID(id);
+        let idCheck = validator.validId(id);
         id = id.trim();
 
         const reviewCollection = await reviews();
@@ -97,16 +102,15 @@ async function getReviewById(id){
     if(arguments.length!=1) throw 'Invalid number of parameters to retrieve Review';
 
     try {
-        let idCheck = helpers.checkID(id);
-        id = id.trim();
+        let idCheck = validator.validId(id);
         const reviewCollection = await reviews();
-        let reviews = await reviewCollection.find(
+        let reviewData = await reviewCollection.findOne(
             {_id:ObjectId(id)}
         );
     
-        if(reviews ==  null) throw 'This doctor has not been reviewed yet';
+        if(reviewData ==  null) throw 'This doctor has not been reviewed yet';
         
-        return reviews;
+        return reviewData;
     } catch (e) {
         return e;
     }
@@ -137,11 +141,14 @@ async function removeReview(id){
 // are we doing this?
 async function updateReview(){
     
+    const updatedReviewData = await reviewCollection.updateOne({_id: ObjectId(newId)},{$set: newReview}); //  need to check this
+    if(!updatedReviewData.acknowledged || !updatedReviewData.modifiedCount) throw 'Review could not be added';
 }
 
 async function Analyser(reviewData)
 {
     try {
+        let final_Review = [];
         
         let  review  = reviewData;
         const lexedReview = aposToLexForm(review);
@@ -152,6 +159,7 @@ async function Analyser(reviewData)
         const { WordTokenizer } = natural;
         const tokenizer = new WordTokenizer;
         const tokenizedReview = tokenizer.tokenize(alphaOnlyReview);
+
         
         // tokenizedReview.forEach((word,index) => {
         //     tokenizedReview[index] = SpellCorrector.correct(word);
@@ -160,25 +168,23 @@ async function Analyser(reviewData)
     
         const { SentimentAnalyzer, PorterStemmer } = natural;
         const analyzer = new SentimentAnalyzer('English', PorterStemmer, 'afinn');
-        const analysis = analyzer.getSentiment(filteredReview);
+        final_Review['analysis']  = analyzer.getSentiment(filteredReview);
 
-        if (analysis < 0) {
-            emojiSection.innerHTML = '<img src="https://img.icons8.com/emoji/96/000000/angry-face.png">';
-            title.style.color = 'red';
-            outline.style.borderColor = 'red';
+        if (final_Review['analysis'] < 0) {
+            final_Review['imgSource'] = '<img src="https://img.icons8.com/emoji/96/000000/angry-face.png">';
+            final_Review['color'] = 'red';
             };
-            if (analysis === 0) {
-            emojiSection.innerHTML = '<img src="https://img.icons8.com/officel/80/000000/neutral-emoticon.png">';
-            title.style.color = '#00367c';
-            outline.style.borderColor = '#00367c';
+            if (final_Review['analysis'] === 0) {
+            final_Review['imgSource'] = '<img src="https://img.icons8.com/officel/80/000000/neutral-emoticon.png">';
+            final_Review['color'] = '#00367c';
+            
             }
-            if (analysis > 0) {
-            emojiSection.innerHTML = '<img src="https://img.icons8.com/color/96/000000/happy.png">';
-            title.style.color = 'green';
-            outline.style.borderColor = 'green'
+            if (final_Review['analysis'] > 0) {
+                final_Review['imgSource'] = '<img src="https://img.icons8.com/color/96/000000/happy.png">';
+                final_Review['color'] = 'green';
             }
     
-        return  analysis;
+        return  final_Review;
 
     } catch (e) {
         return e;

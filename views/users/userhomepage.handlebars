@@ -1,12 +1,33 @@
-<div>
-    <b>Welcome User. This is your home page</b>
+<div class="container">
+    <div class="left">
+    <div>
+        <label for="search">Search Users</label>
+        <input type="search" id="search" data-search>
+        <div>
+        <div class="user-cards" data-user-cards-container></div>
+        <template data-user-template>
+        <div class="card">
+        <div class="header" data-header></div>
+        <div class="body" data-body></div>
+        </div>
+    </template>
+    </div>
+    </div>
 </div>
-<div>
-    <a href="/users/book-appointment">click here to book appointment</a>
-</div>
-<div>
-    <a href="/users/my-appointments">My appointments</a>
-</div>
-<div>
+
+<div class="right">
+    <div>
+        <a href="/users/book-appointment">click here to book appointment</a>
+    </div>
+    <div>
+        <a href="/users/my-appointments">My appointments</a>
+    </div>
+    <div>
     <a href="/users/profile">My profile</a>
+    </div>
 </div>
+</div>
+<script src="/public/js/main.js">
+
+
+</script>
