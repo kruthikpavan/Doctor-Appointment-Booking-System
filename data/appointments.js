@@ -1,5 +1,7 @@
 const mongoCollections = require("../config/mongoCollections");
 const appointments = mongoCollections.appointments;
+const doctors = mongoCollections.doctors;
+
 //schema
 // { 
 //     "_id":"1b6789b3-c0d4-4f8c-b20a-6a1d4b5b1234", 
@@ -32,17 +34,32 @@ async function getAppointmentByID(id){
     }
     return null
 }
-async function removeAppointment(id){
+async function removeAppointment(doctorId,id){
     const appointmentsCollection=await appointments()
+    const appointmentInfo = await appointmentsCollection.findOne({userID:id,status:'pending'})
     const appointment = await appointmentsCollection.deleteMany({userID:id,status:'pending'})
-    return 
-    //send success status
+    const date= appointmentInfo.date
+    const time= appointmentInfo.timeSlot
+    const doctorCollection = await doctors();
+    const doctor= await doctorCollection.findOne({name:doctorId})
+    let updatedBlockedSlots=[]
+    for(const key of doctor.blockedSlots){
+      if(key.date===date && key.time===time){
+        continue
+      }
+      else {
+        updatedBlockedSlots.push(key)
 
- 
+      }
+    }
+  // await doctorCollection.update({'name': name}, {"$set": {"blockedSlots": []}})
+
+    const restoreSlot=await  doctorCollection.update({'name': doctorId}, {"$set": {"blockedSlots": updatedBlockedSlots}})
+    //send success status
 }
 
-
 async function getAppointmentByUser(){
+
     
 }
 
@@ -51,11 +68,6 @@ async function checkStatus(id){
     const appointment = await appointmentsCollection.findOne({userID:id,status:'pending'})
     if(appointment) return true
     return false
-
-
-
-
-    
 }
 
 
