@@ -218,7 +218,7 @@ router
     }
     let timeSlot = undefined;
     for (const key in req.body) {
-      timeSlot = parseFloat(key);
+      timeSlot = parseFloat(key).toFixed(2);
     }
     req.session.timeSlot = timeSlot;
     //to-do
@@ -339,5 +339,51 @@ router.post("/profile", async (req, res) => {
     });
   }
 });
+
+router
+  .route("/reqrescheduleAppointment")
+  .get(async (req, res) => {
+    return res.redirect("/users/book-appointment");
+  })
+  .post(async (req,res) =>{
+
+    //to-do
+    //if req.body is empty redirect to /select-slot page with error . User has to select atleast one slot
+    
+    if(Object.keys(req.body).length === 0){
+      return res.render("users/reqrescheduleAppointment",{
+        error: "No option was selected in Reschedule",
+        availableSlots: req.session.availableSlots,
+      });
+    }
+    if(Object.keys(req.body).length > 1)
+    {
+      return res.render('user/reqrescheduleAppointment',
+      {
+        error:
+        "You cant select multiple slots. Please select only one available slot",
+      availableSlots: req.session.availableSlots,
+      })
+    }
+
+    let timeslot = undefined;
+    for(const key in req.body){
+      timeslot = parseFloat(key).toFixed(2);
+    }
+    req.session.timeSlot = timeSlot;
+    //to do - store timeslot and data from req.sesion.date as appointment info in db
+    const doctorID = req.session.doctors;
+    req.session.doctor = doctorId;
+    const appointment = await appointmentData.updateAppointment(
+      req.session.user,
+      doctorId,
+      timeSlot,
+      req.session.date,
+      pendingStatus
+    );
+    // need to push it to time and date of doctors db
+    const blockDate = await doctorData.blockAppointment(doctorId,req.session.date,timeSlot,pendingStatus)
+    res.redirect("/users/my-appointments");
+  });
 
 module.exports = router;

@@ -1,7 +1,7 @@
 const mongoCollections = require("../config/mongoCollections");
 const appointments = mongoCollections.appointments;
 const doctors = mongoCollections.doctors;
-
+const validator = require('../validation');
 //schema
 // { 
 //     "_id":"1b6789b3-c0d4-4f8c-b20a-6a1d4b5b1234", 
@@ -70,6 +70,29 @@ async function checkStatus(id){
     return false
 }
 
+async function updateAppointment(){
+
+}
+
+async function reqrescheduleAppointment(appointmentID,doctorID,userID,newTime)
+{
+  const appointmentsCollection=await appointments()
+
+  try {
+    appointmentIDcheck = validator.validId(appointmentID);
+    doctorIDcheck = validator.validId(doctorID);
+    userID = validator.validId(userID);
+
+    appointmentDeets = appointmentsCollection.getAppointmentByID(appointmentID);
+
+
+
+    
+  } catch (e) {
+    return e;
+  }
+}
+
 
 module.exports = {
     createAppointment,
@@ -77,5 +100,7 @@ module.exports = {
     removeAppointment,
     removeAppointment,
     getAppointmentByUser,
-    checkStatus
+    checkStatus,
+    reqrescheduleAppointment,
+    updateAppointment
 }
