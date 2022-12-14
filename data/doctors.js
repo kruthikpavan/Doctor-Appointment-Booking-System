@@ -116,10 +116,10 @@ const checkDoctor = async (username, password) => {
 
  }
 
- async function checkSlot(date,time){
+ async function checkSlot(doctor,date,time){
   //check if this time is blocked
   const doctorCollection = await doctors();
-  const notAvailable= await doctorCollection.findOne({'blockedSlots.date': date,'blockedSlots.time':parseFloat(time)})
+  const notAvailable= await doctorCollection.findOne({name:doctor,'blockedSlots.date': date,'blockedSlots.time':parseFloat(time)})
   if(notAvailable) return false
   return true
  }

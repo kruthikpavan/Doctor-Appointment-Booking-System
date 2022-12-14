@@ -64,9 +64,37 @@ input {
   padding: .5rem;
 }
 
+/* CSS */
+.card > .button {
+  background-color: #EA4C89;
+  border-radius: 8px;
+  border-style: none;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 500;
+  height: 40px;
+  line-height: 20px;
+  margin: 2px;
+  outline: none;
+  padding: 4px;
+
+  text-align: center;
+  text-decoration: none;
+
+}
+
+.button-1:hover,
+.button-1:focus {
+  background-color: #F082AC;
+}
 .card > .header {
   margin-bottom: .25rem;
 }
+
+
 
 .card > .body {
   font-size: .8rem;

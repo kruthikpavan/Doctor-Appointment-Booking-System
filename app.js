@@ -34,6 +34,16 @@ app.get("/doctordetails", async (req, res) => {
     let doctors = await doctorData.getAllDoctorDetails()
     res.send(doctors);
   });
+  app.use("/users/book-appointments", async (req, res,next) => {
+        req.session.doctors= 'Kenneth'
+    console.log(req.session);
+
+
+
+console.log('hey ur here');
+   return {"true":'true'}
+  });
+  
   
 
 configRoutes(app);
