@@ -52,6 +52,10 @@ router
     }
   });
 router.get("/home", async (req, res) => {
+  if(req.session.doctors){
+    delete req.session.doctors;
+
+  }
   res.render("users/userhomepage");
 });
 
@@ -119,7 +123,9 @@ router.post("/signup", async (req, res) => {
 router
   .route("/book-appointment")
   .get(async (req, res) => {
+    
     let date = new Date();
+    console.log(req.session);
     let currentMonth = `${new Date().getMonth() + 1}`;
     if (currentMonth.toString().length == 1) currentMonth = `0${currentMonth}`;
     let currentDay = `${new Date().getDate()}`;
@@ -140,6 +146,21 @@ router
     });
   })
   .post(async (req, res) => {
+    console.log(req.session);
+    if(!req.session.doctors){
+      req.session.doctors= req.body.hidden
+   
+      return  res.redirect("/users/book-appointment");
+    }
+    if(req.body.hidden){
+      console.log(req.body);
+      if(req.body.hidden!=req.session.doctors){
+        req.session.doctors= req.body.hidden
+   
+        return  res.redirect("/users/book-appointment");
+
+      }
+    }
     const date = req.body.date;
     const checkIfBooked = await appointmentData.checkStatus(req.session.user)
     if(checkIfBooked) {
@@ -148,9 +169,7 @@ router
         today: req.session.today,
       lastDate: req.session.lastDate,
       });
-
     }
-
     //to-do
     //Next step is to fetch available slots for specified date. Will use dummy data for now---pk
     //If available slots are empty, redirect to book-appointment route. User has to select a different date to proceed
@@ -178,7 +197,7 @@ router
       ],
     };
     for (const slot of AllSlots.slots) {
-      let doctorAvailable= await doctorData.checkSlot(req.session.date,slot.time)
+      let doctorAvailable= await doctorData.checkSlot(req.session.doctors,req.session.date,slot.time)
       if(doctorAvailable){
         let obj={time: slot.time}
         availableSlots.push(obj)
@@ -187,10 +206,10 @@ router
     }
     let allAvailableSlots= {slots:availableSlots}
     return res.render("users/select-slot", {
-      availableSlots: allAvailableSlots,
+      availableSlots: allAvailableSlots, doctor: req.session.doctors
     });
   
-   
+   ƒ
   });
 
 router
@@ -223,8 +242,7 @@ router
     req.session.timeSlot = timeSlot;
     //to-do
     //store this timeslot and date from req.session.date as appointment info in database
-    const doctorId = "Kenneth";
-    req.session.doctor=doctorId
+    const doctorId = req.session.doctors;
     const appointment = await appointmentData.createAppointment(
       req.session.user,
       doctorId,
@@ -251,7 +269,7 @@ router
   .post(async (req, res) => {
     //to-do
     //Implement logic to remove appointment from database . timeslot and date are present in req.session
-    const appointmentDeleted = await appointmentData.removeAppointment(req.session.doctor,req.session.user);
+    const appointmentDeleted = await appointmentData.removeAppointment(req.session.user);
     return res.redirect("/users/home");
   });
 

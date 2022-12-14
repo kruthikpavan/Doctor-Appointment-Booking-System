@@ -34,27 +34,30 @@ async function getAppointmentByID(id){
     }
     return null
 }
-async function removeAppointment(doctorId,id){
+async function removeAppointment(id){
     const appointmentsCollection=await appointments()
     const appointmentInfo = await appointmentsCollection.findOne({userID:id,status:'pending'})
     const appointment = await appointmentsCollection.deleteMany({userID:id,status:'pending'})
     const date= appointmentInfo.date
     const time= appointmentInfo.timeSlot
     const doctorCollection = await doctors();
-    const doctor= await doctorCollection.findOne({name:doctorId})
+    const doctor= await doctorCollection.findOne({name:appointmentInfo.doctorId})
     let updatedBlockedSlots=[]
-    for(const key of doctor.blockedSlots){
-      if(key.date===date && key.time===time){
-        continue
-      }
-      else {
-        updatedBlockedSlots.push(key)
-
+    if(doctor.blockedSlots.length>0){
+      for(const key of doctor.blockedSlots){
+        if(key.date===date && key.time===time){
+          continue
+        }
+        else {
+          updatedBlockedSlots.push(key)
+  
+        }
       }
     }
+  
   // await doctorCollection.update({'name': name}, {"$set": {"blockedSlots": []}})
 
-    const restoreSlot=await  doctorCollection.update({'name': doctorId}, {"$set": {"blockedSlots": updatedBlockedSlots}})
+    const restoreSlot=await  doctorCollection.update({'name': appointmentInfo.doctorId}, {"$set": {"blockedSlots": updatedBlockedSlots}})
     //send success status
 }
 

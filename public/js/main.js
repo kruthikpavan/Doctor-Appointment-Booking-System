@@ -7,7 +7,6 @@ let doctors = undefined
 
 searchInput.addEventListener("input", e => {
   const value = e.target.value.toLowerCase()
-  console.log(doctors);
   doctors.forEach(doc => {
     const visible= doc.name.toLowerCase().includes(value) || doc.category.toLowerCase().includes(value)
     doc.element.classList.toggle('hide',!visible) 
@@ -31,8 +30,33 @@ const getData = async () => {
         const card = userCardTemplate.content.cloneNode(true).children[0]
       const header = card.querySelector("[data-header]")
       const body = card.querySelector("[data-body]")
+      const btn = card.querySelector("[data-appointment]")
+      const hidden=card.querySelector("[hidden]")
+      const review = card.querySelector("[data-reviews]")
+
+  
       header.textContent = doc.name
+      hidden.value = doc.name
       body.textContent = doc.category
+      btn.textContent = 'Book Appointment'
+    //   btn.addEventListener('click',event=>{
+    // //  const bookAppointment= async()=>{
+    // //    fetch("http://localhost:3000/users/book-appointments", {
+    // //         method: "GET",
+    // //       }).then(response=>response.json()).then(data=>console.log(data));
+    // //     //   console.log('hellooo');
+    // //       window.location.href='http://localhost:3000/users/book-appointment'
+    // //     //   const data2 = await response2.json();
+    // //     //   console.log(data2);
+
+    // //  }
+
+    // //     bookAppointment()
+    //   })
+      review.textContent = 'Reviews'
+
+
+
       userCardContainer.append(card)
       return { name: doc.name, category: doc.category, element: card }
     })
