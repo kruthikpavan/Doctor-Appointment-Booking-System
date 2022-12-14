@@ -3,7 +3,7 @@
   border-right: 1px solid #ddd;
 }
 .navbar-light .navbar-brand:hover{
-  color: #09e5ab;
+  color: rgba(6, 163, 218, .7);;
 
 }
 .navbar .nav-item
@@ -12,11 +12,11 @@
 }
 .navbar .nav-item .nav-link:hover
 {
-  color: #09e5ab;
+  color: rgba(6, 163, 218, .7);;
 }
 .navbar .nav-item.active .nav-link
 {
-  color: #09e5ab;
+  color: rgba(6, 163, 218, .7);;
 }
 main
 {
@@ -24,17 +24,17 @@ main
 }
 .btn-outline-primary
 {
-  color: #09e5ab;
-  border-color: #09e5ab;
+  color: rgba(6, 163, 218, .7);;
+  border-color: rgba(6, 163, 218, .7);;
 }
 .link-primary,.link-primary:hover
 {
-  color: #09e5ab;
+  color: rgba(6, 163, 218, .7);;
 }
 .btn-outline-primary:hover
 {
-  background-color: #09e5ab;
-  border-color: #09e5ab;
+  background-color: rgba(6, 163, 218, .7);;
+  border-color: rgba(6, 163, 218, .7);;
 
 }
 .footer
@@ -64,9 +64,37 @@ input {
   padding: .5rem;
 }
 
+/* CSS */
+.card > .button {
+  background-color: #EA4C89;
+  border-radius: 8px;
+  border-style: none;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 500;
+  height: 40px;
+  line-height: 20px;
+  margin: 2px;
+  outline: none;
+  padding: 4px;
+
+  text-align: center;
+  text-decoration: none;
+
+}
+
+.button-1:hover,
+.button-1:focus {
+  background-color: #F082AC;
+}
 .card > .header {
   margin-bottom: .25rem;
 }
+
+
 
 .card > .body {
   font-size: .8rem;
@@ -88,6 +116,24 @@ input {
 {
   width: 100%;
   display: flex;
+}
+
+/* login */
+
+.divider:after,
+.divider:before {
+content: "";
+flex: 1;
+height: 1px;
+background: #eee;
+}
+.h-custom {
+height: calc(100% - 73px);
+}
+@media (max-width: 450px) {
+.h-custom {
+height: 100%;
+}
 }
 
 
