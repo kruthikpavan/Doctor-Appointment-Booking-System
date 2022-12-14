@@ -35,13 +35,12 @@
         <input type="submit" class="btn btn-default" value = "Submit">
       <div class="form-group">
         <div class="alert alert-danger">
-          
+        {{#if}}
           <ul id = "results">
              {{#each errors}}
 
             <li class = "errormessage">{{this}}</li>
                 {{/each}}
-
           </ul>
         </div>
       </div>

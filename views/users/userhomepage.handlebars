@@ -1,15 +1,20 @@
 <div class="container">
     <div class="left">
     <div>
-        <label for="search">Search Users</label>
+        <label for="search">Search for a doctor</label>
         <input type="search" id="search" data-search>
         <div>
         <div class="user-cards" data-user-cards-container></div>
         <template data-user-template>
+     <form action="/users/book-appointment" method="POST">
         <div class="card">
-        <div class="header" data-header></div>
+        <div class="header" name="dataheader" data-header></div>
         <div class="body" data-body></div>
+        <input type="hidden" name="hidden" hidden>
+        <button type="submit" data-appointment></button>
+        <div class="button" data-reviews></div>
         </div>
+     </form>
     </template>
     </div>
     </div>
@@ -17,14 +22,15 @@
 
 <div class="right">
     <div>
+    <a href="/users/profile">My profile</a>
+    </div>
+    <div>
         <a href="/users/book-appointment">click here to book appointment</a>
     </div>
     <div>
         <a href="/users/my-appointments">My appointments</a>
     </div>
-    <div>
-    <a href="/users/profile">My profile</a>
-    </div>
+    
 </div>
 </div>
 <script src="/public/js/main.js">
