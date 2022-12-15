@@ -360,8 +360,9 @@ router.post("/profile", async (req, res) => {
 
 router
   .route("/reqrescheduleAppointment")
+  //needs enew handlebar wthout date
   .get(async (req, res) => {
-    return res.redirect("/users/book-appointment");
+    return res.redirect("/users/reqrescheduleAppointment");
   })
   .post(async (req,res) =>{
 
@@ -392,16 +393,14 @@ router
     //to do - store timeslot and data from req.sesion.date as appointment info in db
     const doctorID = req.session.doctors;
     req.session.doctor = doctorId;
+    let rescheduleRequested = true;
     const appointment = await appointmentData.updateAppointment(
       req.session.user,
       doctorId,
       timeSlot,
       req.session.date,
-      pendingStatus
+      rescheduleRequested
     );
-    // need to push it to time and date of doctors db
-    const blockDate = await doctorData.blockAppointment(doctorId,req.session.date,timeSlot,pendingStatus)
-    res.redirect("/users/my-appointments");
   });
 
 module.exports = router;

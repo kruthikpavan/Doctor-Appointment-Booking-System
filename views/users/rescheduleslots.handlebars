@@ -1,8 +1,7 @@
-<form action="/users/reqrescheduleAppointment"></form>
+<form action="/users/reqrescheduleAppointment" method="post"></form>
 <div>
     {{error}}
 </div>
-
 <table>
 
 <tr>
@@ -34,7 +33,7 @@ function startTimer(duration, display) {
             duration--
 
             if (duration<0) {
-                window.location = "http://localhost:3000/users/book-appointment";
+                window.location = "http://localhost:3000/users/reqrescheduleAppointment";
                 clearInterval(end);
             }
         }, 1000);
