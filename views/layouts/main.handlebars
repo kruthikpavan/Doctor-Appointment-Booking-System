@@ -26,18 +26,23 @@
                 </ul>
             </div>
              <ul class="navbar-nav mr-auto float-right">
-                    
-                   
+              {{#if loggedIn}}
+  <li class="logout">
+                         <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#logout">
+                        <a href="/users/logout">Logout</a>
+                        </button>
+                    </li>
+{{else}}
+ 
                     <li class="nav-item">
                         <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#LoginSignup">
                         Login/Sign Up
                         </button>
                     </li>
-                    <li class="logout">
-                         <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#logout">
-                        Logout
-                        </button>
-                    </li>
+{{/if}}
+                    
+                   
+                    
                 </ul>
         </nav>
     </header>
