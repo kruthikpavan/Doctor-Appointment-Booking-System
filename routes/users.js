@@ -7,14 +7,21 @@ const router = express.Router();
 const userData = data.users;
 const appointmentData = data.appointments;
 const doctorData= data.doctors
-
+const authMiddleware = (req, res, next) => {
+  if (req.session.user) {
+    next();
+  } else {
+    return res.redirect("/users/login");
+  }
+};
 router.get("/", async (req, res) => {
   res.redirect("/");
 });
 router
   .route("/login")
   .get(async (req, res) => {
-    res.render("login", { doctor: false, path: "/users/login" });
+    if (req.session.user) return res.redirect("/users/home");
+    return res.render("login", { doctor: false, path: "/users/login" });
   })
   .post(async (req, res) => {
     const { username, password } = req.body;
@@ -51,12 +58,12 @@ router
       return;
     }
   });
-router.get("/home", async (req, res) => {
+router.get("/home",authMiddleware,async (req, res) => {
   if(req.session.doctors){
     delete req.session.doctors;
 
   }
-  res.render("users/userhomepage");
+  res.render("users/userhomepage",{loggedIn:true});
 });
 
 router.get("/signup", async (req, res) => {
@@ -121,7 +128,7 @@ router.post("/signup", async (req, res) => {
 });
 
 router
-  .route("/book-appointment")
+  .route("/book-appointment",authMiddleware)
   .get(async (req, res) => {
     
     let date = new Date();
@@ -143,6 +150,7 @@ router
     res.render("users/book-appointment", {
       today: currentDate,
       lastDate: lastDate,
+      loggedIn:true
     });
   })
   .post(async (req, res) => {
@@ -168,6 +176,7 @@ router
         error:'You already have an existing slot.',
         today: req.session.today,
       lastDate: req.session.lastDate,
+      loggedIn:true
       });
     }
     //to-do
@@ -206,14 +215,14 @@ router
     }
     let allAvailableSlots= {slots:availableSlots}
     return res.render("users/select-slot", {
-      availableSlots: allAvailableSlots, doctor: req.session.doctors
+      availableSlots: allAvailableSlots, doctor: req.session.doctors,loggedIn:true
     });
   
    ƒ
   });
 
 router
-  .route("/select-slot")
+  .route("/select-slot",authMiddleware)
   .get(async (req, res) => {
     return res.redirect("/users/book-appointment");
   })
@@ -226,18 +235,19 @@ router
       return res.render("users/select-slot", {
         error: "You need to select atleast one slot to complete the booking",
         availableSlots: req.session.availableSlots,
+        loggedIn:true
       });
     }
     if (Object.keys(req.body).length > 1) {
       return res.render("users/select-slot", {
         error:
           "You cant select multiple slots. Please select only one available slot",
-        availableSlots: req.session.availableSlots,
+        availableSlots: req.session.availableSlots,loggedIn:true
       });
     }
     let timeSlot = undefined;
     for (const key in req.body) {
-      timeSlot = parseFloat(key);
+      timeSlot = parseFloat(key).toFixed(2);
     }
     req.session.timeSlot = timeSlot;
     //to-do
@@ -254,7 +264,7 @@ router
     res.redirect("/users/my-appointments");
   });
 router
-  .route("/my-appointments")
+  .route("/my-appointments",authMiddleware)
   .get(async (req, res) => {
     //appointment data need to be fetched from the database and displayed to the user
     const appointmentInfo = await appointmentData.getAppointmentByID(
@@ -264,7 +274,7 @@ router
       return res.send("You dont have any appointments right now!");
     }
 
-    res.render("users/my-appointments", { appointments: appointmentInfo });
+    res.render("users/my-appointments", { appointments: appointmentInfo ,loggedIn:true});
   })
   .post(async (req, res) => {
     //to-do
@@ -273,7 +283,7 @@ router
     return res.redirect("/users/home");
   });
 
-router.get("/profile", async (req, res) => {
+router.get("/profile", authMiddleware,async (req, res) => {
   if (!req.session.user) {
     return res.redirect("login");
   }
@@ -286,9 +296,10 @@ router.get("/profile", async (req, res) => {
     layout: "main",
     title: "My Profile",
     userInfo: user,
+    loggedIn:true
   });
 });
-router.post("/profile", async (req, res) => {
+router.post("/profile",authMiddleware, async (req, res) => {
   let errors = [];
 
   let userInfo = {
@@ -321,6 +332,7 @@ router.post("/profile", async (req, res) => {
       title: "My Profile",
       userInfo: userInfo,
       errors: errors,
+      loggedIn:true
     });
   }
 
@@ -346,6 +358,7 @@ router.post("/profile", async (req, res) => {
         title: "My Profile",
         userInfo: userInfo,
         msg: "Could not  update your profile.",
+        loggedIn:true
       });
     }
   } catch (e) {
@@ -354,8 +367,62 @@ router.post("/profile", async (req, res) => {
       title: "My Profile",
       userInfo: userInfo,
       errors: errors,
+      loggedIn:true
     });
   }
 });
+
+router
+  .route('/logout')
+  .get(async (req, res) => {
+    req.session.destroy()
+    res.redirect('/')
+    return
+  })
+
+router
+  .route("/reqrescheduleAppointment")
+  //needs enew handlebar wthout date
+  .get(async (req, res) => {
+    return res.redirect("/users/reqrescheduleAppointment");
+  })
+  .post(async (req,res) =>{
+
+    //to-do
+    //if req.body is empty redirect to /select-slot page with error . User has to select atleast one slot
+    
+    if(Object.keys(req.body).length === 0){
+      return res.render("users/reqrescheduleAppointment",{
+        error: "No option was selected in Reschedule",
+        availableSlots: req.session.availableSlots,
+      });
+    }
+    if(Object.keys(req.body).length > 1)
+    {
+      return res.render('user/reqrescheduleAppointment',
+      {
+        error:
+        "You cant select multiple slots. Please select only one available slot",
+      availableSlots: req.session.availableSlots,
+      })
+    }
+
+    let timeslot = undefined;
+    for(const key in req.body){
+      timeslot = parseFloat(key).toFixed(2);
+    }
+    req.session.timeSlot = timeSlot;
+    //to do - store timeslot and data from req.sesion.date as appointment info in db
+    const doctorID = req.session.doctors;
+    req.session.doctor = doctorId;
+    let rescheduleRequested = true;
+    const appointment = await appointmentData.updateAppointment(
+      req.session.user,
+      doctorId,
+      timeSlot,
+      req.session.date,
+      rescheduleRequested
+    );
+  });
 
 module.exports = router;
