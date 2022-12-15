@@ -1,7 +1,7 @@
 <div class="container">
     <div class="left">
-    <div>
-        <label for="search">Search for a doctor</label>
+    <div class="pt-4">
+        <h6 for="search">Search Doctor</h6>
         <input type="search" id="search" data-search>
         <div>
         <div class="user-cards" data-user-cards-container></div>
@@ -17,20 +17,46 @@
      </form>
     </template>
     </div>
-    </div>
+
+</div>
 </div>
 
-<div class="right">
-    <div>
-    <a href="/users/profile">My profile</a>
-    </div>
+<div class="pt-5 pl-5">
+<div class="card" style="width: 15rem;">
+  <img class="card-img-top" src="/public/images/app-1.jpeg" alt="Card image cap">
+  <div class="card-body">
+    <h5 class="card-title">Book Appointment</h5>
+    <a href="/users/book-appointment" class="btn btn-primary">Book</a>
+  </div>
+</div>
 
-    <div>
+    {{!-- <a href="/users/book-appointment">click here to book appointment</a> --}}
+<div class="card mt-3" style="width: 15rem;">
+  <img class="card-img-top" src="/public/images/app-2.jpeg" alt="Card image cap">
+  <div class="card-body">
+    <h5 class="card-title">My Appointment</h5>
+    <a href="/users/my-appointments" class="btn btn-primary">My Appointment</a>
+  </div>
+</div>
+    {{!-- <button class="mt-2">
         <a href="/users/my-appointments">My appointments</a>
-    </div>
-    
+    </button> --}}
+<div class="card mt-3" style="width: 15rem;">
+  <img class="card-img-top" src="/public/images/app-3.jpeg" alt="Card image cap">
+  <div class="card-body">
+    <h5 class="card-title">Profile</h5>
+    <a href="/users/profile" class="btn btn-primary">My profile</a>
+  </div>
+</div>
+    {{!-- <button class="mt-2">
+    <a href="/users/profile">My profile</a>
+    </button> --}}
 </div>
 </div>
+
+
+   <div id="gradient"></div>
+
 <script src="/public/js/main.js">
 
 
