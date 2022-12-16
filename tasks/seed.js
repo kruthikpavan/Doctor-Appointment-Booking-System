@@ -10,9 +10,8 @@ async function dataFiller() {
     const db = await connection.dbConnection();
     await db.dropDatabase();
 
-    // await connection.closeConnection();
 
-    console.log('Creating User - 1');
+    console.log('Creating Doctors - 1');
 
 const doctor1 = await doctors.createDoctor(
     "Kenneth",
@@ -57,7 +56,7 @@ const doctor1 = await doctors.createDoctor(
                 "914567",
                 "02/12/80",
                 "Male",
-                "Kenneth@yahoo.com",
+                "123@yahoo.com",
                 "9876583243",
                 "qwer@12Yie"
                 );
@@ -73,6 +72,10 @@ const doctor1 = await doctors.createDoctor(
                     "9654364443",
                     "youknowwhoitis@12Yie"
                     );
+                
+                    console.log('Finished Creating Doctors - 1');
+await connection.closeConnection();
+
 }
 
 dataFiller();
