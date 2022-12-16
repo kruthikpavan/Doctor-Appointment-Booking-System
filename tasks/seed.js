@@ -39,7 +39,7 @@ const doctor1 = await doctors.createDoctor(
         );
 
         const doctor2 = await doctors.createDoctor(
-            "James Fank",
+            "JamesFank",
             "Surgeon",
             "MBBS,MD",
             "098787",
@@ -51,7 +51,7 @@ const doctor1 = await doctors.createDoctor(
             );
 
             const doctor3 = await doctors.createDoctor(
-                "Jake Oyth",
+                "JakeOyth",
                 "Opthal",
                 "MBBS,MD",
                 "914567",
@@ -63,7 +63,7 @@ const doctor1 = await doctors.createDoctor(
                 );
 
                 const doctor4 = await doctors.createDoctor(
-                    "Kevin Ontu",
+                    "KevinOntu",
                     "Physician",
                     "MBBS,MD",
                     "563213",
