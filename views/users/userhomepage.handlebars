@@ -6,22 +6,30 @@
         <div>
         <div class="user-cards" data-user-cards-container></div>
         <template data-user-template>
-        <form action="/users/book-appointment" method="POST">
+      
         <div class="card">
+              <form action="/users/book-appointment" method="POST">
         <div class="header" name="dataheader" data-header></div>
         <div class="body" data-body></div>
         <input type="hidden" name="hidden" hidden>
         <button type="submit" data-appointment></button>
-        <div class="button" data-reviews></div>
-        </div>
      </form>
+
+     <form action="/doctors/reviews" method="POST">
+        <input type="hidden" name="hiddenReview" review-hidden>
+     
+        <button type="submit" data-reviews></button>
+
+    
+   
+     </form>
+
+        </div>
+
     </template>
     </div>
-
 </div>
 </div>
-
-
     {{!-- <a href="/users/book-appointment">click here to book appointment</a> --}}
 <div class="card mt-3" style="width: 15rem;">
   <img class="card-img-top" src="/public/images/app-2.jpeg" alt="Card image cap">
