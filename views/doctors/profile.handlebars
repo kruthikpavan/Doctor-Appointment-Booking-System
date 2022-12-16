@@ -30,12 +30,12 @@
         </div>
         <div class="form-group-birthday">
             <label for="dateOfBirthprofile">Birthday</label>
-            <input type="text" class="form-control" id="dateOfBirthprofile" name="dateOfBirth" value="{{userInfo.dateOfBirth}}">
+            <input type="text" class="form-control" id="dateOfBirthprofile" name="dateOfBirth" value="{{userInfo.dob}}">
         </div>
         <input type="submit" class="btn btn-default" value = "Submit">
       <div class="form-group">
         <div class="alert alert-danger">
-        {{#if}}
+        {{#if errors}}
           <ul id = "results">
              {{#each errors}}
 
@@ -43,8 +43,6 @@
                 {{/each}}
           </ul>
         </div>
-      </div>
-      <div class="success alert-success" hidden>
       </div>
       {{/if}}
         {{#if msg}}
