@@ -109,6 +109,7 @@ input {
 }
 .right{
   width: 30%;
+  margin: 30px;
   display: flex;
   flex-direction: column;
 }
