@@ -32,6 +32,8 @@ const getData = async () => {
       const body = card.querySelector("[data-body]")
       const btn = card.querySelector("[data-appointment]")
       const hidden=card.querySelector("[hidden]")
+      const reviewHidden=card.querySelector("[review-hidden]")
+
       const review = card.querySelector("[data-reviews]")
 
   
@@ -39,6 +41,8 @@ const getData = async () => {
       hidden.value = doc.name
       body.textContent = doc.category
       btn.textContent = 'Book Appointment'
+      review.textContent= 'View Reviews'
+      reviewHidden.value=doc.name
     //   btn.addEventListener('click',event=>{
     // //  const bookAppointment= async()=>{
     // //    fetch("http://localhost:3000/users/book-appointments", {

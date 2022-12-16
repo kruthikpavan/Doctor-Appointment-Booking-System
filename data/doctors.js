@@ -56,13 +56,13 @@ async function createDoctor(
   }
 }
 
-async function getDoctorByID(id) {
+async function getDoctorByID(uname) {
   try {
-    let checkID = helpers.checkID(id);
-    if (checkID === false) throw "ID provided is invalid";
+    // let checkID = helpers.checkID(uname);
+    // if (checkID === false) throw "ID provided is invalid";
     const doctorCollection = await doctors();
-    let docData = await doctorCollection.findOne({ _id: ObjectID(id) });
-    if (docData == null) throw `No doctor with this ID - ${id}`;
+    let docData = await doctorCollection.findOne({ name: uname });
+    if (docData == null) throw `No doctor with this ID - ${uname}`;
     docData["_id"] = docData["_id"].toString();
     return docData;
   } catch (e) {
