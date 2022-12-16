@@ -9,6 +9,59 @@ const connection = require('../config/mongoConnection');
 async function dataFiller() {
     const db = await connection.dbConnection();
     await db.dropDatabase();
+    console.log('Creating Users....')
+    const user1= await users.createUser(
+        "test",
+        "user",
+        "user1",
+        "Test@123",
+        "test@gmail.com",
+        "5512845798",
+        "10/02/2001",
+        {}
+    );
+    const user2= await users.createUser(
+        "Bahu",
+        "bali",
+        "bahu1",
+        "Kattapa@123",
+        "shiv@gmail.com",
+        "5512836998",
+        "10/02/1981",
+        {}
+    );
+    const user3= await users.createUser(
+        "Ramm",
+        "Raju",
+        "fire",
+        "Anger@123",
+        "police@gmail.com",
+        "5512999998",
+        "10/05/1985",
+        {}
+    );
+    const user4= await users.createUser(
+        "Bheem",
+        "komuram",
+        "water",
+        "Bekar@123",
+        "gandu@gmail.com",
+        "5512915298",
+        "10/11/1985",
+        {}
+    );
+    const user5= await users.createUser(
+        "veera",
+        "shankar",
+        "krack",
+        "Krack@123",
+        "krack@gmail.com",
+        "55129154248",
+        "05/11/1985",
+        {}
+    );
+
+
 
 
     console.log('Creating Doctors - 1');
