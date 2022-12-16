@@ -30,6 +30,7 @@ router
     if (!username || !password) {
       res.status(400);
       res.render("login", {
+        doctor: false, path: "/users/login",
         error: "Both username and password needs to be provided",
       });
       return;
@@ -38,6 +39,7 @@ router
       res.status(400);
 
       res.render("login", {
+        doctor: false, path: "/users/login",
         error:
           "Only alpha numeric characters should be provided as username.No other characters or empty spaces are allowed",
       });
@@ -46,6 +48,7 @@ router
     if (username.length < 4) {
       res.status(400);
       res.render("login", {
+        doctor: false, path: "/users/login",
         error: "Username should have atleast 4 characters",
       });
       return;
@@ -56,7 +59,9 @@ router
       res.redirect("/users/home");
       return;
     } else {
-      res.render("login", { error: "Not a valid username and password " });
+      res.render("login", {
+        doctor: false, path: "/users/login",
+         error: "Not a valid username and password " });
       return;
     }
   });
