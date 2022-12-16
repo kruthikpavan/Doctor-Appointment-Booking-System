@@ -4,6 +4,8 @@ const { ObjectId } = require('mongodb');
 const helpers = require("../helpers");
 const validator = require('../validation');
 const doctors= mongoCollections.doctors
+const spell = require('spell-checker-js')
+
 
 
 const aposToLexForm = require('apos-to-lex-form');
@@ -22,40 +24,43 @@ async function createReview(reviewContent,doctorID){
         const reviewCollection = await reviews();
         const doctorCollection = await doctors();
 
+        const doctorData= await doctorCollection.findOne({name:doctorID}) 
+
         let dataCheck = validator.validString(reviewContent);
+        const insertedReview = undefined;
         reviewContent = reviewContent;
         analysedReview = await Analyser(reviewContent);
         const newId = ObjectId();
         let date = new Date();
+        let reviewsArray = [];
         let newReview = {
 
-            // doctor_id: doctorID,
+            doctor_id: doctorData['email'],
             date: date.toDateString(),
-            // time: date.getHours(),
+            time: date.getHours(),
             review: reviewContent,
             score: analysedReview['analysis']
         }
-   
-        // let reviews = await reviewCollection.find(
-        //     {"doctor_id":ObjectId(id)}
-        // );
-        const doctorData= await doctorCollection.findOne({name:doctorID}) 
-        let updatedReviews= doctorData.reviews
-        updatedReviews.push(newReview)
-        const insertedReview= await doctorCollection.updateOne({'name':doctorID}, {"$set": {"reviews": updatedReviews}})
-  // await doctorCollection.update({'name': name}, {"$set": {"blockedSlots": []}})
-// 
-            // const insertedReview = await reviewCollection.insertOne(newReview); //  need to check this
-            // if(!insertedReview.insertedId) throw 'Review could not be added';
+        reviewsArray.push(newReview);
 
-            // const review = await getReviewById(insertedReview.insertedId)
+        let updatedReviews= doctorData['reviews']
+        if(updatedReviews.length == 0){
+            insertedReview= await doctorCollection.updateOne({'name':doctorID}, {"$set": {"reviews": newReview}})
+        }
+        else{
+            updatedReviews.push(newReview)
+            insertedReview= await doctorCollection.updateOne({'name':doctorID}, {"$set": {"reviews": updatedReviews}})
+        }
+            const insertedReviewtoDB = await reviewCollection.insertOne(newReview); //  need to check this
+            if(!insertedReview.insertedId) throw 'Review could not be added';
+
+            //const review = await getReviewById(insertedReview.insertedId)
             newReview['imgSource'] = analysedReview['imgSource'] ;
             newReview['color'] =analysedReview['color'] ;
             newReview['acknowledged'] =true ;
 
             return newReview;
-        
-
+    
     } catch (e) {
         return e;
     }
@@ -161,7 +166,23 @@ async function Analyser(reviewData)
         let  review  = reviewData;
         const lexedReview = aposToLexForm(review);
         const casedReview = lexedReview.toLowerCase();
-        const alphaOnlyReview = casedReview.replace(/[^a-zA-Z\s]+/g, '');
+        let alphaOnlyReview = casedReview.replace(/[^a-zA-Z\s]+/g, '');
+
+        spell.load('en')
+        const check = spell.check(alphaOnlyReview);
+
+        alphaOnlyReview  = removeFromString(check, alphaOnlyReview)
+
+
+        // if(check.length!=0)
+        // {
+        //     for( let i in check){
+        //         if(alphaOnlyReview.includes(check[i]))
+        //         {
+        //             alphaOnlyReview = alphaOnlyReview.replace(check[i],'')
+        //         }
+        //     }
+        // }
     
         //using tokenizer from natural
         const { WordTokenizer } = natural;
@@ -198,6 +219,10 @@ async function Analyser(reviewData)
         return e;
     }
 }
+
+function removeFromString(words, str) {
+    return words.reduce((result, word) => result.replace(word, ''), str)
+    }
 
 module.exports = {
     createReview,
