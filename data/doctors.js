@@ -11,9 +11,6 @@ async function getAllDoctorDetails(){
   return docDetails
 }
 
-
-
-
 async function createDoctor(
   docName,
   category,

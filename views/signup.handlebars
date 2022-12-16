@@ -1,5 +1,6 @@
-    <h1 class="signup-title">Sign up your Account Now</h1>
-    <form id = "signup-form" action = "signup" method = "POST">
+ 
+ <h1 class="signup-title text-center pt-2">Sign up your Account Now</h1>
+    {{!-- <form id = "signup-form" class="pt-5 text-center" action = "signup" method = "POST">
         <div class="form-group-firstname">
             <label for="firstNameSignUp">Enter Your First Name Here</label>
             <input type="text" class="form-control" id="firstNameSignUp" name="firstName" placeholder="First Name" value="{{userInfo.firstName}}">
@@ -28,20 +29,82 @@
             <label for="dateOfBirthSignUp">Enter Your Birthday Here</label>
             <input type="date" class="form-control" id="dateOfBirthSignUp" name="dateOfBirth" value="{{userInfo.dateOfBirth}}">
         </div>
+        <div class="text-center text-lg-start mt-2 pt-2 pb-5">
+            <button type="submit" class="btn btn-primary btn-lg"
+              style="padding-left: 2.5rem; padding-right: 2.5rem;" value="Submit">Login</button>
+        </div>
         <input type="submit" class="btn btn-default" value = "Submit">
-      <div class="form-group">
-        <div class="alert alert-danger">
-          
-          <ul id = "results">
-             {{#each errors}}
+    </form> --}}
+<form id = "signup-form" class="pt-5 text-center" action = "signup" method = "POST">
 
-            <li class = "errormessage">{{this}}</li>
-                {{/each}}
+<section class="h-100 bg-dark">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col">
+        <div class="card card-registration my-4">
+          <div class="row g-0">
+            <div class="col-xl-6 d-none d-xl-block pt-5">
+              <img src="/public/images/res1.jpeg"
+                alt="Sample photo" class="img-fluid"
+                style="border-top-left-radius: .25rem; border-bottom-left-radius: .25rem;" />
+            </div>
+            <div class="col-xl-6">
+              <div class="card-body p-md-5 text-black">
+                <div class="row">
+                  <div class="col-md-6 mb-4">
+                    <div class="form-outline">
+                      <label class="form-label" for="firstNameSignUp">First Name </label>
+                      <input type="text" class="form-control form-control-lg" id="firstNameSignUp" name="firstName" placeholder="First Name" value="{{userInfo.firstName}}" />
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-4">
+                    <div class="form-outline">
+                      <label class="form-label" for="lastNameSignUp">Last name</label>
+                      <input type="text" class="form-control form-control-lg" id="lastNameSignUp" name="lastName" placeholder="Last Name" value="{{userInfo.lastName}}" />
+                    </div>
+                  </div>
+                </div>
 
-          </ul>
+                  <div class="form-outline mb-4">
+                    <div class="form-outline">
+                      <label class="form-label" for="usernameSignUp">Username</label>
+                      <input type="text" class="form-control form-control-lg" id="usernameSignUp" name="username" placeholder="Username" value="{{userInfo.username}}" />
+                    </div>
+                  </div>
+
+                  <div class="form-outline mb-4">
+                    <div class="form-outline">
+                      <label class="form-label" for="passwordSignUp">Password <br/> (At least 8 characters, 1 capital letter, and 1 number)</label>
+                      <input type="password" class="form-control form-control-lg" id="passwordSignUp" name="password" placeholder="Password"/>
+                    </div>
+                  </div>
+
+                <div class="form-outline mb-4">
+                  <label class="form-label" for="emailSignUp">E-mail</label>
+                  <input type="text" class="form-control form-control-lg" id="emailSignUp" name="email" placeholder="E-mail Address" value="{{userInfo.email}}" />
+                </div>
+
+                <div class="form-outline mb-4">
+                  <label class="form-label" for="phoneNumberSignUp">Contact Number</label>
+                  <input type="text" class="form-control form-control-lg" id="phoneNumberSignUp" name="phoneNumber" placeholder="Phone Number" value="{{userInfo.phoneNumber}}" />
+                </div>
+
+                <div class="form-outline mb-4">
+                  <label class="form-label" for="dateOfBirthSignUp">Date of Birthday</label>
+                  <input type="date" class="form-control form-control-lg" id="dateOfBirthSignUp" name="dateOfBirth" value="{{userInfo.dateOfBirth}}" />
+                </div>
+
+                <div class="d-flex justify-content-center pt-3">
+                  <button type="submit" class="btn btn-primary btn-lg" value="Submit">Submit</button>
+                </div>
+
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="success alert-success" hidden>
-      </div>
-    </form>
+    </div>
+  </div>
+</section>
+</form>
     <script src="/public/js/signup.js"></script>

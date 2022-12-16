@@ -1,5 +1,5 @@
-    <h1 class="Profile-title">User Profile/ Update Profile</h1>
-    <form id = "Profile-form" action = "profile" method = "POST">
+    <h1 class="Profile-title text-center pt-2">Update Profile</h1>
+    {{!-- <form id = "Profile-form" action = "profile" method = "POST">
         <div class="form-group-firstname">
             <label for="firstNameProfile">First Name </label>
             <input type="text" class="form-control" id="firstNameProfile" name="firstName" placeholder="First Name" value="{{userInfo.firstName}}">
@@ -12,7 +12,6 @@
             <label for="usernameProfile">Username</label>
             <input type="text" class="form-control" id="usernameProfile" name="username" placeholder="Username" value="{{userInfo.username}}">
         </div>
-       
         <div class="form-group-email">
             <label for="emailProfile">E-Mail</label>
             <input type="text" class="form-control" id="emailProfile" name="email" placeholder="E-mail Address" value="{{userInfo.email}}">
@@ -32,6 +31,72 @@
           
           <ul id = "results">
              {{#each errors}}
+            <li class = "errormessage">{{this}}</li>
+                {{/each}}
+          </ul>
+        </div>
+      </div>
+      {{/if}}
+        {{#if msg}}
+      <div class="info alert-info">
+        {{msg}}
+      </div>
+        {{/if}}
+    </form> --}}
+<form class="form" id = "Profile-form" action = "profile" method = "POST">
+	  <h2>User Profile</h2>
+	  <div class="form-group">
+		  <label for="firstNameProfile">First Name:</label>
+		  <div class="relative">
+			  <input class="form-control" type="text" id="firstNameProfile" name="firstName" value="{{userInfo.firstName}}" required="" placeholder="Type your first name here...">
+			  <i class="fa fa-user"></i>
+		  </div>
+	  </div>
+	  <div class="form-group">
+	  	<label for="lastNameProfile">Last Name:</label>
+	  	<div class="relative">
+			  <input class="form-control" type="text" id="lastNameProfile" name="lastName" value="{{userInfo.lastName}}" required="" placeholder="Type your last name here...">
+		  	<i class="fa fa-envelope"></i>
+	  	</div>
+	  </div>
+	  <div class="form-group">
+	  	<label for="usernameProfile">Username:</label>
+	  	<div class="relative">
+			  <input class="form-control" type="text" id="usernameProfile" name="username" value="{{userInfo.username}}" required="" placeholder="Type your username here...">
+	  		<i class="fa fa-phone"></i>
+	  	</div>
+	  </div>
+	  <div class="form-group">
+	  	<label for="emailProfile">E-mail address:</label>
+	  	<div class="relative">
+			  <input class="form-control" type="email" id="emailProfile" name="email" value="{{userInfo.email}}" required="" placeholder="Type your email here...">
+	  		<i class="fa fa-building"></i>
+	  	</div>
+	  </div>
+	  <div class="form-group">
+	  	<label for="phoneNumberProfile">Contact Number:</label>
+	  	<div class="relative">
+	  	<input class="form-control" type="text" id="phoneNumberProfile" name="phoneNumber" required="" placeholder="Type your contact number..."  value="{{userInfo.phoneNumber}}">
+	  	<i class="fa fa-suitcase"></i>
+	  </div>	
+	  </div>
+		<div class="form-group">
+			<label for="dateOfBirthProfile">Date of Birth:</label>
+	  	<div class="relative">
+	  		<input class="form-control" type="text" id="dateOfBirthProfile" name="dateOfBirth" required="" placeholder="Type your specialization..." value="{{userInfo.dateOfBirth}}">
+	  		<i class="fa fa-css3"></i>
+	  	</div>
+	  </div>
+	              	
+	  <div class="tright text-center">
+        <button class="movebtn movebtnsu" type="Submit" value="submit">Submit <i class="fa fa-fw fa-paper-plane"></i></button>
+	  </div>
+    {{#if errors}}
+      <div class="form-group">
+        <div class="alert alert-danger">
+          
+          <ul id = "results">
+             {{#each errors}}
 
             <li class = "errormessage">{{this}}</li>
                 {{/each}}
@@ -45,5 +110,4 @@
         {{msg}}
       </div>
         {{/if}}
-    </form>
-  
+	</form>

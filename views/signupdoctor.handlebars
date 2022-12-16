@@ -36,16 +36,17 @@
             <label for="dateOfBirthSignUp">Enter Your Birthday Here</label>
             <input type="date" class="form-control" id="dateOfBirthSignUp" name="dateOfBirth" value="{{userInfo.dateOfBirth}}">
         </div>
+        {{!-- <div class="text-center text-lg-start mt-2 pt-2 pb-5">
+            <button type="submit" class="btn btn-primary btn-lg"
+              style="padding-left: 2.5rem; padding-right: 2.5rem;" value="Submit">Login</button>
+        </div> --}}
         <input type="submit" class="btn btn-default" value = "Submit">
       <div class="form-group">
         <div class="alert alert-danger">
-          
           <ul id = "results">
              {{#each errors}}
-
             <li class = "errormessage">{{this}}</li>
                 {{/each}}
-
           </ul>
         </div>
       </div>
