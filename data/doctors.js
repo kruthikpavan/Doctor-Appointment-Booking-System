@@ -34,6 +34,7 @@ async function createDoctor(
       throw "This E-mail has already been used to register";
     let hashed = await bcrypt.hash(password, saltRounds);
     let blockedSlots=[]
+    let reviews=[]
 
     let newUser = {
       name: docName,
@@ -45,7 +46,8 @@ async function createDoctor(
       email: email.toLowerCase(),
       phoneNumber: phoneNumber,
       password: hashed,
-      blockedSlots: blockedSlots
+      blockedSlots: blockedSlots,
+      reviews:reviews
     };
 
     const insertDoc = await doctorCollection.insertOne(newUser);

@@ -7,6 +7,8 @@ const router = express.Router();
 const userData = data.users;
 const appointmentData = data.appointments;
 const doctorData= data.doctors
+const reviewData= data.reviews
+
 const authMiddleware = (req, res, next) => {
   if (req.session.user) {
     next();
@@ -230,7 +232,7 @@ router
     //to-do
     //if req.body is empty redirect to /select-slot page with error . User has to select atleast one slot
     
-
+// !!!Pass available slots to same page.
     if (Object.keys(req.body).length === 0) {
       return res.render("users/select-slot", {
         error: "You need to select atleast one slot to complete the booking",
@@ -372,13 +374,73 @@ router.post("/profile",authMiddleware, async (req, res) => {
   }
 });
 
+
 router
-  .route('/logout')
+  .route("/review")
+  //needs enew handlebar wthout date
   .get(async (req, res) => {
-    req.session.destroy()
-    res.redirect('/')
-    return
+
+   // let reviewDetails = req.body;
+    // try {
+    //     let id = req.session.user._id;
+    //     if(req.session.user)
+    //         res.redirect('/users');
+    //     const getReviews = await data.getAllUserReviews(id);
+    //     res.status(200).json(getReviews);
+    // } catch (e) {
+    //     res.status(500).json(e);
+    // }
+    res.render('review');
   })
+  .post(async (req,res) =>{
+    try{
+      let doctorId = undefined
+      if(req.body.hidden){
+        console.log(req.body.hidden);
+        doctorID= req.body.hidden
+        res.redirect('/users/review')
+        return
+      }
+     
+      // let id = req.session.user._id;
+      // const reviewData = req.body;
+      // if (!ObjectId.isValid(doctorID)) throw 'Invalid Doctor ID';
+      // if (!ObjectId.isValid(userID)) throw 'Invalid User ID';
+      // if (!ObjectId.isValid(appointmentID)) throw 'Invalid Appointment ID';
+      // doctorID = reviewData.doctorID;
+      // userID = reviewData.userID;
+      review = req.body['review-form'].trim();
+      console.log(review);
+      // appointmentID = reviewData.appointmentID;
+      // let doctorIDrate = validator.Validid(doctorID);
+      // let userIDrate = validator.Validid(userID);
+      // let appointmentIDrate = validator.Validid(appointmentID);
+      // let reviewrate = validator.validString(review);
+      // if(doctorIDrate == false || userIDrate == false || appointmentIDrate== false || reviewrate == false)
+      // {
+      //     return res.render('reviews',{error:'Not a valid username and password '});
+      // }
+  }
+  catch(e)
+  {
+  if(typeof e !== 'object')
+      return res.status(500).json("Internal server error");
+  else
+      return res.status(parseInt(e.status)).json(e.error);
+  }
+
+  try {
+      const newReview = await reviewData.createReview(review,doctorID);
+      if (!newReview.acknowledged) throw "Could not add review";
+      res.status(200).redirect("/users/home");
+      } catch (e) {
+      if(typeof e !== 'object')
+      return res.status(500).json("Internal server error");
+  else
+      return res.status(parseInt(e.status)).json(e.error);
+  }
+  })
+
 
 router
   .route("/reqrescheduleAppointment")
@@ -424,5 +486,15 @@ router
       rescheduleRequested
     );
   });
+
+
+  router
+  .route('/logout')
+  .get(async (req, res) => {
+    req.session.destroy()
+    res.redirect('/')
+    return
+  })
+
 
 module.exports = router;
