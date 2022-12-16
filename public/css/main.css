@@ -97,8 +97,6 @@ input {
   margin-bottom: .25rem;
 }
 
-
-
 .card > .body {
   font-size: .8rem;
   color: #777;
@@ -443,5 +441,29 @@ button:hover {
   input{
       width: 100%;
   }
+}
+
+.review-card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  max-width: 300px;
+  margin: auto;
+  text-align: center;
+  font-family: arial;
+}
+
+
+.review-card h1 {
+  color: #444;
+  font-size: 18px;
+}
+
+.review-card p {
+  font-size: 14px;
+  color: #777;
+  margin: 20px 0;
+}
+
+.head-color{
+  background-color: rgb(249, 112, 112);
 }
 

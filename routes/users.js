@@ -171,9 +171,7 @@ router
       console.log(req.body);
       if(req.body.hidden!=req.session.doctors){
         req.session.doctors= req.body.hidden
-   
         return  res.redirect("/users/book-appointment");
-
       }
     }
     const date = req.body.date;
