@@ -8,12 +8,13 @@
 <div>
 <h3>You have an appointment at</h3> <h2>{{this.timeSlot}}</h2> <h3>on</h3> <h2>{{this.date}}</h2> <h3>with</h3> <h2>{{this.doctorId}}</h2>
 </div>
-
     <div>
-   <button type="submit">Cancel this appointment</button> 
+   <button type="submit">Cancel this appointment </button> 
 </div>
 </form>
-
+<form action="/users/review" method="POST">
+<input type="hidden" name="hidden" value={{this.doctorId}}>
+   <button type="submit"> Give a review</button>
 </form>
 <div>
     <a href="/users/reqrescheduleAppointment">Request for a reschedule</a>

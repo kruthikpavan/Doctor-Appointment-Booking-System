@@ -30,7 +30,7 @@ router
     }
    const docInfo= await userData.checkDoctor(username,password)
    if(docInfo){
-    req.session.doctors=username;
+    req.session.doctors=docInfo;
     res.redirect('/doctors/home')
     return
    }
@@ -135,20 +135,18 @@ router.post("/profile", async (req, res) => {
     qualification: xss(req.body.qualification.trim()),
   };
 
-  if (!validator.validString(newUser.name)) errors.push("Invalid name.");
+  if (!validator.validString(userInfo.name)) errors.push("Invalid name.");
 
-  if (!validator.validPassword(newUser.password))
-    errors.push("Invalid password.");
-  if (!validator.validEmail(newUser.email)) errors.push("Invalid email.");
-  if (!validator.validDate(newUser.dateOfBirth))
+
+  if (!validator.validEmail(userInfo.email)) errors.push("Invalid email.");
+  if (!validator.validDate(userInfo.dateOfBirth))
     errors.push("Invalid Date of Birth.");
 
-  if (!validator.validString(newUser.category))
+  if (!validator.validString(userInfo.category))
     errors.push("Invalid category.");
-  if (!validator.validString(newUser.qualification))
+  if (!validator.validString(userInfo.qualification))
     errors.push("Invalid qualification.");
-  if (errors.length > 0) {
-    console.log(errors);
+ 
 
     if (!req.session.doctors) {
       res.redirect("/doctors");
@@ -164,7 +162,7 @@ router.post("/profile", async (req, res) => {
 
     try {
       const updatedUser = await userData.updateProfile(
-        req.session.user._id,
+        req.session.doctors._id,
         userInfo.name,
         userInfo.category,
         userInfo.qualification,
@@ -197,7 +195,7 @@ router.post("/profile", async (req, res) => {
         errors: errors,
       });
     }
-  }
+  
 });
 
 module.exports = router;
