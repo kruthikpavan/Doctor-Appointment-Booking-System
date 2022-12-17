@@ -51,9 +51,9 @@ router.route('/')
     }
 
     try {
-        doctorID = '5ce819935e539c343f141ece';
-        userID = '5ce819935e539c343f141ece';
-        appointmentID = '5ce819935e539c343f141ece';
+        // doctorID = '5ce819935e539c343f141ece';
+        // userID = '5ce819935e539c343f141ece';
+        // appointmentID = '5ce819935e539c343f141ece';
 
         const newReview = await reviewData.createReview(review,doctorID,userID,appointmentID);
         if (!newReview.acknowledged) throw "Could not add review";

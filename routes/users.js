@@ -43,7 +43,8 @@ const fetchAvailableSlots=async(doctor,date)=>{
       let todayDate= new Date().getDate()
         let selectedDate = date.slice(-2);
         if(selectedDate==todayDate){
-          if(parseFloat(slot.time).toFixed(2) > parseFloat(Ntime).toFixed(2))
+          //if(parseFloat(slot.time).toFixed(2) > parseFloat(Ntime).toFixed(2))
+          if((Number(slot.time)).round(2)>(Number(Ntime)).round(2))
           {
             availableSlots.push(obj)
           }
@@ -57,7 +58,10 @@ const fetchAvailableSlots=async(doctor,date)=>{
   return availableSlots;
 }
 
-
+Number.prototype.round = function(p) {
+  p = p || 10;
+  return parseFloat( this.toFixed(p) );
+};
 
 const authMiddleware = (req, res, next) => {
   if (req.session.user) {

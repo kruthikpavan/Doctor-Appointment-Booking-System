@@ -195,7 +195,7 @@ async function Analyser(reviewData)
         final_Review['analysis']  = analyzer.getSentiment(filteredReview);
 
         if (final_Review['analysis'] < 0) {
-            final_Review['imgSource'] = '😒';
+            final_Review['imgSource'] = 'https://img.icons8.com/color/96/000000/angry.png';
             final_Review['color'] = 'red';
             };
             if (final_Review['analysis'] === 0) {
