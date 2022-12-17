@@ -39,7 +39,8 @@ async function createReview(reviewContent,doctorID){
             date: date.toDateString(),
             time: date.getHours(),
             review: reviewContent,
-            score: analysedReview['analysis']
+            score: analysedReview['analysis'],
+            image: analysedReview['imgSource']
         }
         reviewsArray.push(newReview);
 
@@ -194,16 +195,16 @@ async function Analyser(reviewData)
         final_Review['analysis']  = analyzer.getSentiment(filteredReview);
 
         if (final_Review['analysis'] < 0) {
-            final_Review['imgSource'] = '<img src="https://img.icons8.com/emoji/96/000000/angry-face.png">';
+            final_Review['imgSource'] = '😒';
             final_Review['color'] = 'red';
             };
             if (final_Review['analysis'] === 0) {
-            final_Review['imgSource'] = '<img src="https://img.icons8.com/officel/80/000000/neutral-emoticon.png">';
+            final_Review['imgSource'] = 'https://img.icons8.com/officel/80/000000/neutral-emoticon.png';
             final_Review['color'] = '#00367c';
             
             }
             if (final_Review['analysis'] > 0) {
-                final_Review['imgSource'] = '<img src="https://img.icons8.com/color/96/000000/happy.png">';
+                final_Review['imgSource'] = 'https://img.icons8.com/color/96/000000/happy.png';
                 final_Review['color'] = 'green';
             }
     
