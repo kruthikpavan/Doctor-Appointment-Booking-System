@@ -156,6 +156,10 @@ router.post("/signup", async (req, res) => {
   if (!validator.validEmail(newUser.email)) errors.push("Invalid email.");
   if (!validator.validDate(newUser.dateOfBirth))
     errors.push("Invalid Date of Birth.");
+    if (!validator.validPhoneNumber(newUser.phoneNumber))
+    errors.push("Invalid phone");
+    
+   
 
   if (errors.length > 0) {
     console.log(errors);
@@ -327,7 +331,7 @@ router.get("/profile", authMiddleware,async (req, res) => {
   if (!req.session.user) {
     return res.redirect("login");
   }
-  let user = await userData.getUserByUn(req.session.user);
+  let user = await userData.getUserByUn(req.session.user.toLowerCase());
 
   if (user === null) {
     return res.render("error/404");

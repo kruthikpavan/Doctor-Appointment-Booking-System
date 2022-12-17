@@ -112,7 +112,7 @@ router.get("/profile", async (req, res) => {
   if (!req.session.doctors) {
     return res.redirect("/doctors");
   }
-  let user = await userData.getDoctorByID(req.session.doctors._id);
+  let user = await userData.getDoctorByName(req.session.doctors);
   if (user === null) {
     return res.render("error/404");
   }
@@ -210,7 +210,7 @@ router
     return res.render('doctors/doctor-reviews', {reviews:doctor.reviews})
   })
   .post(async (req, res) => {
-    req.session.doctors= req.body.hiddenReview
+    req.session.doctors=xss(req.body.hiddenReview)
     return res.redirect('/doctors/reviews')
 
 })
