@@ -465,7 +465,7 @@ router
 
   try {
       const newReview = await reviewData.createReview(review,doctorID);
-      if (!newReview.acknowledged) throw "Could not add review";
+      //if (!newReview.acknowledged) throw "Could not add review";
       res.status(200).redirect("/users/home");
       } catch (e) {
       if(typeof e !== 'object')

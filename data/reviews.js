@@ -32,7 +32,7 @@ async function createReview(reviewContent,doctorID){
         analysedReview = await Analyser(reviewContent);
         const newId = ObjectId();
         let date = new Date();
-        let reviewsArray = [];
+        let reviewsArray = doctorData['reviews'];
         let newReview = {
 
             doctor_id: doctorData['email'],
@@ -43,14 +43,8 @@ async function createReview(reviewContent,doctorID){
         }
         reviewsArray.push(newReview);
 
-        let updatedReviews= doctorData['reviews']
-        if(updatedReviews.length == 0){
-            insertedReview= await doctorCollection.updateOne({'name':doctorID}, {"$set": {"reviews": newReview}})
-        }
-        else{
-            updatedReviews.push(newReview)
-            insertedReview= await doctorCollection.updateOne({'name':doctorID}, {"$set": {"reviews": updatedReviews}})
-        }
+        insertedReview= await doctorCollection.updateOne({'name':doctorID}, {"$set": {"reviews": reviewsArray}})
+
             const insertedReviewtoDB = await reviewCollection.insertOne(newReview); //  need to check this
             if(!insertedReview.insertedId) throw 'Review could not be added';
 
