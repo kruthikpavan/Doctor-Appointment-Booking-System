@@ -35,7 +35,7 @@ async function createReview(reviewContent,doctorID){
         let reviewsArray = doctorData['reviews'];
         let newReview = {
 
-            doctor_id: doctorData['email'],
+            doctor_id: doctorID,
             date: date.toDateString(),
             time: date.getHours(),
             review: reviewContent,
