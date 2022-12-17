@@ -168,13 +168,14 @@ router
       return  res.redirect("/users/book-appointment");
     }
     if(req.body.hidden){
-      console.log(req.body);
+      //console.log(req.body);
       if(req.body.hidden!=req.session.doctors){
         req.session.doctors= req.body.hidden
         return  res.redirect("/users/book-appointment");
       }
     }
     const date = req.body.date;
+    const requestedDate = new Date(date);
     const checkIfBooked = await appointmentData.checkStatus(req.session.user)
     if(checkIfBooked) {
       return res.render("users/book-appointment", {
@@ -188,6 +189,10 @@ router
     //Next step is to fetch available slots for specified date. Will use dummy data for now---pk
     //If available slots are empty, redirect to book-appointment route. User has to select a different date to proceed
     req.session.date = date;
+    let d = new Date();
+    let h = d.getHours();
+    let min = d.getMinutes();
+    let Ntime = h+2;
     let availableSlots=[]
     let AllSlots = {
       slots: [
@@ -197,27 +202,46 @@ router
         { time: '11.30' },
         { time: '12' },
         { time: '12.30' },
-        { time: '1' },
-        { time: '1.30' },
-        { time: '4' },
-        { time: '4.30' },
-        { time: '5' },
-        { time: '5.30' },
-        { time: '6' },
-        { time: '6.30' },
-        { time: '7' },
-        { time: '7.30' },
-        { time: '8' }
+        { time: '13' },
+        { time: '13.30' },
+        { time: '16' },
+        { time: '16.30' },
+        { time: '17' },
+        { time: '17.30' },
+        { time: '18' },
+        { time: '18.30' },
+        { time: '19' },
+        { time: '19.30' },
+        { time: '20' }
       ],
     };
     for (const slot of AllSlots.slots) {
       let doctorAvailable= await doctorData.checkSlot(req.session.doctors,req.session.date,slot.time)
       if(doctorAvailable){
         let obj={time: slot.time}
-        availableSlots.push(obj)
-
+        let todayDate= new Date().getDate()
+        let selectedDate = date.slice(-2);
+        if(selectedDate==todayDate){
+          if(parseFloat(slot.time).toFixed(2) > parseFloat(Ntime).toFixed(2))
+          availableSlots.push(obj)
+        }
+        else{
+          availableSlots.push(obj)
+        }
+     
+        
       }
     }
+
+    if(availableSlots.length == 0) {
+      return res.render("users/book-appointment", {
+        error:'No more slots available for today.',
+        today: req.session.today,
+      lastDate: req.session.lastDate,
+      loggedIn:true
+      });
+    }
+
     let allAvailableSlots= {slots:availableSlots}
     return res.render("users/select-slot", {
       availableSlots: allAvailableSlots, doctor: req.session.doctors,loggedIn:true
