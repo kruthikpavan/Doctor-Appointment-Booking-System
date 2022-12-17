@@ -33,10 +33,8 @@ const getData = async () => {
       const btn = card.querySelector("[data-appointment]")
       const hidden=card.querySelector("[hidden]")
       const reviewHidden=card.querySelector("[review-hidden]")
-
       const review = card.querySelector("[data-reviews]")
 
-  
       header.textContent = doc.name
       hidden.value = doc.name
       body.textContent = doc.category
@@ -70,3 +68,5 @@ const getData = async () => {
   
   window.onload= ()=>{
     getData();}
+
+    

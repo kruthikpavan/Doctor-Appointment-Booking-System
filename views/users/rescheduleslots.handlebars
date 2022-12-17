@@ -1,48 +1,18 @@
-<form action="/users/reqrescheduleAppointment" method="post"></form>
+<form method="post" action="/users/reschedule" >
+{{doctor}}
 <div>
     {{error}}
 </div>
 <table>
 
 <tr>
-    {{each .slots}}
-    <input type="checkbox" id={{this.time}} name = {{this.time}}>
-    <label class = "toggle-control" for={{this.time}}>{{this.time}}</label>"></label>
-    {{/each}}
+    {{#each availableSlots.slots}}
+<input type="checkbox" id={{this.time}} name={{this.time}}>
+<label class="toggle-control" for={{this.time}}>{{this.time}}</label>
+
+{{/each}}
 </tr>
-
+    
 </table>
-
-<button type = 'submit'>Book</button>
-<div>Booking closes in <span id="time">5:00</span></div>
+<button type="submit">Book This slot!</button>
 </form>
-
-<script>
-
-function startTimer(duration, display) {
-        
-        let endTimer =setInterval(function () {
-            minutes = parseInt(duration/ 60)
-            seconds = parseInt(duration % 60);
-
-            if(seconds<10){display.textContent= `${minutes}:0${seconds}`}
-            else{
-            display.textContent = minutes + ":" + seconds;
-
-            }
-            duration--
-
-            if (duration<0) {
-                window.location = "http://localhost:3000/users/reqrescheduleAppointment";
-                clearInterval(end);
-            }
-        }, 1000);
-    }
-
-    window.onload = () =>{
-        let fiveMinutes = 300,
-        display = document.querySelector('#time');
-        startTimer(fiveMinutes,display);
-    }
-
-</script>
