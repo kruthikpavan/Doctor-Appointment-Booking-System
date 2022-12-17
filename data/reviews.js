@@ -32,25 +32,20 @@ async function createReview(reviewContent,doctorID){
         analysedReview = await Analyser(reviewContent);
         const newId = ObjectId();
         let date = new Date();
-        let reviewsArray = [];
+        let reviewsArray = doctorData['reviews'];
         let newReview = {
 
             doctor_id: doctorData['email'],
             date: date.toDateString(),
             time: date.getHours(),
             review: reviewContent,
-            score: analysedReview['analysis']
+            score: analysedReview['analysis'],
+            image: analysedReview['imgSource']
         }
         reviewsArray.push(newReview);
 
-        let updatedReviews= doctorData['reviews']
-        if(updatedReviews.length == 0){
-            insertedReview= await doctorCollection.updateOne({'name':doctorID}, {"$set": {"reviews": newReview}})
-        }
-        else{
-            updatedReviews.push(newReview)
-            insertedReview= await doctorCollection.updateOne({'name':doctorID}, {"$set": {"reviews": updatedReviews}})
-        }
+        insertedReview= await doctorCollection.updateOne({'name':doctorID}, {"$set": {"reviews": reviewsArray}})
+
             const insertedReviewtoDB = await reviewCollection.insertOne(newReview); //  need to check this
             if(!insertedReview.insertedId) throw 'Review could not be added';
 
@@ -200,16 +195,16 @@ async function Analyser(reviewData)
         final_Review['analysis']  = analyzer.getSentiment(filteredReview);
 
         if (final_Review['analysis'] < 0) {
-            final_Review['imgSource'] = '<img src="https://img.icons8.com/emoji/96/000000/angry-face.png">';
+            final_Review['imgSource'] = '😒';
             final_Review['color'] = 'red';
             };
             if (final_Review['analysis'] === 0) {
-            final_Review['imgSource'] = '<img src="https://img.icons8.com/officel/80/000000/neutral-emoticon.png">';
+            final_Review['imgSource'] = 'https://img.icons8.com/officel/80/000000/neutral-emoticon.png';
             final_Review['color'] = '#00367c';
             
             }
             if (final_Review['analysis'] > 0) {
-                final_Review['imgSource'] = '<img src="https://img.icons8.com/color/96/000000/happy.png">';
+                final_Review['imgSource'] = 'https://img.icons8.com/color/96/000000/happy.png';
                 final_Review['color'] = 'green';
             }
     
