@@ -10,6 +10,10 @@ const doctorData= data.doctors
 const reviewData= data.reviews
 
 const fetchAvailableSlots=async(doctor,date)=>{
+  let d = new Date();
+  let h = d.getHours();
+  let min = d.getMinutes();
+  let Ntime = h+2;
   let availableSlots=[]
   let AllSlots = {
     slots: [
@@ -36,12 +40,21 @@ const fetchAvailableSlots=async(doctor,date)=>{
     let doctorAvailable= await doctorData.checkSlot(doctor,date,slot.time)
     if(doctorAvailable){
       let obj={time: slot.time}
-      availableSlots.push(obj)
-
+      let todayDate= new Date().getDate()
+        let selectedDate = date.slice(-2);
+        if(selectedDate==todayDate){
+          if(parseFloat(slot.time).toFixed(2) > parseFloat(Ntime).toFixed(2))
+          {
+            availableSlots.push(obj)
+          }
+        }
+        else
+        {
+          availableSlots.push(obj)
+        }
     }
   }
-  return availableSlots
-
+  return availableSlots;
 }
 
 
@@ -226,6 +239,16 @@ router
     req.session.date = date;
    
     const availableSlots= await fetchAvailableSlots(req.session.doctors,date)
+
+    if(availableSlots.length == 0) {
+      return res.render("users/book-appointment", {
+        error:'No more slots available for today.',
+        today: req.session.today,
+      lastDate: req.session.lastDate,
+      loggedIn:true
+      });
+    }
+
     let allAvailableSlots= {slots:availableSlots}
     return res.render("users/select-slot", {
       availableSlots: allAvailableSlots, doctor: req.session.doctors,loggedIn:true
