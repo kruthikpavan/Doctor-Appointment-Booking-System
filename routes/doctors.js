@@ -30,7 +30,7 @@ router
     }
    const docInfo= await userData.checkDoctor(username,password)
    if(docInfo){
-    req.session.doctors=docInfo;
+    req.session.doctors=docInfo.name;
     res.redirect('/doctors/home')
     return
    }
