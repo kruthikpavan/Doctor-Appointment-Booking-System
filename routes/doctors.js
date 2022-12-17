@@ -196,6 +196,23 @@ router.post("/profile", async (req, res) => {
       });
     }
   
-});
+})
+;
+
+
+
+//reviews
+
+router
+  .route("/reviews")
+  .get(async (req, res) => {
+    const doctor= await userData.getDoctorByID(req.session.doctors)
+    return res.render('doctors/doctor-reviews', {reviews:doctor.reviews})
+  })
+  .post(async (req, res) => {
+    req.session.doctors= req.body.hiddenReview
+    return res.redirect('/doctors/reviews')
+
+})
 
 module.exports = router;

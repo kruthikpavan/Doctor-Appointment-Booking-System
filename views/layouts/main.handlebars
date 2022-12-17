@@ -22,24 +22,31 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto justify-content-center align-items-center menu">
+                     {{#if loggedIn}}
                     <li class="nav-item active">
-                        <a class="nav-link" href="/">Home</a>
+                        <a class="nav-link" href="/users/home">Home</a>
                     </li>
+                    {{/if}}
                 </ul>
             </div>
              <ul class="navbar-nav mr-auto float-right">
-                    
-                   
+              {{#if loggedIn}}
+  <li class="logout">
+                         <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#logout">
+                        <a href="/users/logout">Logout</a>
+                        </button>
+                    </li>
+{{else}}
+ 
                     <li class="nav-item">
                         <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#LoginSignup">
                         Login/Sign Up
                         </button>
                     </li>
-                    <li class="logout">
-                         <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#logout">
-                        Logout
-                        </button>
-                    </li>
+{{/if}}
+                    
+                   
+                    
                 </ul>
         </nav>
     </header>
@@ -60,7 +67,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Login/SignUp</h5>
+        <h2 class="modal-title">Login/SignUp</h2>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>

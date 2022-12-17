@@ -31,6 +31,7 @@
     "mongodb": "^4.12.1",
     "natural": "^5.2.3",
     "nodemon": "^2.0.20",
+    "spell-checker-js": "^1.2.6",
     "spelling-corrector": "^3.0.0",
     "stopword": "^2.0.5",
     "validator": "^13.7.0",

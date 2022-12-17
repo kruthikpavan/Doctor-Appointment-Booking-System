@@ -1,5 +1,5 @@
     <h1 class="Profile-title">Doctor Profile</h1>
-    <form id = "profile-form" action = "profile" method = "POST">
+    {{!-- <form id = "profile-form" action = "profile" method = "POST">
         <div class="form-group-name">
             <label for="nameprofile">Name</label>
             <input type="text" class="form-control" id="nameprofile" name="name" placeholder="Name" value="{{userInfo.name}}">
@@ -50,5 +50,76 @@
         {{msg}}
       </div>
         {{/if}}
-    </form>
+    </form> --}}
+
+    <form class="profile-form" id ="Profile-form" action="profile" method = "POST">
+    <h2>Doctor Profile</h2>
+    <div class="form-group">
+      <label for="nameprofile">Doctor Name:</label>
+      <div class="relative">
+        <input class="form-control" type="text" id="nameprofile" name="name" value="{{userInfo.name}}" required="">
+        <i class="fa fa-user"></i>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="categoryprofile">Category:</label>
+      <div class="relative">
+        <input class="form-control" type="text" id="categoryprofile" name="category" value="{{userInfo.category}}" required="">
+        <i class="fa fa-user-md"></i>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="qualificationprofile">Qualification:</label>
+      <div class="relative">
+        <input class="form-control" type="text" id="qualificationprofile" name="qualification" value="{{userInfo.qualification}}" required="">
+        <i class="fa fa-book"></i>
+      </div>
+    </div>
+     <div class="form-group">
+        <label for="genderprofile">Gender: </label>
+            <select id="genderprofile" name="gender">
+              <option value="Male">Male</option>
+              <option value="Male">Female</option>
+            </select>
+    </div>
+    <div class="form-group">
+      <label for="emailprofile">E-mail address:</label>
+      <div class="relative">
+        <input class="form-control" type="email" id="emailprofile" name="email" value="{{userInfo.email}}" required="">
+        <i class="fa fa-envelope"></i>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="phoneNumberprofile">Contact Number:</label>
+      <div class="relative">
+      <input class="form-control" type="text" id="phoneNumberprofile" name="phoneNumber" required="" value="{{userInfo.phoneNumber}}">
+      <i class="fa fa-phone"></i>
+    </div>  
+    </div>
+                  
+    <div class="tright text-center">
+        <button class="movebtn movebtnsu" type="Submit" value="submit">Submit <i class="fa fa-fw fa-paper-plane"></i></button>
+    </div>
+    {{#if errors}}
+      <div class="form-group">
+        <div class="alert alert-danger">
+          
+          <ul id = "results">
+             {{#each errors}}
+
+            <li class = "errormessage">{{this}}</li>
+                {{/each}}
+
+          </ul>
+        </div>
+      </div>
+      {{/if}}
+        {{#if msg}}
+      <div class="info alert-info">
+        {{msg}}
+      </div>
+        {{/if}}
+  </form>
+
+
   

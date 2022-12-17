@@ -1,0 +1,18 @@
+<form method="post" action="/users/reschedule" >
+{{doctor}}
+<div>
+    {{error}}
+</div>
+<table>
+
+<tr>
+    {{#each availableSlots.slots}}
+<input type="checkbox" id={{this.time}} name={{this.time}}>
+<label class="toggle-control" for={{this.time}}>{{this.time}}</label>
+
+{{/each}}
+</tr>
+    
+</table>
+<button type="submit">Book This slot!</button>
+</form>

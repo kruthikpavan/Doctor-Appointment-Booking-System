@@ -20,7 +20,6 @@ async function createUser(
         email= email.toLowerCase();
         let dataCheck  = await helpers.checkUserDetails(firstName,lastName,username,password,email,phoneNumber,dateOfBirth);
         const userCollection  = await users();
-      
         let userData = await userCollection.findOne({email: email});
         if(userData != null || userData != undefined) throw 'This E-mail has already been used to register';
         userData = await userCollection.findOne({username: username});
@@ -140,7 +139,7 @@ const checkUser = async (username, password) => {
       email= email.toLowerCase();
       const userCollection  = await users();
       let userData = await userCollection.findOne({email: email});
-      if((userData != null || userData != undefined) && userData.username!=username) throw 'This E-mail has already exist';
+      if((userData != null || userData != undefined) && userData.username!=username) throw 'You cant have same username';
       let updateUser = {
           firstName:firstName,
           lastName:lastName,

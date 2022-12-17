@@ -3,6 +3,10 @@ const reviews = mongoCollections.reviews;
 const { ObjectId } = require('mongodb');
 const helpers = require("../helpers");
 const validator = require('../validation');
+const doctors= mongoCollections.doctors
+const spell = require('spell-checker-js')
+
+
 
 const aposToLexForm = require('apos-to-lex-form');
 const express = require('express');
@@ -10,44 +14,48 @@ const SpellCorrector = require('spelling-corrector');
 const natural = require('natural');
 const SW = require('stopword');
 
-async function createReview(reviewContent,doctorID,userID,appointmentID){
-    if(!reviewContent || !doctorID || !userID || !appointmentID) throw 'All fields are mandatory for post review';
-    if (!ObjectId.isValid(doctorID)) throw 'Invalid Doctor ID';
-    if (!ObjectId.isValid(userID)) throw 'Invalid User ID';
-    if (!ObjectId.isValid(appointmentID)) throw 'Invalid Appointment ID';
-    if(arguments.length != 4) throw 'Invalid number of Parameters';
+async function createReview(reviewContent,doctorID){
+    if(!reviewContent || !doctorID) throw 'All fields are mandatory for post review';
+    // if (!ObjectId.isValid(userID)) throw 'Invalid User ID';
+    // if (!ObjectId.isValid(appointmentID)) throw 'Invalid Appointment ID';
+    if(arguments.length != 2) throw 'Invalid number of Parameters';
 
     try {
         const reviewCollection = await reviews();
+        const doctorCollection = await doctors();
+
+        const doctorData= await doctorCollection.findOne({name:doctorID}) 
+
         let dataCheck = validator.validString(reviewContent);
+        const insertedReview = undefined;
         reviewContent = reviewContent;
         analysedReview = await Analyser(reviewContent);
         const newId = ObjectId();
         let date = new Date();
+        let reviewsArray = doctorData['reviews'];
         let newReview = {
-            Reviewer_id: userID,
-            doctor_id: doctorID,
-            appointment_id: appointmentID,
+
+            doctor_id: doctorData['email'],
             date: date.toDateString(),
             time: date.getHours(),
             review: reviewContent,
-            score: analysedReview['analysis']
+            score: analysedReview['analysis'],
+            image: analysedReview['imgSource']
         }
+        reviewsArray.push(newReview);
 
-        // let reviews = await reviewCollection.find(
-        //     {"doctor_id":ObjectId(id)}
-        // );
-            const insertedReview = await reviewCollection.insertOne(newReview); //  need to check this
-            if(!insertedReview.acknowledged || !insertedReview.insertedId) throw 'Review could not be added';
+        insertedReview= await doctorCollection.updateOne({'name':doctorID}, {"$set": {"reviews": reviewsArray}})
 
-            const review = await getReviewById(insertedReview.insertedId)
-            review['imgSource'] = analysedReview['imgSource'] ;
-            review['color'] =analysedReview['color'] ;
-            review['acknowledged'] =true ;
+            const insertedReviewtoDB = await reviewCollection.insertOne(newReview); //  need to check this
+            if(!insertedReview.insertedId) throw 'Review could not be added';
 
-            return review;
-        
+            //const review = await getReviewById(insertedReview.insertedId)
+            newReview['imgSource'] = analysedReview['imgSource'] ;
+            newReview['color'] =analysedReview['color'] ;
+            newReview['acknowledged'] =true ;
 
+            return newReview;
+    
     } catch (e) {
         return e;
     }
@@ -103,8 +111,8 @@ async function getReviewById(id){
 
     try {
         let idCheck = validator.validId(id);
-        const reviewCollection = await reviews();
-        let reviewData = await reviewCollection.findOne(
+        const doctorCollection = await doctors();
+        let reviewData = await doctorCollection.findOne(
             {_id:ObjectId(id)}
         );
     
@@ -153,7 +161,23 @@ async function Analyser(reviewData)
         let  review  = reviewData;
         const lexedReview = aposToLexForm(review);
         const casedReview = lexedReview.toLowerCase();
-        const alphaOnlyReview = casedReview.replace(/[^a-zA-Z\s]+/g, '');
+        let alphaOnlyReview = casedReview.replace(/[^a-zA-Z\s]+/g, '');
+
+        spell.load('en')
+        const check = spell.check(alphaOnlyReview);
+
+        alphaOnlyReview  = removeFromString(check, alphaOnlyReview)
+
+
+        // if(check.length!=0)
+        // {
+        //     for( let i in check){
+        //         if(alphaOnlyReview.includes(check[i]))
+        //         {
+        //             alphaOnlyReview = alphaOnlyReview.replace(check[i],'')
+        //         }
+        //     }
+        // }
     
         //using tokenizer from natural
         const { WordTokenizer } = natural;
@@ -171,16 +195,16 @@ async function Analyser(reviewData)
         final_Review['analysis']  = analyzer.getSentiment(filteredReview);
 
         if (final_Review['analysis'] < 0) {
-            final_Review['imgSource'] = '<img src="https://img.icons8.com/emoji/96/000000/angry-face.png">';
+            final_Review['imgSource'] = 'https://img.icons8.com/color/96/000000/angry.png';
             final_Review['color'] = 'red';
             };
             if (final_Review['analysis'] === 0) {
-            final_Review['imgSource'] = '<img src="https://img.icons8.com/officel/80/000000/neutral-emoticon.png">';
+            final_Review['imgSource'] = 'https://img.icons8.com/officel/80/000000/neutral-emoticon.png';
             final_Review['color'] = '#00367c';
             
             }
             if (final_Review['analysis'] > 0) {
-                final_Review['imgSource'] = '<img src="https://img.icons8.com/color/96/000000/happy.png">';
+                final_Review['imgSource'] = 'https://img.icons8.com/color/96/000000/happy.png';
                 final_Review['color'] = 'green';
             }
     
@@ -190,6 +214,10 @@ async function Analyser(reviewData)
         return e;
     }
 }
+
+function removeFromString(words, str) {
+    return words.reduce((result, word) => result.replace(word, ''), str)
+    }
 
 module.exports = {
     createReview,

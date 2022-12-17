@@ -1,7 +1,7 @@
 const mongoCollections = require("../config/mongoCollections");
 const appointments = mongoCollections.appointments;
 const doctors = mongoCollections.doctors;
-
+const validator = require('../validation');
 //schema
 // { 
 //     "_id":"1b6789b3-c0d4-4f8c-b20a-6a1d4b5b1234", 
@@ -14,12 +14,14 @@ const doctors = mongoCollections.doctors;
 
 async function createAppointment(userID,doctorId,timeSlot,date){
     const status= 'pending'
+    const requestReschedule= false
     const newAppointment=  {    
         userID,
         doctorId,
         timeSlot,
         date,
-        status
+        status,
+        requestReschedule
     }
     const appointmentsCollection=await  appointments()
     const createdAppointment = await appointmentsCollection.insertOne(newAppointment);
@@ -73,6 +75,28 @@ async function checkStatus(id){
     return false
 }
 
+async function updateAppointment(){
+
+}
+
+async function reqrescheduleAppointment(userId,doctorId)
+{
+  const appointmentsCollection=await appointments()
+
+  try {
+    // appointmentIDcheck = validator.validId(appointmentID);
+    // doctorIDcheck = validator.validId(doctorID);
+    // userID = validator.validId(userID);
+
+    const updateKey=await  appointmentsCollection.update({'userID': userId,'doctorId':doctorId}, {"$set": {"requestReschedule": true}})
+return
+
+    
+  } catch (e) {
+    return e;
+  }
+}
+
 
 module.exports = {
     createAppointment,
@@ -80,5 +104,7 @@ module.exports = {
     removeAppointment,
     removeAppointment,
     getAppointmentByUser,
-    checkStatus
+    checkStatus,
+    reqrescheduleAppointment,
+    updateAppointment
 }

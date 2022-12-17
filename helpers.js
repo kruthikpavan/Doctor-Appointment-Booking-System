@@ -58,11 +58,11 @@ async function checkAge(age)
 async function checkUserDetails(firstName,lastName,username,password,email,phoneNumber,dateOfBirth)
 {
     if(!validator.validString(firstName)) throw 'Invalid FirstName'
-    if(!validator.validString(lastName)) throw 'Invalid FirstName'
-    if(!validator.validString(username)) throw 'Invalid FirstName'
-    if(!validator.validPassword(password)) throw 'Invalid FirstName'
-    if(!validator.validEmail(email)) throw 'Invalid FirstName'
-    if(!validator.validPhoneNumber(phoneNumber)) throw 'Invalid FirstName'
+    if(!validator.validString(lastName)) throw 'Invalid LastName'
+    if(!validator.validString(username)) throw 'Invalid userName'
+    if(!validator.validPassword(password)) throw 'Invalid password'
+    if(!validator.validEmail(email)) throw 'Invalid Email'
+    if(!validator.validPhoneNumber(phoneNumber)) throw 'Invalid PhoneNumber'
     return true;
 }
 

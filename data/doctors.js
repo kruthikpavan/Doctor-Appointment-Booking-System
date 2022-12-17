@@ -10,6 +10,60 @@ async function getAllDoctorDetails(){
   docDetails =  await doctorCollection.find({}).toArray();
   return docDetails
 }
+async function addRescheduleRequest(doctor,date,pastTime,timeslot,user){
+  const doctorCollection = await doctors();
+  const doctorData= await doctorCollection.findOne({name:doctor})
+  let reschedulerequests= doctorData.rescheduleRequests
+  let updatedRequests= reschedulerequests
+  //send request only if it's not already sent
+  let alreadyPresent= false
+  if(reschedulerequests.length>0){
+
+    reschedulerequests.forEach(req=>{
+      if(req.user==user){
+        alreadyPresent=true
+      }
+    })
+  }
+ 
+  if(!alreadyPresent){
+    updatedRequests.push({date:date,time:timeslot,pastTime:pastTime,user:user})
+    const updatedRequest=await  doctorCollection.update({'name': doctor}, {"$set": {"rescheduleRequests": updatedRequests}})
+    return true
+  }
+  return false
+ 
+ 
+
+}
+async function updateDoctor(doctor,date,time,presentTime,user)
+{
+  const doctorCollection = await doctors();
+  const doctorData= await doctorCollection.findOne({name:doctor})
+  let updatedBlockedSlots=[]
+  let newBlock={date:date,time:presentTime}
+  updatedBlockedSlots.push(newBlock)
+  if(doctorData.blockedSlots.length>0){
+      for(const key of doctorData.blockedSlots){
+        if(key.date===date && key.time===time){
+          continue
+        }
+        if(key.date===date && key.time===time){
+          continue
+        }
+        else {
+          updatedBlockedSlots.push(key)
+  
+        }
+      }
+    }
+    const restoreSlot=await  doctorCollection.update({'name': doctor}, {"$set": {"blockedSlots": updatedBlockedSlots}})
+
+
+  
+}
+
+
 
 async function createDoctor(
   docName,
@@ -34,6 +88,7 @@ async function createDoctor(
       throw "This E-mail has already been used to register";
     let hashed = await bcrypt.hash(password, saltRounds);
     let blockedSlots=[]
+    let reviews=[]
 
     let newUser = {
       name: docName,
@@ -45,7 +100,9 @@ async function createDoctor(
       email: email.toLowerCase(),
       phoneNumber: phoneNumber,
       password: hashed,
-      blockedSlots: blockedSlots
+      blockedSlots: blockedSlots,
+      reviews:reviews,
+      rescheduleRequests:[]
     };
 
     const insertDoc = await doctorCollection.insertOne(newUser);
@@ -54,13 +111,13 @@ async function createDoctor(
   }
 }
 
-async function getDoctorByID(id) {
+async function getDoctorByID(uname) {
   try {
-    let checkID = helpers.checkID(id);
-    if (checkID === false) throw "ID provided is invalid";
+    // let checkID = helpers.checkID(uname);
+    // if (checkID === false) throw "ID provided is invalid";
     const doctorCollection = await doctors();
-    let docData = await doctorCollection.findOne({ _id: ObjectID(id) });
-    if (docData == null) throw `No doctor with this ID - ${id}`;
+    let docData = await doctorCollection.findOne({ name: uname });
+    if (docData == null) throw `No doctor with this ID - ${uname}`;
     docData["_id"] = docData["_id"].toString();
     return docData;
   } catch (e) {
@@ -116,7 +173,7 @@ const checkDoctor = async (username, password) => {
  async function checkSlot(doctor,date,time){
   //check if this time is blocked
   const doctorCollection = await doctors();
-  const notAvailable= await doctorCollection.findOne({name:doctor,'blockedSlots.date': date,'blockedSlots.time':parseFloat(time)})
+  const notAvailable= await doctorCollection.findOne({name:doctor,'blockedSlots.date': date,'blockedSlots.time':parseFloat(time).toFixed(2)})
   if(notAvailable) return false
   return true
  }
@@ -160,7 +217,7 @@ async function updateProfile(
     if (updatedInfo.modifiedCount === 0) return null;
     return await this.getDoctorByID(id);
   } catch (e) {
-    console.log(e);
+    console.log(e);   
     throw e;
   }
 }
@@ -172,5 +229,7 @@ module.exports = {
   checkDoctor,
   checkSlot,
   blockAppointment,
-  getAllDoctorDetails
+  getAllDoctorDetails,
+  updateDoctor,
+  addRescheduleRequest
 };

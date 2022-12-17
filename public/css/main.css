@@ -97,8 +97,6 @@ input {
   margin-bottom: .25rem;
 }
 
-
-
 .card > .body {
   font-size: .8rem;
   color: #777;
@@ -109,6 +107,7 @@ input {
 }
 .right{
   width: 30%;
+  margin: 30px;
   display: flex;
   flex-direction: column;
 }
@@ -231,7 +230,7 @@ input[type="search"]:focus{
 
 /* user profile */
 
-.form {
+.profile-form {
   max-width: calc(100vw - 40px);
   width: 500px;
   height: auto;
@@ -244,7 +243,7 @@ input[type="search"]:focus{
   position: relative;
   border-bottom: 5px solid #ccc;
 }
-form:before {
+.profile-form:before {
   content: '';
   position: absolute;
   top: 0;
@@ -262,7 +261,7 @@ form:before {
   background: linear-gradient(to right, rgba(196,225,127,1) 0%, rgba(196,225,127,1) 20%, rgba(247,253,202,1) 20%, rgba(247,253,202,1) 40%, rgba(254,207,113,1) 40%, rgba(254,207,113,1) 60%, rgba(240,119,108,1) 60%, rgba(240,119,108,1) 80%, rgba(219,157,190,1) 80%, rgba(219,157,190,1) 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c4e17f', endColorstr='#db9dbe', GradientType=1 );
 }
-.form h2 {
+.profile-form h2 {
   margin: 18px 0;
   padding-bottom: 10px;
   width: 210px;
@@ -284,7 +283,7 @@ input {
   border: 2px solid #bebed2;
   transition: all .3s;
 }
-.form p:before {
+.profile-form p:before {
   content: attr(type);
   display: block;
   margin: 10px 0 0;
@@ -442,5 +441,29 @@ button:hover {
   input{
       width: 100%;
   }
+}
+
+.review-card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  max-width: 300px;
+  margin: auto;
+  text-align: center;
+  font-family: arial;
+}
+
+
+.review-card h1 {
+  color: #444;
+  font-size: 18px;
+}
+
+.review-card p {
+  font-size: 14px;
+  color: #777;
+  margin: 20px 0;
+}
+
+.head-color{
+  background-color: rgb(249, 112, 112);
 }
 
