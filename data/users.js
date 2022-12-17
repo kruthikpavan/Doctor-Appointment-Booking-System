@@ -139,18 +139,24 @@ const checkUser = async (username, password) => {
       email= email.toLowerCase();
       const userCollection  = await users();
       let userData = await userCollection.findOne({email: email});
-      if((userData != null || userData != undefined) && userData.username!=username) throw 'You cant have same username';
-      let updateUser = {
-          firstName:firstName,
-          lastName:lastName,
-          username:username,
-          email:email,
-          phoneNumber:phoneNumber,
-          dateOfBirth:dateOfBirth,
+      if((userData != null || userData != undefined) && userData.username!=username)
+      {
+        let updateUser = {
+            firstName:firstName,
+            lastName:lastName,
+            username:username,
+            email:email,
+            phoneNumber:phoneNumber,
+            dateOfBirth:dateOfBirth,
+        }
+        const updatedInfo = await userCollection.updateOne({ _id: ObjectID(userData._id) }, { $set: updateUser });
+        if (updatedInfo.modifiedCount === 0) return null;
+        return await this.getUserByUn(username);
       }
-      const updatedInfo = await userCollection.updateOne({ username: username }, { $set: updateUser });
-      if (updatedInfo.modifiedCount === 0) return null;
-      return await this.getUserByUn(username);
+      else{
+        throw 'You cant have same username';
+      } 
+
       } catch (e) {
           console.log(e);
           throw e;
