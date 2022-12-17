@@ -9,6 +9,43 @@ const appointmentData = data.appointments;
 const doctorData= data.doctors
 const reviewData= data.reviews
 
+const fetchAvailableSlots=async(doctor,date)=>{
+  let availableSlots=[]
+  let AllSlots = {
+    slots: [
+      { time: '10' },
+      { time: '10.30' },
+      { time: '11' },
+      { time: '11.30' },
+      { time: '12' },
+      { time: '12.30' },
+      { time: '13' },
+      { time: '13.30' },
+      { time: '16' },
+      { time: '16.30' },
+      { time: '17' },
+      { time: '17.30' },
+      { time: '18' },
+      { time: '18.30' },
+      { time: '19' },
+      { time: '19:30' }
+
+    ],
+  };
+  for (const slot of AllSlots.slots) {
+    let doctorAvailable= await doctorData.checkSlot(doctor,date,slot.time)
+    if(doctorAvailable){
+      let obj={time: slot.time}
+      availableSlots.push(obj)
+
+    }
+  }
+  return availableSlots
+
+}
+
+
+
 const authMiddleware = (req, res, next) => {
   if (req.session.user) {
     next();
@@ -187,42 +224,14 @@ router
     //Next step is to fetch available slots for specified date. Will use dummy data for now---pk
     //If available slots are empty, redirect to book-appointment route. User has to select a different date to proceed
     req.session.date = date;
-    let availableSlots=[]
-    let AllSlots = {
-      slots: [
-        { time: '10' },
-        { time: '10.30' },
-        { time: '11' },
-        { time: '11.30' },
-        { time: '12' },
-        { time: '12.30' },
-        { time: '1' },
-        { time: '1.30' },
-        { time: '4' },
-        { time: '4.30' },
-        { time: '5' },
-        { time: '5.30' },
-        { time: '6' },
-        { time: '6.30' },
-        { time: '7' },
-        { time: '7.30' },
-        { time: '8' }
-      ],
-    };
-    for (const slot of AllSlots.slots) {
-      let doctorAvailable= await doctorData.checkSlot(req.session.doctors,req.session.date,slot.time)
-      if(doctorAvailable){
-        let obj={time: slot.time}
-        availableSlots.push(obj)
-
-      }
-    }
+   
+    const availableSlots= await fetchAvailableSlots(req.session.doctors,date)
     let allAvailableSlots= {slots:availableSlots}
     return res.render("users/select-slot", {
       availableSlots: allAvailableSlots, doctor: req.session.doctors,loggedIn:true
     });
   
-   ƒ
+   
   });
 
 router
