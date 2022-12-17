@@ -157,6 +157,8 @@ router.post("/signup", async (req, res) => {
   if (!validator.validDate(newUser.dateOfBirth))
     errors.push("Invalid Date of Birth.");
 
+   
+
   if (errors.length > 0) {
     console.log(errors);
     return res.status(401).render("signup", {

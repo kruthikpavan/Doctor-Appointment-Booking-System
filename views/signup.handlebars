@@ -97,7 +97,20 @@
                 <div class="d-flex justify-content-center pt-3">
                   <button type="submit" class="btn btn-primary btn-lg" value="Submit">Submit</button>
                 </div>
+{{#if errors}}
+      <div class="form-group">
+        <div class="alert alert-danger">
+          
+          <ul id = "results">
+             {{#each errors}}
 
+            <li class = "errormessage">{{this}}</li>
+                {{/each}}
+
+          </ul>
+        </div>
+      </div>
+      {{/if}}
               </div>
             </div>
           </div>

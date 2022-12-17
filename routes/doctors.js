@@ -210,7 +210,7 @@ router
     return res.render('doctors/doctor-reviews', {reviews:doctor.reviews})
   })
   .post(async (req, res) => {
-    req.session.doctors= req.body.hiddenReview
+    req.session.doctors=xss(req.body.hiddenReview)
     return res.redirect('/doctors/reviews')
 
 })
