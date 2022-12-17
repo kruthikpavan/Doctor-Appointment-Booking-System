@@ -9,6 +9,56 @@ const appointmentData = data.appointments;
 const doctorData= data.doctors
 const reviewData= data.reviews
 
+const fetchAvailableSlots=async(doctor,date)=>{
+  let d = new Date();
+  let h = d.getHours();
+  let min = d.getMinutes();
+  let Ntime = h+2;
+  let availableSlots=[]
+  let AllSlots = {
+    slots: [
+      { time: '10' },
+      { time: '10.30' },
+      { time: '11' },
+      { time: '11.30' },
+      { time: '12' },
+      { time: '12.30' },
+      { time: '13' },
+      { time: '13.30' },
+      { time: '16' },
+      { time: '16.30' },
+      { time: '17' },
+      { time: '17.30' },
+      { time: '18' },
+      { time: '18.30' },
+      { time: '19' },
+      { time: '19:30' }
+
+    ],
+  };
+  for (const slot of AllSlots.slots) {
+    let doctorAvailable= await doctorData.checkSlot(doctor,date,slot.time)
+    if(doctorAvailable){
+      let obj={time: slot.time}
+      let todayDate= new Date().getDate()
+        let selectedDate = date.slice(-2);
+        if(selectedDate==todayDate){
+          if(parseFloat(slot.time).toFixed(2) > parseFloat(Ntime).toFixed(2))
+          {
+            availableSlots.push(obj)
+          }
+        }
+        else
+        {
+          availableSlots.push(obj)
+        }
+    }
+  }
+  return availableSlots;
+}
+
+
+
 const authMiddleware = (req, res, next) => {
   if (req.session.user) {
     next();
@@ -68,7 +118,6 @@ router
 router.get("/home",authMiddleware,async (req, res) => {
   if(req.session.doctors){
     delete req.session.doctors;
-
   }
   res.render("users/userhomepage",{loggedIn:true});
 });
@@ -188,42 +237,24 @@ router
     //Next step is to fetch available slots for specified date. Will use dummy data for now---pk
     //If available slots are empty, redirect to book-appointment route. User has to select a different date to proceed
     req.session.date = date;
-    let availableSlots=[]
-    let AllSlots = {
-      slots: [
-        { time: '10' },
-        { time: '10.30' },
-        { time: '11' },
-        { time: '11.30' },
-        { time: '12' },
-        { time: '12.30' },
-        { time: '1' },
-        { time: '1.30' },
-        { time: '4' },
-        { time: '4.30' },
-        { time: '5' },
-        { time: '5.30' },
-        { time: '6' },
-        { time: '6.30' },
-        { time: '7' },
-        { time: '7.30' },
-        { time: '8' }
-      ],
-    };
-    for (const slot of AllSlots.slots) {
-      let doctorAvailable= await doctorData.checkSlot(req.session.doctors,req.session.date,slot.time)
-      if(doctorAvailable){
-        let obj={time: slot.time}
-        availableSlots.push(obj)
+   
+    const availableSlots= await fetchAvailableSlots(req.session.doctors,date)
 
-      }
+    if(availableSlots.length == 0) {
+      return res.render("users/book-appointment", {
+        error:'No more slots available for today.',
+        today: req.session.today,
+      lastDate: req.session.lastDate,
+      loggedIn:true
+      });
     }
+
     let allAvailableSlots= {slots:availableSlots}
     return res.render("users/select-slot", {
       availableSlots: allAvailableSlots, doctor: req.session.doctors,loggedIn:true
     });
   
-   ƒ
+   
   });
 
 router
@@ -443,32 +474,61 @@ router
       return res.status(parseInt(e.status)).json(e.error);
   }
   })
-
-
 router
-  .route("/reqrescheduleAppointment")
+  .route("/reschedule")
   //needs enew handlebar wthout date
   .get(async (req, res) => {
-    return res.redirect("/users/reqrescheduleAppointment");
+
+    const appointments= await appointmentData.getAppointmentByID(req.session.user)
+    let date= undefined
+    let doctor= undefined
+    if(appointments.length>0){
+      appointments.forEach(appointment=>{
+        if(appointment.status=='pending'){
+            date= appointment.date
+            doctor= appointment.doctorId
+        }
+      })
+    }
+    let availableSlots= await fetchAvailableSlots(doctor,date)
+    let allAvailableSlots= {slots:availableSlots}
+    return res.render("users/rescheduleslots", {
+      
+      availableSlots: allAvailableSlots, doctor: doctor,loggedIn:true
+    });
   })
   .post(async (req,res) =>{
-
     //to-do
     //if req.body is empty redirect to /select-slot page with error . User has to select atleast one slot
-    
+    const appointments= await appointmentData.getAppointmentByID(req.session.user)
+    let date= undefined
+    let doctor= undefined
+    let pastTime= undefined
+    if(appointments.length>0){
+      appointments.forEach(appointment=>{
+        if(appointment.status=='pending'){
+            date= appointment.date
+            doctor= appointment.doctorId
+            pastTime= appointment.timeSlot
+
+        }
+      })
+    }
+    const availableSlots= await fetchAvailableSlots(doctor,date)
+    let allAvailableSlots= {slots:availableSlots}
     if(Object.keys(req.body).length === 0){
-      return res.render("users/reqrescheduleAppointment",{
+      return res.render("users/rescheduleslots",{
         error: "No option was selected in Reschedule",
-        availableSlots: req.session.availableSlots,
+        availableSlots: allAvailableSlots,
       });
     }
     if(Object.keys(req.body).length > 1)
     {
-      return res.render('user/reqrescheduleAppointment',
+      return res.render('users/rescheduleslots',
       {
         error:
         "You cant select multiple slots. Please select only one available slot",
-      availableSlots: req.session.availableSlots,
+      availableSlots: allAvailableSlots,
       })
     }
 
@@ -476,18 +536,22 @@ router
     for(const key in req.body){
       timeslot = parseFloat(key).toFixed(2);
     }
-    req.session.timeSlot = timeSlot;
+ 
     //to do - store timeslot and data from req.sesion.date as appointment info in db
-    const doctorID = req.session.doctors;
-    req.session.doctor = doctorId;
+    //this will remove previous blocked slot from db
+    // use this later
+     const updatedDoctor= await doctorData.addRescheduleRequest(doctor,date,pastTime,timeslot,req.session.user)
+    if(!updatedDoctor){
+      let error='You already requested for a reschedule please wait for the doctor to review it'
+      return res.render("users/rescheduleslots", {
+      
+        error:error, doctor: doctor,loggedIn:true
+      });
+    }
+
     let rescheduleRequested = true;
-    const appointment = await appointmentData.updateAppointment(
-      req.session.user,
-      doctorId,
-      timeSlot,
-      req.session.date,
-      rescheduleRequested
-    );
+    const updateKey= await appointmentData.reqrescheduleAppointment(req.session.user,doctor)
+     return res.redirect('/users/home')
   });
 
 
