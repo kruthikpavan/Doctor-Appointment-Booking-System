@@ -112,7 +112,7 @@ router.get("/profile", async (req, res) => {
   if (!req.session.doctors) {
     return res.redirect("/doctors");
   }
-  let user = await userData.getDoctorByID(req.session.doctors._id);
+  let user = await userData.getDoctorByName(req.session.doctors);
   if (user === null) {
     return res.render("error/404");
   }

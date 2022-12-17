@@ -327,7 +327,7 @@ router.get("/profile", authMiddleware,async (req, res) => {
   if (!req.session.user) {
     return res.redirect("login");
   }
-  let user = await userData.getUserByUn(req.session.user);
+  let user = await userData.getUserByUn(req.session.user.toLowerCase());
 
   if (user === null) {
     return res.render("error/404");

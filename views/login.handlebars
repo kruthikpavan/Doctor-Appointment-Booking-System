@@ -140,13 +140,14 @@
           <div class="text-center text-lg-start mt-2 pt-2">
             <button type="submit" class="btn btn-primary btn-lg"
               style="padding-left: 2.5rem; padding-right: 2.5rem;">Login</button>
-          <div class="error-group alert alert-danger" hidden>
-          <ul id = "results-login">
-            {{#if errors}}
-              <li>{{errors}}</li>
-            {{/if}}
-          </ul>
-          </div>
+          
+          {{#if error}}
+      <div class="form-group">
+        <div class="alert alert-danger">
+              {{error}}
+        </div>
+      </div>
+      {{/if}}
           </div>
         </form>
         <form action = "signup" class="signup-form">

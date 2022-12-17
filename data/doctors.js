@@ -124,6 +124,20 @@ async function getDoctorByID(uname) {
     console.log("Could not fetch user by id" + e);
   }
 }
+async function getDoctorByName(uname) {
+  try {
+    // let checkID = helpers.checkID(uname);
+    // if (checkID === false) throw "ID provided is invalid";
+    const doctorCollection = await doctors();
+    let docData = await doctorCollection.findOne({ name: uname });
+    if (docData == null) throw `No doctor with this ID - ${uname}`;
+    docData["_id"] = docData["_id"].toString();
+    return docData;
+  } catch (e) {
+    console.log("Could not fetch user by id" + e);
+  }
+}
+
 
 async function removeDoctor(id) {
   try {
@@ -231,5 +245,6 @@ module.exports = {
   blockAppointment,
   getAllDoctorDetails,
   updateDoctor,
-  addRescheduleRequest
+  addRescheduleRequest,
+  getDoctorByName
 };
