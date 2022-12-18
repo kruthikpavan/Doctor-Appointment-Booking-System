@@ -467,3 +467,19 @@ button:hover {
   background-color: rgb(249, 112, 112);
 }
 
+.logout-btn{
+  display: block;
+    width: 115px;
+    height: 40px;
+    background: #1e439b;
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    line-height: 18px;
+}
+
+.logout-btn:hover{
+  color: #fff;
+}
