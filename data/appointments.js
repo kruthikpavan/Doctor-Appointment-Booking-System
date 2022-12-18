@@ -13,7 +13,7 @@ const validator = require('../validation');
 //     } 
 
 async function createAppointment(userID,doctorId,timeSlot,date){
-    const status= 'pending'
+    const fulfilled= false
     const requestReschedule= false
     const reviewGiven= false
     const rescheduleDone= 'pending'
@@ -22,7 +22,7 @@ async function createAppointment(userID,doctorId,timeSlot,date){
         doctorId,
         timeSlot,
         date,
-        status,
+        fulfilled,
         requestReschedule,
         reviewGiven,
         rescheduleDone
@@ -35,16 +35,18 @@ async function createAppointment(userID,doctorId,timeSlot,date){
 
 async function rejectStatus(user){
   const appointmentsCollection=await appointments()
-  const appointment = await appointmentsCollection.updateOne({userID:user} ,{"$set": {rescheduleDone: 'rejected'}})
+  const appointment = await appointmentsCollection.updateOne({userID:user} ,{"$set": {rescheduleDone: 'rejected',
+  requestReschedule:false}})
   return 
 
 
 }
 
-async function rescheduleAppointment(user,newTime){
+async function rescheduleAppointment(user,newTime,oldTime){
 
   const appointmentsCollection=await appointments()
-  const appointment = await appointmentsCollection.updateOne({userID:user} ,{"$set": {rescheduleDone: 'approved',timeSlot:newTime}})
+  const appointment = await appointmentsCollection.updateOne({userID:user,timeSlot:oldTime} ,{"$set": {rescheduleDone: 'approved',timeSlot:newTime, 
+  requestReschedule:false}})
   return true
 
 
@@ -74,8 +76,8 @@ async function getAppointmentByDoctorID(id){
 
 async function removeAppointment(id){
     const appointmentsCollection=await appointments()
-    const appointmentInfo = await appointmentsCollection.findOne({userID:id,status:'pending'})
-    const appointment = await appointmentsCollection.deleteMany({userID:id,status:'pending'})
+    const appointmentInfo = await appointmentsCollection.findOne({userID:id,fulfilled:false})
+    const appointment = await appointmentsCollection.deleteMany({userID:id,fulfilled:false})
     const date= appointmentInfo.date
     const time= appointmentInfo.timeSlot
     const doctorCollection = await doctors();
@@ -106,15 +108,22 @@ async function getAppointmentByUser(){
 
 async function checkStatus(id){
     const appointmentsCollection=await appointments()
-    const appointment = await appointmentsCollection.findOne({userID:id,status:'pending'})
+    const appointment = await appointmentsCollection.findOne({userID:id,fulfilled:false})
     if(appointment) return true
     return false
 }
 
-async function updateAppointment(name){
-
+async function updateFulfilled(name,date,time){
   const appointmentsCollection=await appointments()
-  const appointment = await appointmentsCollection.updateOne({userID:name} ,{"$set": {"reviewGiven": true}})
+ const appointment = await appointmentsCollection.updateOne({userID:name,date:date,timeSlot:time} ,{"$set": {fulfilled:true}})
+ return
+
+}
+
+
+async function updateAppointment(name,doctor){
+  const appointmentsCollection=await appointments()
+  const appointment = await appointmentsCollection.updateOne({userID:name,doctorId:doctor,reviewGiven:false} ,{"$set": {"reviewGiven": true}})
  return
 }
 
@@ -148,5 +157,6 @@ module.exports = {
     updateAppointment,
     rescheduleAppointment,
     rejectStatus,
-    getAppointmentByDoctorID
+    getAppointmentByDoctorID,
+    updateFulfilled
 }

@@ -15,7 +15,7 @@ const authMiddleware = (req, res, next) => {
 
 async function approveReschedule(user,doctor,time,reschedule,date,pastTime){
  
-  let updatedAppointment= await appointmentData.rescheduleAppointment(user,time)
+  let updatedAppointment= await appointmentData.rescheduleAppointment(user,time,pastTime)
   let deleteRequest= await userData.removeRequest(doctor,user,reschedule)
   let removeBlock= await userData.updateBlockedSlot(doctor,pastTime,date,time)
   return 
@@ -45,17 +45,17 @@ router
   .route("/")
   .get(async (req, res) => {
     if (req.session.doctors) return res.redirect("/doctors/home");
-    return res.render("login", { doctor: true, path: "/doctors" });
+    return res.render("login", { doctor: true, path: "/doctors",title: "doctor-login"});
   })
   .post(async (req, res) => {const {username,password}= req.body
     if(!username || !password) {
       res.status(400)
-      res.render('login',{doctor: true, path: "/doctors",error:'Both username and password needs to be provided'})
+      res.render('login',{doctor: true, path: "/doctors",error:'Both username and password needs to be provided',title: "doctor-login"})
       return
     }
     if(username.length<4){
       res.status(400)
-      res.render('login',{doctor: true, path: "/doctors",error:'Username should have atleast 4 characters'})
+      res.render('login',{doctor: true, path: "/doctors",error:'Username should have atleast 4 characters',title: "doctor-login"})
       return
     }
    const docInfo= await userData.checkDoctor(username,password)
@@ -65,7 +65,7 @@ router
     return
    }
    else{
-    res.render('login',{doctor: true, path: "/doctors",error:'Not a valid username and password '})
+    res.render('login',{doctor: true, path: "/doctors",error:'Not a valid username and password ',title: "doctor-login"})
     return
    }
   
@@ -135,7 +135,7 @@ router.post("/signup", async (req, res) => {
 });
 
 router.get("/home", authMiddleware, async (req, res) => {
-  res.render("doctors/doctorhomepage",{docloggedIn:true});
+  res.render("doctors/doctorhomepage",{docloggedIn:true, title:"doctorhomepage"});
 });
 
 router.get("/profile",authMiddleware, async (req, res) => {
@@ -237,7 +237,7 @@ router
     const doctor= await userData.getDoctorByID(req.session.doctors)
     let rescheduleRequests= doctor.rescheduleRequests
     let allRequests= {requestList:rescheduleRequests}
-    return res.render('doctors/reschedule-requests', {requests:allRequests})
+    return res.render('doctors/reschedule-requests', {requests:allRequests,title:"reschedulerequests-doctors"})
   })
   .post(authMiddleware,async (req, res) => {
     const userId= req.body.hidden
@@ -299,9 +299,10 @@ router
 router
   .route("/myAppointments")
   .get(async (req, res) => {
-    const doctorData= await appointmentData.getAppointmentByDoctorID(req.session.doctors)
+    let doctorData= await appointmentData.getAppointmentByDoctorID(req.session.doctors)
+   
     let allDoctors= {data:doctorData}
-    return res.render("doctors/my-appointments", { doctorData: allDoctors ,loggedIn:true});
+    return res.render("doctors/my-appointments", { doctorData: allDoctors ,loggedIn:true,title:"doctors-appointments"});
    
   })
   .post(async (req, res) => {
@@ -317,16 +318,15 @@ router
 
 router
   .route("/reviews")
-  .get(authMiddleware,async (req, res) => {
+  .get(async (req, res) => {
     const doctor= await userData.getDoctorByID(req.session.doctors)
-    return res.render('doctors/doctor-reviews', {reviews:doctor.reviews, loggedIn:true})
+    return res.render('doctors/doctor-reviews', {reviews:doctor.reviews, loggedIn:true , title:"doctors reviews"})
   })
-  .post(authMiddleware,async (req, res) => {
+  .post(async (req, res) => {
     req.session.doctors=xss(req.body.hiddenReview)
     return res.redirect('/doctors/reviews')
  
     
-
 })
 router
 .route('/logout')

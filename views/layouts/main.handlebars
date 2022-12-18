@@ -39,9 +39,9 @@
 {{else}}
  {{#if docloggedIn}}
   <li class="logout">
-                         <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#logout">
-                        <a href="/doctors/logout">Logout</a>
-                        </button>
+                         {{!-- <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#logout"> --}}
+                        <a class="logout-btn" href="/doctors/logout">Logout</a>
+                        {{!-- </button> --}}
                     </li>
 {{else}}
 
