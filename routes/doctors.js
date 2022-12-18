@@ -21,12 +21,12 @@ router
   .post(async (req, res) => {const {username,password}= req.body
     if(!username || !password) {
       res.status(400)
-      res.render('login',{doctor: true, path: "/doctors"},{error:'Both username and password needs to be provided'})
+      res.render('login',{doctor: true, path: "/doctors",error:'Both username and password needs to be provided'})
       return
     }
     if(username.length<4){
       res.status(400)
-      res.render('login',{doctor: true, path: "/doctors"},{error:'Username should have atleast 4 characters'})
+      res.render('login',{doctor: true, path: "/doctors",error:'Username should have atleast 4 characters'})
       return
     }
    const docInfo= await userData.checkDoctor(username,password)
@@ -36,7 +36,7 @@ router
     return
    }
    else{
-    res.render('login',{doctor: true, path: "/doctors"},{error:'Not a valid username and password '})
+    res.render('login',{doctor: true, path: "/doctors",error:'Not a valid username and password '})
     return
    }
   
