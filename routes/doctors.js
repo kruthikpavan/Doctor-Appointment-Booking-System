@@ -251,7 +251,7 @@ router
   .route("/reviews")
   .get(async (req, res) => {
     const doctor= await userData.getDoctorByID(req.session.doctors)
-    return res.render('doctors/doctor-reviews', {reviews:doctor.reviews})
+    return res.render('doctors/doctor-reviews', {reviews:doctor.reviews, loggedIn:true})
   })
   .post(async (req, res) => {
     req.session.doctors=xss(req.body.hiddenReview)
