@@ -32,7 +32,8 @@ const fetchAvailableSlots=async(doctor,date)=>{
       { time: '18' },
       { time: '18.30' },
       { time: '19' },
-      { time: '19:30' }
+      { time: '19:30' },
+     
 
     ],
   };
@@ -44,7 +45,7 @@ const fetchAvailableSlots=async(doctor,date)=>{
         let selectedDate = date.slice(-2);
         if(selectedDate==todayDate){
           //if(parseFloat(slot.time).toFixed(2) > parseFloat(Ntime).toFixed(2))
-          if((Number(slot.time)).round(2)>(Number(Ntime)).round(2))
+          if((parseFloat(slot.time))>parseFloat(Ntime))
           {
             availableSlots.push(obj)
           }
@@ -300,6 +301,7 @@ router
     const appointment = await appointmentData.createAppointment(
       req.session.user,
       doctorId,
+      
       timeSlot,
       req.session.date
     );

@@ -12,6 +12,35 @@ const authMiddleware = (req, res, next) => {
     return res.redirect("/doctors");
   }
 };
+
+async function approveReschedule(user,doctor,time,reschedule,date,pastTime){
+ 
+  let updatedAppointment= await appointmentData.rescheduleAppointment(user,time)
+  let deleteRequest= await userData.removeRequest(doctor,user,reschedule)
+  let removeBlock= await userData.updateBlockedSlot(doctor,pastTime,date,time)
+  return 
+}
+async function rejectReschedule(user,doctor,time,reschedule){
+  let updatedAppointment= await appointmentData.rejectStatus(user)
+  let deleteRequest= await userData.removeRequest(doctor,user,reschedule)
+return
+}
+
+function isToday(year,month,date) {
+  let today = new Date();
+  return (
+    year === today.getFullYear() &&
+    month=== today.getMonth()+1 &&
+    date === today.getDate()
+  );
+}
+function isEarlierTime(hours,mins) {
+  let currentTime = new Date();
+  return (
+    hours > currentTime.getHours() ||
+    (hours === currentTime.getHours() && mins > currentTime.getMinutes())
+  );
+}
 router
   .route("/")
   .get(async (req, res) => {
@@ -40,7 +69,7 @@ router
     return
    }
   
-    
+
   });
 
 router.post("/signup", async (req, res) => {
@@ -212,37 +241,76 @@ router
   })
   .post(async (req, res) => {
     const userId= req.body.hidden
+    const btnValue= req.body.btn
     let reschedule= undefined
     const doctor= await userData.getDoctorByID(req.session.doctors)
     let rescheduleRequests= doctor.rescheduleRequests
     const allAppointments= await appointmentData.getAppointmentByID(userId)
     rescheduleRequests.forEach(req=>{
-      if(req.userID==userId){
+      if(req.user==userId){
         reschedule= req
       }
     })
-    const formattedDate = today.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    });
-    if(reschedule.date==formattedDate){
-      const time = new Date();
-    let formattedTime = time.toLocaleTimeString('en-US', {
-    hour: 'numeric',
-  minute: '2-digit',
-  hour12: false
-});
-  formattedTime.replace(':','.')
-  if(parseFloat(formattedTime).toFixed(2)>parseFloat(reschedule.time).toFixed(2)){
-    //cancel request
-  }
+    let pastTime= reschedule.pastTime
+    let resDate= reschedule.date
+    let time= reschedule.time
+    let resDay=  parseInt(resDate.slice(-2)) 
+    let resYear= parseInt(resDate.substring(0,4))
+    let resMonth= parseInt(resDate.substring(5,7))
+    let resHour= parseInt(time.substring(0,2))
+    let resMins= parseInt(time.substring(-2))
+    let approveAppointment=undefined
+    let rejectAppointment=undefined
 
 
-      
+    if(isToday(resYear,resMonth,resDay)){
+      if(isEarlierTime(resHour,resMins)){
+        if(btnValue=='approve'){
+          let approveAppointment= await approveReschedule(userId,req.session.doctors,time,reschedule,resDate,pastTime)
+          // let updatedAppointment= await appointmentData.rescheduleAppointment(userId,time)
+        return res.redirect('/doctors/home')
+        }
+        else{
+          rejectAppointment= await rejectReschedule(userId,req.session.doctors,time,reschedule)
+          return res.redirect('/doctors/home')
+        }
+      }
+      else{
+        rejectAppointment= await rejectReschedule(userId,req.session.doctors,time,reschedule)
+        return res.redirect('/doctors/home')
+     
+      }
     }
+    approveAppointment=await approveReschedule(userId,req.session.doctors,time,reschedule)
+    return res.redirect('/doctors/home')
+
+    
+   
+
+
+ 
+ 
+
+
+    
 })
 
+//my appointments
+router
+  .route("/myAppointments")
+  .get(async (req, res) => {
+    const doctorData= await appointmentData.getAppointmentByDoctorID(req.session.doctors)
+    let allDoctors= {data:doctorData}
+    return res.render("doctors/my-appointments", { doctorData: allDoctors ,loggedIn:true});
+   
+  })
+  .post(async (req, res) => {
+    req.session.doctors=xss(req.body.hiddenReview)
+    return res.redirect('/doctors/reviews')
+ 
+    
+
+})
 
 
 //reviews
