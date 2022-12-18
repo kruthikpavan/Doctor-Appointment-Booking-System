@@ -432,7 +432,7 @@ router
     // } catch (e) {
     //     res.status(500).json(e);
     // }
-    res.render('review');
+    res.render("review",{ loggedIn:true});
   })
   .post(async (req,res) =>{
     try{

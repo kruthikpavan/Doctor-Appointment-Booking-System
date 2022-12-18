@@ -6,7 +6,7 @@ router.get('/', async (req, res) => {
         res.redirect("/users/home");
         return;
     }else if(req.session.doctors){
-        res.render("doctors/doctorhomepage");
+        res.redirect("/doctors/home");
         return;
     }else{  res.render('home',
     {

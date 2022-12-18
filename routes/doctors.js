@@ -21,12 +21,12 @@ router
   .post(async (req, res) => {const {username,password}= req.body
     if(!username || !password) {
       res.status(400)
-      res.render('login',{error:'Both username and password needs to be provided'})
+      res.render('login',{doctor: true, path: "/doctors",error:'Both username and password needs to be provided'})
       return
     }
     if(username.length<4){
       res.status(400)
-      res.render('login',{error:'Username should have atleast 4 characters'})
+      res.render('login',{doctor: true, path: "/doctors",error:'Username should have atleast 4 characters'})
       return
     }
    const docInfo= await userData.checkDoctor(username,password)
@@ -36,7 +36,7 @@ router
     return
    }
    else{
-    res.render('login',{error:'Not a valid username and password '})
+    res.render('login',{doctor: true, path: "/doctors",error:'Not a valid username and password '})
     return
    }
   
@@ -106,7 +106,7 @@ router.post("/signup", async (req, res) => {
 });
 
 router.get("/home", authMiddleware, async (req, res) => {
-  res.render("doctors/doctorhomepage");
+  res.render("doctors/doctorhomepage",{docloggedIn:true});
 });
 
 router.get("/profile", async (req, res) => {
@@ -121,6 +121,7 @@ router.get("/profile", async (req, res) => {
     layout: "main",
     title: "My Profile",
     userInfo: user,
+    docloggedIn:true
   });
 });
 router.post("/profile", async (req, res) => {
@@ -250,7 +251,7 @@ router
   .route("/reviews")
   .get(async (req, res) => {
     const doctor= await userData.getDoctorByID(req.session.doctors)
-    return res.render('doctors/doctor-reviews', {reviews:doctor.reviews})
+    return res.render('doctors/doctor-reviews', {reviews:doctor.reviews, loggedIn:true})
   })
   .post(async (req, res) => {
     req.session.doctors=xss(req.body.hiddenReview)
@@ -258,6 +259,13 @@ router
  
     
 
+})
+router
+.route('/logout')
+.get(async (req, res) => {
+  req.session.destroy()
+  res.redirect('/')
+  return
 })
 
 module.exports = router;

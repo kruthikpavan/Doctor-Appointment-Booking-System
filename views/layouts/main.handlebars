@@ -37,12 +37,22 @@
                         </button>
                     </li>
 {{else}}
+ {{#if docloggedIn}}
+  <li class="logout">
+                         <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#logout">
+                        <a href="/doctors/logout">Logout</a>
+                        </button>
+                    </li>
+{{else}}
+
  
                     <li class="nav-item">
                         <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#LoginSignup">
                         Login/Sign Up
                         </button>
                     </li>
+{{/if}}
+
 {{/if}}
                     
                    
