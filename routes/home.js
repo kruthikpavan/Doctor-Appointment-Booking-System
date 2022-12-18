@@ -12,11 +12,6 @@ router.get('/', async (req, res) => {
     {
         title: 'Doctor Appointment Booking',
     });}
-    
-    res.render('home',
-        {
-            title: 'Doctor Appointment Booking',
-        });
 });
 
 module.exports = router;
