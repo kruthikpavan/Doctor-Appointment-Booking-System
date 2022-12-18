@@ -24,10 +24,8 @@ const fetchAvailableSlots=async(doctor,date)=>{
       { time: '10.45' },
       { time: '10.50' },
       { time: '10.55' },
-
       { time: '11' },
       { time: '11.05' },
-
       { time: '11.30' },
       { time: '12' },
       { time: '12.30' },
@@ -35,7 +33,9 @@ const fetchAvailableSlots=async(doctor,date)=>{
       { time: '13.21' },
       { time: '13.30' },
       { time: '16' },
-      { time: '16.30' },
+      { time: '16.45' },
+      { time: '16.50' },
+      { time: '16.55' },
       { time: '17' },
       { time: '17.30' },
       { time: '18' },
@@ -502,7 +502,9 @@ router
       // doctorID = reviewData.doctorID;
       // userID = reviewData.userID;
       review = req.body['review-form'].trim();
-      console.log(review);
+       if(/[\/#$%\^&\*;:{}=\-_`~()]/g.test(review)){
+        return res.render('review', {error: "The review is gibberish or has spelling mistake. Please try again. Don't include any unnecessary symbols in your review"});
+       }
 
       if(review == null || review == '')
       {
@@ -529,7 +531,7 @@ router
   try {
       const newReview = await reviewData.createReview(review,doctorID);
       if(newReview['status'] == false){
-        return res.render('review', {error: "The review is gibberish or has spelling mistake. Please try again."});
+        return res.render('review', {error: "The review is gibberish or has spelling mistake. Please try again. Don't include any unnecessary symbols in your review"});
       }
       const changeKey= await appointmentData.updateAppointment(req.session.user,doctorID)
       //if (!newReview.acknowledged) throw "Could not add review";
