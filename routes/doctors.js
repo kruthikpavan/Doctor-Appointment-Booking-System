@@ -138,7 +138,7 @@ router.get("/home", authMiddleware, async (req, res) => {
   res.render("doctors/doctorhomepage",{docloggedIn:true});
 });
 
-router.get("/profile", async (req, res) => {
+router.get("/profile",authMiddleware, async (req, res) => {
   if (!req.session.doctors) {
     return res.redirect("/doctors");
   }
@@ -153,7 +153,7 @@ router.get("/profile", async (req, res) => {
     docloggedIn:true
   });
 });
-router.post("/profile", async (req, res) => {
+router.post("/profile",authMiddleware, async (req, res) => {
   let errors = [];
 
   let userInfo = {
@@ -233,13 +233,13 @@ router.post("/profile", async (req, res) => {
 
 router
   .route("/rescheduleRequest")
-  .get(async (req, res) => {
+  .get(authMiddleware,async (req, res) => {
     const doctor= await userData.getDoctorByID(req.session.doctors)
     let rescheduleRequests= doctor.rescheduleRequests
     let allRequests= {requestList:rescheduleRequests}
     return res.render('doctors/reschedule-requests', {requests:allRequests})
   })
-  .post(async (req, res) => {
+  .post(authMiddleware,async (req, res) => {
     const userId= req.body.hidden
     const btnValue= req.body.btn
     let reschedule= undefined
@@ -317,11 +317,11 @@ router
 
 router
   .route("/reviews")
-  .get(async (req, res) => {
+  .get(authMiddleware,async (req, res) => {
     const doctor= await userData.getDoctorByID(req.session.doctors)
     return res.render('doctors/doctor-reviews', {reviews:doctor.reviews, loggedIn:true})
   })
-  .post(async (req, res) => {
+  .post(authMiddleware,async (req, res) => {
     req.session.doctors=xss(req.body.hiddenReview)
     return res.redirect('/doctors/reviews')
  

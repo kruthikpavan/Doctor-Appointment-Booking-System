@@ -139,7 +139,7 @@ const doctor5 = await doctors.createDoctor(
                         );
                         const doctor7 = await doctors.createDoctor(
                             "doremon",
-                            "Physician",
+                            "dentist",
                             "MBBS,MD",
                             "1111",
                             "12/10/88",
@@ -150,7 +150,7 @@ const doctor5 = await doctors.createDoctor(
                             );
                             const doctor8 = await doctors.createDoctor(
                                 "ironman",
-                                "Physician",
+                                "dentist",
                                 "MBBS,MD",
                                 "1111",
                                 "02/10/88",
@@ -172,7 +172,7 @@ const doctor5 = await doctors.createDoctor(
                                     );
                                     const doctor10 = await doctors.createDoctor(
                                         "CaptainMarvel",
-                                        "Physician",
+                                        "Dentist",
                                         "MBBS",
                                         "1111",
                                         "14/06/95",

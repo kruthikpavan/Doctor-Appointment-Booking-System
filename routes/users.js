@@ -194,7 +194,7 @@ router.post("/signup", async (req, res) => {
 
 router
   .route("/book-appointment",authMiddleware)
-  .get(async (req, res) => {
+  .get(authMiddleware,async (req, res) => {
     
     let date = new Date();
     console.log(req.session);
@@ -218,7 +218,7 @@ router
       loggedIn:true
     });
   })
-  .post(async (req, res) => {
+  .post(authMiddleware,async (req, res) => {
     console.log(req.session);
     if(!req.session.doctors){
       req.session.doctors= req.body.hidden
@@ -268,7 +268,7 @@ router
 
 router
   .route("/select-slot",authMiddleware)
-  .get(async (req, res) => {
+  .get(authMiddleware,async (req, res) => {
     return res.redirect("/users/book-appointment");
   })
   .post(async (req, res) => {
@@ -311,7 +311,7 @@ router
   });
 router
   .route("/my-appointments",authMiddleware)
-  .get(async (req, res) => {
+  .get(authMiddleware,async (req, res) => {
     //appointment data need to be fetched from the database and displayed to the user
     const appointmentInfo = await appointmentData.getAppointmentByID(
       req.session.user
@@ -422,7 +422,7 @@ router.post("/profile",authMiddleware, async (req, res) => {
 router
   .route("/review")
   //needs enew handlebar wthout date
-  .get(async (req, res) => {
+  .get(authMiddleware,async (req, res) => {
 
    // let reviewDetails = req.body;
     // try {
@@ -436,7 +436,7 @@ router
     // }
     res.render("review",{ loggedIn:true});
   })
-  .post(async (req,res) =>{
+  .post(authMiddleware,async (req,res) =>{
     try{
       let doctorId = undefined
       if(req.body.hidden){
@@ -488,7 +488,7 @@ router
 router
   .route("/reschedule")
   //needs enew handlebar wthout date
-  .get(async (req, res) => {
+  .get(authMiddleware,async (req, res) => {
 
     const appointments= await appointmentData.getAppointmentByID(req.session.user)
     let date= undefined
@@ -518,7 +518,7 @@ router
       availableSlots: allAvailableSlots, doctor: doctor,loggedIn:true
     });
   })
-  .post(async (req,res) =>{
+  .post(authMiddleware,async (req,res) =>{
     //to-do
     //if req.body is empty redirect to /select-slot page with error . User has to select atleast one slot
     const appointments= await appointmentData.getAppointmentByID(req.session.user)
