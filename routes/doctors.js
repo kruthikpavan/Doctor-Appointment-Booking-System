@@ -295,6 +295,22 @@ router
     
 })
 
+//my appointments
+router
+  .route("/myAppointments")
+  .get(async (req, res) => {
+    const doctorData= await appointmentData.getAppointmentByDoctorID(req.session.doctors)
+    let allDoctors= {data:doctorData}
+    return res.render("doctors/my-appointments", { doctorData: allDoctors ,loggedIn:true});
+   
+  })
+  .post(async (req, res) => {
+    req.session.doctors=xss(req.body.hiddenReview)
+    return res.redirect('/doctors/reviews')
+ 
+    
+
+})
 
 
 //reviews

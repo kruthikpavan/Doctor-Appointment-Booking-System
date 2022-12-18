@@ -61,6 +61,17 @@ async function getAppointmentByID(id){
     }
     return null
 }
+
+async function getAppointmentByDoctorID(id){
+  if(!id) throw 'Appointment ID is invalid';
+  const appointmentsCollection=await appointments()
+  const appointment = await appointmentsCollection.find({doctorId:id}).toArray()
+  if(appointment){
+      return appointment
+  }
+  return null
+}
+
 async function removeAppointment(id){
     const appointmentsCollection=await appointments()
     const appointmentInfo = await appointmentsCollection.findOne({userID:id,status:'pending'})
@@ -136,5 +147,6 @@ module.exports = {
     reqrescheduleAppointment,
     updateAppointment,
     rescheduleAppointment,
-    rejectStatus
+    rejectStatus,
+    getAppointmentByDoctorID
 }
