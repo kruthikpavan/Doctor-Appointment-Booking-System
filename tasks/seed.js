@@ -73,9 +73,9 @@ const doctor1 = await doctors.createDoctor(
     "1111",
     "12/12/88",
     "Male",
-    "Kenneth@yahoo.com",
+    "user@gmail.com",
     "9876564443",
-    "sdjfbwefj@1Rywb"
+    "Test@123"
     );
 
 const doctor5 = await doctors.createDoctor(
