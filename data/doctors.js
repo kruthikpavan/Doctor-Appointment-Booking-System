@@ -4,7 +4,18 @@ const helpers = require("../helpers");
 const bcrypt = require("bcryptjs");
 const saltRounds = 16;
 const { ObjectID } = require("bson");
+async function removeRequest(doctor,user,reschedule)
+{
+  const doctorCollection = await doctors();
+  const update= await doctorCollection.update(
+    { name: doctor },  // Filter for the document to update
+    { $pull: { rescheduleRequests: reschedule } }   // Use the $pull operator to remove the element
+  );
+  return 
 
+
+
+}
 async function getAllDoctorDetails(){
   const doctorCollection = await doctors();
   docDetails =  await doctorCollection.find({}).toArray();
@@ -170,12 +181,33 @@ const checkDoctor = async (username, password) => {
     return null
   
  };
+async function updateBlockedSlot(doctor,pastTime,date,time){
+  let removeSlot={date,pastTime}
+  let addSlot= {date,time}
+  const doctorCollection = await doctors();
+  const doctorData= await doctorCollection.findOne({name:doctor})
+  let updatedBlockedSlots=[]
+  updatedBlockedSlots.push({date,time})
+    if(doctorData.blockedSlots.length>0){
+      for(const key of doctorData.blockedSlots){
+        if(key.date===date && key.time===pastTime){
+         continue
+        }
+        updatedBlockedSlots.push(key)  
+      }
+    }
+      const restoreSlot=await  doctorCollection.update({'name': doctor}, {"$set": {"blockedSlots": updatedBlockedSlots}})
 
+  return 
+
+
+
+}
  async function blockAppointment(name,date,time){
   const doctorCollection = await doctors();
   // await doctorCollection.update({'name': name}, {"$set": {"blockedSlots": []}})
  
-  const appointmentBlock= doctorCollection.update({name:name},{
+  const appointmentBlock= await doctorCollection.update({name:name},{
     $push: {
       blockedSlots: {date,time}
   }
@@ -246,5 +278,7 @@ module.exports = {
   getAllDoctorDetails,
   updateDoctor,
   addRescheduleRequest,
-  getDoctorByName
+  getDoctorByName,
+  removeRequest,
+  updateBlockedSlot
 };

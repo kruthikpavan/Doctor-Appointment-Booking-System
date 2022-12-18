@@ -16,7 +16,7 @@ async function createAppointment(userID,doctorId,timeSlot,date){
     const status= 'pending'
     const requestReschedule= false
     const reviewGiven= false
-    const rescheduleDone= false
+    const rescheduleDone= 'pending'
     const newAppointment=  {    
         userID,
         doctorId,
@@ -31,6 +31,27 @@ async function createAppointment(userID,doctorId,timeSlot,date){
     const createdAppointment = await appointmentsCollection.insertOne(newAppointment);
     return {appointmentInserted: true}
 }
+
+
+async function rejectStatus(user){
+  const appointmentsCollection=await appointments()
+  const appointment = await appointmentsCollection.updateOne({userID:user} ,{"$set": {rescheduleDone: 'rejected'}})
+  return 
+
+
+}
+
+async function rescheduleAppointment(user,newTime){
+
+  const appointmentsCollection=await appointments()
+  const appointment = await appointmentsCollection.updateOne({userID:user} ,{"$set": {rescheduleDone: 'approved',timeSlot:newTime}})
+  return true
+
+
+}
+
+
+
 async function getAppointmentByID(id){
     if(!id) throw 'Appointment ID is invalid';
     const appointmentsCollection=await appointments()
@@ -113,5 +134,7 @@ module.exports = {
     getAppointmentByUser,
     checkStatus,
     reqrescheduleAppointment,
-    updateAppointment
+    updateAppointment,
+    rescheduleAppointment,
+    rejectStatus
 }
