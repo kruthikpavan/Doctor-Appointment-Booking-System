@@ -1,10 +1,15 @@
   {{#each requests.requestList}}
-  
+
 <form action="/doctors/rescheduleRequest" method="POST">
+<div class="review-card">
 <h2>{{this.user}}</h2>
+<h2>{{this.time}}</h2>
 <input type="hidden" name="hidden" value={{this.user}}>
 <h2>{{this.date}}</h2>
 <button type="submit" name="btn" value="approve"> Click here to approve</button>
 <button type="submit" name="btn" value="reject"> Click here to Reject</button>
+
+</div>
+
 </form>
   {{/each}}

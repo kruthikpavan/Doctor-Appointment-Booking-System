@@ -13,10 +13,12 @@ const fetchAvailableSlots=async(doctor,date)=>{
   let d = new Date();
   let h = d.getHours();
   let min = d.getMinutes();
-  let Ntime = h+2;
+  let Ntime = h;
   let availableSlots=[]
   let AllSlots = {
     slots: [
+    
+      { time: '4.17' },
       { time: '10' },
       { time: '10.30' },
       { time: '11' },
@@ -329,6 +331,23 @@ router
     if (!appointmentInfo) {
       return res.send("You dont have any appointments right now!");
     }
+    const currentTime = new Date();
+    const currentHour = currentTime.getHours();
+    const currentMinute = currentTime.getMinutes();
+    let timeNow= `${currentHour}.${currentMinute}`
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth()+1;
+    const currentDay = currentDate.getDate();
+    let dateNow= `${currentYear}-${currentMonth}-${currentDay}`
+    appointmentInfo.forEach(doc=>{
+          if(dateNow==doc.date){
+            if(parseFloat(timeNow)>parseFloat(doc.timeSlot)){
+              doc.fulfilled=true
+            }
+          }
+    })
+    const updateAppointment= await appointmentData.updateFulfilled(req.session.user)
 
     res.render("users/my-appointments", { appointments: appointmentInfo ,loggedIn:true,title:"users-my-appointments"});
   })
@@ -505,7 +524,7 @@ router
     let doctor= undefined
     if(appointments.length>0){
       appointments.forEach(appointment=>{
-        if(appointment.status=='pending'){
+        if(appointment.fulfilled==false){
             date= appointment.date
             doctor= appointment.doctorId
         }
@@ -539,7 +558,7 @@ router
     let pastTime= undefined
     if(appointments.length>0){
       appointments.forEach(appointment=>{
-        if(appointment.status=='pending'){
+        if(appointment.fulfilled==false){
             date= appointment.date
             doctor= appointment.doctorId
             pastTime= appointment.timeSlot

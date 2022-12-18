@@ -299,7 +299,8 @@ router
 router
   .route("/myAppointments")
   .get(async (req, res) => {
-    const doctorData= await appointmentData.getAppointmentByDoctorID(req.session.doctors)
+    let doctorData= await appointmentData.getAppointmentByDoctorID(req.session.doctors)
+   
     let allDoctors= {data:doctorData}
     return res.render("doctors/my-appointments", { doctorData: allDoctors ,loggedIn:true,title:"doctors-appointments"});
    
@@ -317,16 +318,15 @@ router
 
 router
   .route("/reviews")
-  .get(authMiddleware,async (req, res) => {
+  .get(async (req, res) => {
     const doctor= await userData.getDoctorByID(req.session.doctors)
     return res.render('doctors/doctor-reviews', {reviews:doctor.reviews, loggedIn:true , title:"doctors reviews"})
   })
-  .post(authMiddleware,async (req, res) => {
+  .post(async (req, res) => {
     req.session.doctors=xss(req.body.hiddenReview)
     return res.redirect('/doctors/reviews')
  
     
-
 })
 router
 .route('/logout')

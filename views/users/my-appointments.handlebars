@@ -1,24 +1,55 @@
 <div>
     <b>Hey user! You have these appointments scheduled</b>
 </div>
-
 {{#each appointments}}
-
 <form method="POST" action="/users/my-appointments">
+<div class="review-card">
+
 <div>
 <h3>You have an appointment at</h3> <h2>{{this.timeSlot}}</h2> <h3>on</h3> <h2>{{this.date}}</h2> <h3>with</h3> <h2>{{this.doctorId}}</h2>
 </div>
-    <div>
+   {{#unless this.requestReschedule}}
+
+ {{#unless this.fulfilled}}
+
+     <div>
    <button type="submit">Cancel this appointment </button> 
 </div>
+{{else}}
+
+{{/unless}}
+
+{{else}}
+
+{{/unless}}
+  
 </form>
 <form action="/users/review" method="POST">
 <input type="hidden" name="hidden" value={{this.doctorId}}>
+
+  {{#if this.fulfilled}}
+   
+ {{#unless this.reviewGiven}}
    <button type="submit"> Give a review</button>
+{{else}}
+{{/unless}}
+
+{{else}}
+
+{{/if}}
+
+</div>
+
 </form>
 <div>
-    <a href="/users/reschedule">Request for a reschedule</a>
+{{#unless this.fulfilled}}
+     <a href="/users/reschedule">Request for a reschedule</a>
+{{else}}
+
+{{/unless}}
+
+
+  
 </div>
- 
 {{/each}}
 
