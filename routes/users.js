@@ -78,7 +78,7 @@ router
   .route("/login")
   .get(async (req, res) => {
     if (req.session.user) return res.redirect("/users/home");
-    return res.render("login", { doctor: false, path: "/users/login" });
+    return res.render("login", { doctor: false, path: "/users/login", title: "userlogin" });
   })
   .post(async (req, res) => {
     const { username, password } = req.body;
@@ -87,6 +87,7 @@ router
       res.render("login", {
         doctor: false, path: "/users/login",
         error: "Both username and password needs to be provided",
+        title:"userlogin"
       });
       return;
     }
@@ -97,6 +98,7 @@ router
         doctor: false, path: "/users/login",
         error:
           "Only alpha numeric characters should be provided as username.No other characters or empty spaces are allowed",
+          title:"userlogin"
       });
       return;
     }
@@ -105,6 +107,7 @@ router
       res.render("login", {
         doctor: false, path: "/users/login",
         error: "Username should have atleast 4 characters",
+        title:"userlogin"
       });
       return;
     }
@@ -116,7 +119,7 @@ router
     } else {
       res.render("login", {
         doctor: false, path: "/users/login",
-         error: "Not a valid username and password " });
+         error: "Not a valid username and password ", title:"userlogin" });
       return;
     }
   });
@@ -124,7 +127,7 @@ router.get("/home",authMiddleware,async (req, res) => {
   if(req.session.doctors){
     delete req.session.doctors;
   }
-  res.render("users/userhomepage",{loggedIn:true});
+  res.render("users/userhomepage",{loggedIn:true,title:"userhomepage"});
 });
 
 router.get("/signup", async (req, res) => {
@@ -215,7 +218,8 @@ router
     res.render("users/book-appointment", {
       today: currentDate,
       lastDate: lastDate,
-      loggedIn:true
+      loggedIn:true,
+      title:"user-bookappointment"
     });
   })
   .post(authMiddleware,async (req, res) => {
@@ -239,7 +243,8 @@ router
         error:'You already have an existing slot.',
         today: req.session.today,
       lastDate: req.session.lastDate,
-      loggedIn:true
+      loggedIn:true,
+      title:"user-bookappointment"
       });
     }
     //to-do
@@ -254,13 +259,16 @@ router
         error:'No more slots available for today.',
         today: req.session.today,
       lastDate: req.session.lastDate,
-      loggedIn:true
+      loggedIn:true,
+      title:"user-bookappointment"
+
       });
     }
 
     let allAvailableSlots= {slots:availableSlots}
     return res.render("users/select-slot", {
-      availableSlots: allAvailableSlots, doctor: req.session.doctors,loggedIn:true
+      availableSlots: allAvailableSlots, doctor: req.session.doctors,loggedIn:true,
+      title:"user-select-slots"
     });
   
    
@@ -280,14 +288,16 @@ router
       return res.render("users/select-slot", {
         error: "You need to select atleast one slot to complete the booking",
         availableSlots: req.session.availableSlots,
-        loggedIn:true
+        loggedIn:true,
+        title:"users-select-slot"
       });
     }
     if (Object.keys(req.body).length > 1) {
       return res.render("users/select-slot", {
         error:
           "You cant select multiple slots. Please select only one available slot",
-        availableSlots: req.session.availableSlots,loggedIn:true
+        availableSlots: req.session.availableSlots,loggedIn:true,
+        title:"users-select-slot"
       });
     }
     let timeSlot = undefined;
@@ -320,7 +330,7 @@ router
       return res.send("You dont have any appointments right now!");
     }
 
-    res.render("users/my-appointments", { appointments: appointmentInfo ,loggedIn:true});
+    res.render("users/my-appointments", { appointments: appointmentInfo ,loggedIn:true,title:"users-my-appointments"});
   })
   .post(async (req, res) => {
     //to-do
@@ -434,7 +444,7 @@ router
     // } catch (e) {
     //     res.status(500).json(e);
     // }
-    res.render("review",{ loggedIn:true});
+    res.render("review",{ loggedIn:true,title:"review"});
   })
   .post(authMiddleware,async (req,res) =>{
     try{
@@ -508,14 +518,16 @@ router
         error:'No more slots available for today.',
         today: req.session.today,
       lastDate: req.session.lastDate,
-      loggedIn:true
+      loggedIn:true,
+      title:"recheduleslots"
       });
     }
 
     let allAvailableSlots= {slots:availableSlots}
     return res.render("users/rescheduleslots", {
       
-      availableSlots: allAvailableSlots, doctor: doctor,loggedIn:true
+      availableSlots: allAvailableSlots, doctor: doctor,loggedIn:true,
+      title:"reschedulesots"
     });
   })
   .post(authMiddleware,async (req,res) =>{
@@ -540,7 +552,7 @@ router
     if(Object.keys(req.body).length === 0){
       return res.render("users/rescheduleslots",{
         error: "No option was selected in Reschedule",
-        availableSlots: allAvailableSlots,
+        availableSlots: allAvailableSlots,title:"reschedulesots"
       });
     }
     if(Object.keys(req.body).length > 1)
@@ -549,7 +561,7 @@ router
       {
         error:
         "You cant select multiple slots. Please select only one available slot",
-      availableSlots: allAvailableSlots,
+      availableSlots: allAvailableSlots,title:"reschedulesots"
       })
     }
 
@@ -566,7 +578,7 @@ router
       let error='You already requested for a reschedule please wait for the doctor to review it'
       return res.render("users/rescheduleslots", {
       
-        error:error, doctor: doctor,loggedIn:true
+        error:error, doctor: doctor,loggedIn:true,title:"reschedulesots"
       });
     }
 
