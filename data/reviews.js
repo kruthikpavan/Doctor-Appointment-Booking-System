@@ -5,6 +5,7 @@ const helpers = require("../helpers");
 const validator = require('../validation');
 const doctors= mongoCollections.doctors
 const spell = require('spell-checker-js')
+const appointments= mongoCollections.appointments
 
 
 
@@ -35,7 +36,7 @@ async function createReview(reviewContent,doctorID){
         let reviewsArray = doctorData['reviews'];
         let newReview = {
 
-            doctor_id: doctorData['email'],
+            doctor_id: doctorID,
             date: date.toDateString(),
             time: date.getHours(),
             review: reviewContent,
@@ -46,7 +47,7 @@ async function createReview(reviewContent,doctorID){
 
         insertedReview= await doctorCollection.updateOne({'name':doctorID}, {"$set": {"reviews": reviewsArray}})
 
-            const insertedReviewtoDB = await reviewCollection.insertOne(newReview); //  need to check this
+
             if(!insertedReview.insertedId) throw 'Review could not be added';
 
             //const review = await getReviewById(insertedReview.insertedId)
@@ -195,7 +196,7 @@ async function Analyser(reviewData)
         final_Review['analysis']  = analyzer.getSentiment(filteredReview);
 
         if (final_Review['analysis'] < 0) {
-            final_Review['imgSource'] = '😒';
+            final_Review['imgSource'] = 'https://img.icons8.com/color/96/000000/angry.png';
             final_Review['color'] = 'red';
             };
             if (final_Review['analysis'] === 0) {

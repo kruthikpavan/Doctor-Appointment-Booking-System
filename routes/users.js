@@ -32,7 +32,8 @@ const fetchAvailableSlots=async(doctor,date)=>{
       { time: '18' },
       { time: '18.30' },
       { time: '19' },
-      { time: '19:30' }
+      { time: '19:30' },
+     
 
     ],
   };
@@ -43,7 +44,8 @@ const fetchAvailableSlots=async(doctor,date)=>{
       let todayDate= new Date().getDate()
         let selectedDate = date.slice(-2);
         if(selectedDate==todayDate){
-          if(parseFloat(slot.time).toFixed(2) > parseFloat(Ntime).toFixed(2))
+          //if(parseFloat(slot.time).toFixed(2) > parseFloat(Ntime).toFixed(2))
+          if((parseFloat(slot.time))>parseFloat(Ntime))
           {
             availableSlots.push(obj)
           }
@@ -57,7 +59,10 @@ const fetchAvailableSlots=async(doctor,date)=>{
   return availableSlots;
 }
 
-
+Number.prototype.round = function(p) {
+  p = p || 10;
+  return parseFloat( this.toFixed(p) );
+};
 
 const authMiddleware = (req, res, next) => {
   if (req.session.user) {
@@ -152,6 +157,10 @@ router.post("/signup", async (req, res) => {
   if (!validator.validEmail(newUser.email)) errors.push("Invalid email.");
   if (!validator.validDate(newUser.dateOfBirth))
     errors.push("Invalid Date of Birth.");
+    if (!validator.validPhoneNumber(newUser.phoneNumber))
+    errors.push("Invalid phone");
+    
+   
 
   if (errors.length > 0) {
     console.log(errors);
@@ -185,7 +194,7 @@ router.post("/signup", async (req, res) => {
 
 router
   .route("/book-appointment",authMiddleware)
-  .get(async (req, res) => {
+  .get(authMiddleware,async (req, res) => {
     
     let date = new Date();
     console.log(req.session);
@@ -209,7 +218,7 @@ router
       loggedIn:true
     });
   })
-  .post(async (req, res) => {
+  .post(authMiddleware,async (req, res) => {
     console.log(req.session);
     if(!req.session.doctors){
       req.session.doctors= req.body.hidden
@@ -259,7 +268,7 @@ router
 
 router
   .route("/select-slot",authMiddleware)
-  .get(async (req, res) => {
+  .get(authMiddleware,async (req, res) => {
     return res.redirect("/users/book-appointment");
   })
   .post(async (req, res) => {
@@ -292,6 +301,7 @@ router
     const appointment = await appointmentData.createAppointment(
       req.session.user,
       doctorId,
+      
       timeSlot,
       req.session.date
     );
@@ -301,7 +311,7 @@ router
   });
 router
   .route("/my-appointments",authMiddleware)
-  .get(async (req, res) => {
+  .get(authMiddleware,async (req, res) => {
     //appointment data need to be fetched from the database and displayed to the user
     const appointmentInfo = await appointmentData.getAppointmentByID(
       req.session.user
@@ -323,7 +333,7 @@ router.get("/profile", authMiddleware,async (req, res) => {
   if (!req.session.user) {
     return res.redirect("login");
   }
-  let user = await userData.getUserByUn(req.session.user);
+  let user = await userData.getUserByUn(req.session.user.toLowerCase());
 
   if (user === null) {
     return res.render("error/404");
@@ -412,7 +422,7 @@ router.post("/profile",authMiddleware, async (req, res) => {
 router
   .route("/review")
   //needs enew handlebar wthout date
-  .get(async (req, res) => {
+  .get(authMiddleware,async (req, res) => {
 
    // let reviewDetails = req.body;
     // try {
@@ -424,9 +434,9 @@ router
     // } catch (e) {
     //     res.status(500).json(e);
     // }
-    res.render('review');
+    res.render("review",{ loggedIn:true});
   })
-  .post(async (req,res) =>{
+  .post(authMiddleware,async (req,res) =>{
     try{
       let doctorId = undefined
       if(req.body.hidden){
@@ -465,6 +475,7 @@ router
 
   try {
       const newReview = await reviewData.createReview(review,doctorID);
+      const changeKey= await appointmentData.updateAppointment(req.session.user)
       //if (!newReview.acknowledged) throw "Could not add review";
       res.status(200).redirect("/users/home");
       } catch (e) {
@@ -477,7 +488,7 @@ router
 router
   .route("/reschedule")
   //needs enew handlebar wthout date
-  .get(async (req, res) => {
+  .get(authMiddleware,async (req, res) => {
 
     const appointments= await appointmentData.getAppointmentByID(req.session.user)
     let date= undefined
@@ -491,13 +502,23 @@ router
       })
     }
     let availableSlots= await fetchAvailableSlots(doctor,date)
+    
+    if(availableSlots.length == 0) {
+      return res.render("users/rescheduleslots", {
+        error:'No more slots available for today.',
+        today: req.session.today,
+      lastDate: req.session.lastDate,
+      loggedIn:true
+      });
+    }
+
     let allAvailableSlots= {slots:availableSlots}
     return res.render("users/rescheduleslots", {
       
       availableSlots: allAvailableSlots, doctor: doctor,loggedIn:true
     });
   })
-  .post(async (req,res) =>{
+  .post(authMiddleware,async (req,res) =>{
     //to-do
     //if req.body is empty redirect to /select-slot page with error . User has to select atleast one slot
     const appointments= await appointmentData.getAppointmentByID(req.session.user)

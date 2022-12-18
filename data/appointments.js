@@ -15,18 +15,43 @@ const validator = require('../validation');
 async function createAppointment(userID,doctorId,timeSlot,date){
     const status= 'pending'
     const requestReschedule= false
+    const reviewGiven= false
+    const rescheduleDone= 'pending'
     const newAppointment=  {    
         userID,
         doctorId,
         timeSlot,
         date,
         status,
-        requestReschedule
+        requestReschedule,
+        reviewGiven,
+        rescheduleDone
     }
     const appointmentsCollection=await  appointments()
     const createdAppointment = await appointmentsCollection.insertOne(newAppointment);
     return {appointmentInserted: true}
 }
+
+
+async function rejectStatus(user){
+  const appointmentsCollection=await appointments()
+  const appointment = await appointmentsCollection.updateOne({userID:user} ,{"$set": {rescheduleDone: 'rejected'}})
+  return 
+
+
+}
+
+async function rescheduleAppointment(user,newTime){
+
+  const appointmentsCollection=await appointments()
+  const appointment = await appointmentsCollection.updateOne({userID:user} ,{"$set": {rescheduleDone: 'approved',timeSlot:newTime}})
+  return true
+
+
+}
+
+
+
 async function getAppointmentByID(id){
     if(!id) throw 'Appointment ID is invalid';
     const appointmentsCollection=await appointments()
@@ -36,6 +61,17 @@ async function getAppointmentByID(id){
     }
     return null
 }
+
+async function getAppointmentByDoctorID(id){
+  if(!id) throw 'Appointment ID is invalid';
+  const appointmentsCollection=await appointments()
+  const appointment = await appointmentsCollection.find({doctorId:id}).toArray()
+  if(appointment){
+      return appointment
+  }
+  return null
+}
+
 async function removeAppointment(id){
     const appointmentsCollection=await appointments()
     const appointmentInfo = await appointmentsCollection.findOne({userID:id,status:'pending'})
@@ -75,8 +111,11 @@ async function checkStatus(id){
     return false
 }
 
-async function updateAppointment(){
+async function updateAppointment(name){
 
+  const appointmentsCollection=await appointments()
+  const appointment = await appointmentsCollection.updateOne({userID:name} ,{"$set": {"reviewGiven": true}})
+ return
 }
 
 async function reqrescheduleAppointment(userId,doctorId)
@@ -106,5 +145,8 @@ module.exports = {
     getAppointmentByUser,
     checkStatus,
     reqrescheduleAppointment,
-    updateAppointment
+    updateAppointment,
+    rescheduleAppointment,
+    rejectStatus,
+    getAppointmentByDoctorID
 }

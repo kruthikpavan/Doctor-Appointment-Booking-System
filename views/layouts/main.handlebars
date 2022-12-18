@@ -31,18 +31,28 @@
             </div>
              <ul class="navbar-nav mr-auto float-right">
               {{#if loggedIn}}
+                    <li class="logout">
+                         {{!-- <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#logout"> --}}
+                        <a class="logout-btn" href="/users/logout">Logout</a>
+                        {{!-- </button> --}}
+                    </li>
+{{else}}
+ {{#if docloggedIn}}
   <li class="logout">
                          <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#logout">
-                        <a href="/users/logout">Logout</a>
+                        <a href="/doctors/logout">Logout</a>
                         </button>
                     </li>
 {{else}}
+
  
                     <li class="nav-item">
                         <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#LoginSignup">
                         Login/Sign Up
                         </button>
                     </li>
+{{/if}}
+
 {{/if}}
                     
                    
@@ -67,7 +77,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Login/SignUp</h5>
+        <h2 class="modal-title">Login/SignUp</h2>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>

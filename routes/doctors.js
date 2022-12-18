@@ -4,6 +4,7 @@ const data = require("../data");
 const validator = require("../validation");
 const router = express.Router();
 const userData = data.doctors;
+const appointmentData= data.appointments
 const authMiddleware = (req, res, next) => {
   if (req.session.doctors) {
     next();
@@ -11,6 +12,35 @@ const authMiddleware = (req, res, next) => {
     return res.redirect("/doctors");
   }
 };
+
+async function approveReschedule(user,doctor,time,reschedule,date,pastTime){
+ 
+  let updatedAppointment= await appointmentData.rescheduleAppointment(user,time)
+  let deleteRequest= await userData.removeRequest(doctor,user,reschedule)
+  let removeBlock= await userData.updateBlockedSlot(doctor,pastTime,date,time)
+  return 
+}
+async function rejectReschedule(user,doctor,time,reschedule){
+  let updatedAppointment= await appointmentData.rejectStatus(user)
+  let deleteRequest= await userData.removeRequest(doctor,user,reschedule)
+return
+}
+
+function isToday(year,month,date) {
+  let today = new Date();
+  return (
+    year === today.getFullYear() &&
+    month=== today.getMonth()+1 &&
+    date === today.getDate()
+  );
+}
+function isEarlierTime(hours,mins) {
+  let currentTime = new Date();
+  return (
+    hours > currentTime.getHours() ||
+    (hours === currentTime.getHours() && mins > currentTime.getMinutes())
+  );
+}
 router
   .route("/")
   .get(async (req, res) => {
@@ -20,26 +50,26 @@ router
   .post(async (req, res) => {const {username,password}= req.body
     if(!username || !password) {
       res.status(400)
-      res.render('login',{error:'Both username and password needs to be provided'})
+      res.render('login',{doctor: true, path: "/doctors",error:'Both username and password needs to be provided'})
       return
     }
     if(username.length<4){
       res.status(400)
-      res.render('login',{error:'Username should have atleast 4 characters'})
+      res.render('login',{doctor: true, path: "/doctors",error:'Username should have atleast 4 characters'})
       return
     }
    const docInfo= await userData.checkDoctor(username,password)
    if(docInfo){
-    req.session.doctors=docInfo;
+    req.session.doctors=docInfo.name;
     res.redirect('/doctors/home')
     return
    }
    else{
-    res.render('login',{error:'Not a valid username and password '})
+    res.render('login',{doctor: true, path: "/doctors",error:'Not a valid username and password '})
     return
    }
   
-    
+
   });
 
 router.post("/signup", async (req, res) => {
@@ -105,14 +135,14 @@ router.post("/signup", async (req, res) => {
 });
 
 router.get("/home", authMiddleware, async (req, res) => {
-  res.render("doctors/doctorhomepage");
+  res.render("doctors/doctorhomepage",{docloggedIn:true});
 });
 
-router.get("/profile", async (req, res) => {
+router.get("/profile",authMiddleware, async (req, res) => {
   if (!req.session.doctors) {
     return res.redirect("/doctors");
   }
-  let user = await userData.getDoctorByID(req.session.doctors._id);
+  let user = await userData.getDoctorByName(req.session.doctors);
   if (user === null) {
     return res.render("error/404");
   }
@@ -120,9 +150,10 @@ router.get("/profile", async (req, res) => {
     layout: "main",
     title: "My Profile",
     userInfo: user,
+    docloggedIn:true
   });
 });
-router.post("/profile", async (req, res) => {
+router.post("/profile",authMiddleware, async (req, res) => {
   let errors = [];
 
   let userInfo = {
@@ -198,21 +229,111 @@ router.post("/profile", async (req, res) => {
   
 })
 ;
+//rescheduleRequest
 
+router
+  .route("/rescheduleRequest")
+  .get(authMiddleware,async (req, res) => {
+    const doctor= await userData.getDoctorByID(req.session.doctors)
+    let rescheduleRequests= doctor.rescheduleRequests
+    let allRequests= {requestList:rescheduleRequests}
+    return res.render('doctors/reschedule-requests', {requests:allRequests})
+  })
+  .post(authMiddleware,async (req, res) => {
+    const userId= req.body.hidden
+    const btnValue= req.body.btn
+    let reschedule= undefined
+    const doctor= await userData.getDoctorByID(req.session.doctors)
+    let rescheduleRequests= doctor.rescheduleRequests
+    const allAppointments= await appointmentData.getAppointmentByID(userId)
+    rescheduleRequests.forEach(req=>{
+      if(req.user==userId){
+        reschedule= req
+      }
+    })
+    let pastTime= reschedule.pastTime
+    let resDate= reschedule.date
+    let time= reschedule.time
+    let resDay=  parseInt(resDate.slice(-2)) 
+    let resYear= parseInt(resDate.substring(0,4))
+    let resMonth= parseInt(resDate.substring(5,7))
+    let resHour= parseInt(time.substring(0,2))
+    let resMins= parseInt(time.substring(-2))
+    let approveAppointment=undefined
+    let rejectAppointment=undefined
+
+
+    if(isToday(resYear,resMonth,resDay)){
+      if(isEarlierTime(resHour,resMins)){
+        if(btnValue=='approve'){
+          let approveAppointment= await approveReschedule(userId,req.session.doctors,time,reschedule,resDate,pastTime)
+          // let updatedAppointment= await appointmentData.rescheduleAppointment(userId,time)
+        return res.redirect('/doctors/home')
+        }
+        else{
+          rejectAppointment= await rejectReschedule(userId,req.session.doctors,time,reschedule)
+          return res.redirect('/doctors/home')
+        }
+      }
+      else{
+        rejectAppointment= await rejectReschedule(userId,req.session.doctors,time,reschedule)
+        return res.redirect('/doctors/home')
+     
+      }
+    }
+    approveAppointment=await approveReschedule(userId,req.session.doctors,time,reschedule)
+    return res.redirect('/doctors/home')
+
+    
+   
+
+
+ 
+ 
+
+
+    
+})
+
+//my appointments
+router
+  .route("/myAppointments")
+  .get(async (req, res) => {
+    const doctorData= await appointmentData.getAppointmentByDoctorID(req.session.doctors)
+    let allDoctors= {data:doctorData}
+    return res.render("doctors/my-appointments", { doctorData: allDoctors ,loggedIn:true});
+   
+  })
+  .post(async (req, res) => {
+    req.session.doctors=xss(req.body.hiddenReview)
+    return res.redirect('/doctors/reviews')
+ 
+    
+
+})
 
 
 //reviews
 
 router
   .route("/reviews")
-  .get(async (req, res) => {
+  .get(authMiddleware,async (req, res) => {
     const doctor= await userData.getDoctorByID(req.session.doctors)
-    return res.render('doctors/doctor-reviews', {reviews:doctor.reviews})
+    return res.render('doctors/doctor-reviews', {reviews:doctor.reviews, loggedIn:true})
   })
-  .post(async (req, res) => {
-    req.session.doctors= req.body.hiddenReview
+  .post(authMiddleware,async (req, res) => {
+    req.session.doctors=xss(req.body.hiddenReview)
     return res.redirect('/doctors/reviews')
+ 
+    
 
+})
+router
+.route('/logout')
+.get(async (req, res) => {
+  req.session.destroy()
+  res.redirect('/')
+  return
 })
 
 module.exports = router;
