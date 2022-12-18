@@ -402,19 +402,16 @@ router.post("/profile",authMiddleware, async (req, res) => {
     phoneNumber: xss(req.body.phoneNumber.trim()),
     dateOfBirth: xss(req.body.dateOfBirth.trim()),
   };
-  if (!validator.validString(userInfo.firstName))
-    errors.push("Invalid first name.");
-  if (!validator.validString(userInfo.lastName))
-    errors.push("Invalid last name.");
-  if (!validator.validString(userInfo.username))
-    errors.push("Invalid username.");
+  if (!validator.validString(userInfo.firstName) || validator.IsSpecialchar(userInfo.firstName) || validator.IsNumber(userInfo.firstName))
+  errors.push("Invalid first name.");
+if (!validator.validString(userInfo.lastName) || validator.IsSpecialchar(userInfo.lastName) || validator.IsNumber(userInfo.lastName))
+  errors.push("Invalid last name.");
+if (!validator.validString(userInfo.username) || validator.IsSpecialchar(userInfo.username) || validator.IsNumber(userInfo.username))
+  errors.push("Invalid username.");
 
   if (!validator.validEmail(userInfo.email)) errors.push("Invalid email.");
-  if (!validator.validDate(userInfo.dateOfBirth)) {
-    userInfo.dateOfBirth = req.body.dateOfBirth.trim();
+  if (!validator.IsvalidDate(userInfo.dateOfBirth))
     errors.push("Invalid Date of Birth.");
-  }
-
   if (!req.session.user) {
     res.redirect("login");
   }
