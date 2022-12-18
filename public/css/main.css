@@ -454,7 +454,7 @@ button:hover {
 
 .review-card h1 {
   color: #444;
-  font-size: 18px;
+  /* font-size: 18px; */
 }
 
 .review-card p {
