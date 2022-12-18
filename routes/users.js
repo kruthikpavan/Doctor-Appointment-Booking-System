@@ -161,12 +161,12 @@ router.post("/signup", async (req, res) => {
     errors.push("Invalid first name.");
 if (!validator.validString(newUser.lastName) || validator.IsSpecialchar(newUser.lastName) || validator.IsNumber(newUser.lastName))
     errors.push("Invalid last name.");
-  if (!validator.validString(newUser.username))
+  if (!validator.validString(newUser.username) || validator.IsSpecialchar(newUser.username) || validator.IsNumber(newUser.username))
     errors.push("Invalid username.");
   if (!validator.validPassword(newUser.password))
     errors.push("Invalid password.");
   if (!validator.validEmail(newUser.email)) errors.push("Invalid email.");
-  if (!validator.validDate(newUser.dateOfBirth))
+  if (!validator.IsvalidDate(newUser.dateOfBirth))
     errors.push("Invalid Date of Birth.");
     if (!validator.validPhoneNumber(newUser.phoneNumber))
     errors.push("Invalid phone");
