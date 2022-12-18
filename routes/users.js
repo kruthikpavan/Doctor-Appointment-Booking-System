@@ -18,7 +18,7 @@ const fetchAvailableSlots=async(doctor,date)=>{
   let AllSlots = {
     slots: [
     
-      { time: '4.17' },
+  
       { time: '10' },
       { time: '10.30' },
       { time: '11' },
@@ -36,7 +36,6 @@ const fetchAvailableSlots=async(doctor,date)=>{
       { time: '19' },
       { time: '19:30' },
      
-
     ],
   };
   for (const slot of AllSlots.slots) {
