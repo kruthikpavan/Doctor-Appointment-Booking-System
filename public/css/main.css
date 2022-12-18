@@ -505,3 +505,46 @@ button:hover {
 .btn{
   color: #101012;
 }
+
+#menu {
+  width: 200px; 
+  float: left; 
+}
+
+#menu ul {
+  list-style-type: none; 
+  margin: 0; 
+  padding: 0; 
+}
+
+
+#menu li {
+  background-color: #333; 
+  color: #fff; 
+  padding: 10px; 
+}
+
+#menu li:hover {
+  background-color: #444; 
+}
+
+#menu a {
+  color: #fff; 
+  display: block; 
+  text-decoration: none; 
+  padding: 10px; 
+}
+
+#menu a:hover {
+  color: #eee; 
+}
+
+.left-bar{
+  width: 50%;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+.text-white mb-0{
+  color: #101012;
+}
