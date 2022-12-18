@@ -14,9 +14,9 @@
 {
   color: rgb(1,123,254);
 }
-.navbar .nav-item.active .nav-link
+.navbar .nav-item.active 
 {
-  color: rgb(1,123,254);
+  color: rgb(1,124,254);
 }
 main
 {
@@ -24,17 +24,17 @@ main
 }
 .btn-outline-primary
 {
-  color: rgb(1,123,254);
-  border-color: rgb(1,123,254);
+  color: rgb(6, 17, 30);
+  border-color: rgb(6, 15, 25);
 }
 .link-primary,.link-primary:hover
 {
-  color: rgb(1,123,254);
+  color: rgb(2, 10, 18);
 }
 .btn-outline-primary:hover
 {
-  background-color: rgb(1,123,254);
-  border-color: rgb(1,123,254);
+  background-color: rgb(9, 17, 26);
+  border-color: rgb(8, 17, 27);
 
 }
 .footer
@@ -485,10 +485,23 @@ button:hover {
     text-align: center;
     border-radius: 5px;
     color: white;
-    font-weight: bold;
-    line-height: 18px;
 }
 
 .logout-btn:hover{
   color: #fff;
+}
+.sr-only {
+  color: #000;
+}
+
+.nav-link{
+  color: #101012;
+}
+
+.btn btn-primary{
+  color: #101012;
+}
+
+.btn{
+  color: #101012;
 }

@@ -28,9 +28,14 @@ async function createReview(reviewContent,doctorID){
         const doctorData= await doctorCollection.findOne({name:doctorID}) 
 
         let dataCheck = validator.validString(reviewContent);
-        const insertedReview = undefined;
+        let insertedReview = undefined;
         reviewContent = reviewContent;
         analysedReview = await Analyser(reviewContent);
+        if(analysedReview['status'] == false)
+        {
+            analysedReview['status'] = false;
+            return analysedReview;
+        }
         const newId = ObjectId();
         let date = new Date();
         let reviewsArray = doctorData['reviews'];
@@ -163,9 +168,15 @@ async function Analyser(reviewData)
         const lexedReview = aposToLexForm(review);
         const casedReview = lexedReview.toLowerCase();
         let alphaOnlyReview = casedReview.replace(/[^a-zA-Z\s]+/g, '');
+        final_Review['status'] = true;
 
         spell.load('en')
         const check = spell.check(alphaOnlyReview);
+        if(check.length>0)
+        {
+            final_Review['status'] = false;
+            return final_Review;
+        }
 
         alphaOnlyReview  = removeFromString(check, alphaOnlyReview)
 
@@ -193,8 +204,14 @@ async function Analyser(reviewData)
     
         const { SentimentAnalyzer, PorterStemmer } = natural;
         const analyzer = new SentimentAnalyzer('English', PorterStemmer, 'afinn');
+     
+        
         final_Review['analysis']  = analyzer.getSentiment(filteredReview);
-
+        if(isNaN(final_Review['analysis'])){
+            final_Review['status'] = false;
+            return final_Review;
+        }
+       
         if (final_Review['analysis'] < 0) {
             final_Review['imgSource'] = 'https://img.icons8.com/color/96/000000/angry.png';
             final_Review['color'] = 'red';

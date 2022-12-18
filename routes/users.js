@@ -13,7 +13,7 @@ const fetchAvailableSlots=async(doctor,date)=>{
   let d = new Date();
   let h = d.getHours();
   let min = d.getMinutes();
-  let Ntime = h+2;
+  let Ntime = h;
   let availableSlots=[]
   let AllSlots = {
     slots: [
@@ -32,6 +32,7 @@ const fetchAvailableSlots=async(doctor,date)=>{
       { time: '12' },
       { time: '12.30' },
       { time: '13' },
+      { time: '13.21' },
       { time: '13.30' },
       { time: '16' },
       { time: '16.30' },
@@ -483,13 +484,15 @@ router
   })
   .post(authMiddleware,async (req,res) =>{
     try{
-      let doctorId = undefined
+      let doctorId =  undefined
       if(req.body.hidden){
         console.log(req.body.hidden);
         doctorID= req.body.hidden
         res.redirect('/users/review')
         return
       }
+
+
      
       // let id = req.session.user._id;
       // const reviewData = req.body;
@@ -500,6 +503,11 @@ router
       // userID = reviewData.userID;
       review = req.body['review-form'].trim();
       console.log(review);
+
+      if(review == null || review == '')
+      {
+        return res.render('review', {error: "The review is empty. Please try again."});
+      }
       // appointmentID = reviewData.appointmentID;
       // let doctorIDrate = validator.Validid(doctorID);
       // let userIDrate = validator.Validid(userID);
@@ -520,6 +528,9 @@ router
 
   try {
       const newReview = await reviewData.createReview(review,doctorID);
+      if(newReview['status'] == false){
+        return res.render('review', {error: "The review is gibberish or has spelling mistake. Please try again."});
+      }
       const changeKey= await appointmentData.updateAppointment(req.session.user,doctorID)
       //if (!newReview.acknowledged) throw "Could not add review";
       res.status(200).redirect("/users/home");

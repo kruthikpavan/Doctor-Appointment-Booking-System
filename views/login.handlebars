@@ -50,14 +50,14 @@
 
           <!-- Username input -->
           <div class="form-outline mb-4">
-            <input type="email" id="username-login" name="username" class="form-control form-control-lg"
+            <input type="email" id="username-login" name="username" class="form-control form-control-lg" for="doc-username"
               placeholder="Enter a E-mail address" />
-            <label class="form-label" for="password-login">E-mail address</label>
+            <label class="form-label" for="username-login">E-mail address</label>
           </div>
 
           <!-- Password input -->
           <div class="form-outline mb-3">
-            <input type="password" id="form3Example4" name="password" class="form-control form-control-lg"
+            <input type="password" id="form3Example4" name="password" class="form-control form-control-lg" for="doc-password"
               placeholder="Enter password" />
             <label class="form-label" for="password-login">Password</label>
           </div>
@@ -127,18 +127,18 @@
           <div class="form-outline mb-4">
             <input type="text" id="username-login" name="username" class="form-control form-control-lg"
               placeholder="Enter username" />
-            <label class="form-label" for="password-login">Enter username</label>
+            <label class="form-label" for="username-login">Enter username</label>
           </div>
 
           <!-- Password input -->
           <div class="form-outline mb-3">
             <input type="password" id="form3Example4" name="password" class="form-control form-control-lg"
               placeholder="Enter password" />
-            <label class="form-label" for="password-login">Password</label>
+            <label class="form-label" for="form3Example4">Password</label>
           </div>
 
           <div class="text-center text-lg-start mt-2 pt-2">
-            <button type="submit" class="btn btn-primary btn-lg"
+            <button type="submit" class="btn-outline-primary btn-lg"
               style="padding-left: 2.5rem; padding-right: 2.5rem;">Login</button>
           
           {{#if error}}
@@ -153,7 +153,7 @@
         <form action = "signup" class="signup-form">
             <div class="text-center pt-2">Don't have an account? Sign-Up Here!</div>
             <div class="text-center text-lg-start mt-2">
-            <button type = "submit" class="btn btn-primary btn-lg" style="padding-left: 2.5rem; padding-right: 2.5rem;" value = "Sign-Up">Register</button>
+            <button type = "submit" class="btn-outline-primary btn-lg" style="padding-left: 2.5rem; padding-right: 2.5rem;" value = "Sign-Up">Register</button>
             </div>
         </form>
       </div>
