@@ -500,6 +500,16 @@ router
       })
     }
     let availableSlots= await fetchAvailableSlots(doctor,date)
+    
+    if(availableSlots.length == 0) {
+      return res.render("users/rescheduleslots", {
+        error:'No more slots available for today.',
+        today: req.session.today,
+      lastDate: req.session.lastDate,
+      loggedIn:true
+      });
+    }
+
     let allAvailableSlots= {slots:availableSlots}
     return res.render("users/rescheduleslots", {
       
