@@ -505,3 +505,7 @@ button:hover {
 .btn{
   color: #101012;
 }
+
+.text-white mb-0{
+  color: #101012;
+}

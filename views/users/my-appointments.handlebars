@@ -36,7 +36,7 @@
 
 
 <div>
-<h3>You have an appointment at</h3> <h2>{{this.timeSlot}}</h2> <h3>on</h3> <h2>{{this.date}}</h2> <h3>with</h3> <h2>{{this.doctorId}}</h2>
+<h1>You have an appointment at</h1> <h2>{{this.timeSlot}}</h2> <h3>on</h3> <h2>{{this.date}}</h2> <h3>with</h3> <h2>{{this.doctorId}}</h2>
 </div>
    {{#unless this.requestReschedule}}
 
@@ -74,7 +74,7 @@
 </form>
 <div>
 {{#unless this.fulfilled}}
-     <a href="/users/reschedule">Request for a reschedule</a>
+     <a href="/users/reschedule" class = "btn btn-primary">Request for a reschedule</a>
 {{else}}
 
 {{/unless}}
