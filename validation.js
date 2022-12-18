@@ -64,7 +64,15 @@ function validPhoneNumber(phone)
     if(phone.trim() == "") return false;
     return regex.test(phone);
 }
-
+function IsSpecialchar(val)
+{
+    var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+    return format.test(val);
+}
+function IsNumber(val)
+{
+    return /\d/.test(val);
+}
 // function validString(data){
 //     if(!string) return false;
 //     if(data.trim().length === 0) return false;
@@ -80,4 +88,6 @@ module.exports = {
     validAge,
     validPassword,
     validPhoneNumber,
+    IsNumber,
+    IsSpecialchar
 }
