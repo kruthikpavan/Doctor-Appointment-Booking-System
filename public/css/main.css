@@ -545,3 +545,6 @@ button:hover {
   padding-left: 0;
 }
 
+.text-white mb-0{
+  color: #101012;
+}

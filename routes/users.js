@@ -157,9 +157,9 @@ router.post("/signup", async (req, res) => {
     dateOfBirth: dateOfBirthConvert,
   };
 
-  if (!validator.validString(newUser.firstName))
+  if (!validator.validString(newUser.firstName) || validator.IsSpecialchar(newUser.firstName) || validator.IsNumber(newUser.firstName))
     errors.push("Invalid first name.");
-  if (!validator.validString(newUser.lastName))
+if (!validator.validString(newUser.lastName) || validator.IsSpecialchar(newUser.lastName) || validator.IsNumber(newUser.lastName))
     errors.push("Invalid last name.");
   if (!validator.validString(newUser.username))
     errors.push("Invalid username.");

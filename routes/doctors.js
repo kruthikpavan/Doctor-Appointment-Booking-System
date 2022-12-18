@@ -188,6 +188,7 @@ router.post("/profile",authMiddleware, async (req, res) => {
         title: "My Profile",
         userInfo: userInfo,
         errors: errors,
+        docloggedIn:true
       });
     }
 
@@ -210,12 +211,14 @@ router.post("/profile",authMiddleware, async (req, res) => {
           userInfo: updatedUser,
           errors: errors,
           msg: "Successfully updated",
+          docloggedIn:true
         });
       } else {
         res.render("doctors/profile", {
           title: "My Profile",
           userInfo: userInfo,
           msg: "Could not  update your profile.",
+          docloggedIn:true
         });
       }
     } catch (e) {
@@ -224,6 +227,7 @@ router.post("/profile",authMiddleware, async (req, res) => {
         title: "My Profile",
         userInfo: userInfo,
         errors: errors,
+        docloggedIn:true
       });
     }
   
@@ -237,7 +241,7 @@ router
     const doctor= await userData.getDoctorByID(req.session.doctors)
     let rescheduleRequests= doctor.rescheduleRequests
     let allRequests= {requestList:rescheduleRequests}
-    return res.render('doctors/reschedule-requests', {requests:allRequests,title:"reschedulerequests-doctors"})
+    return res.render('doctors/reschedule-requests', {requests:allRequests,title:"reschedulerequests-doctors", docloggedIn:true})
   })
   .post(authMiddleware,async (req, res) => {
     const userId= req.body.hidden
@@ -302,7 +306,7 @@ router
     let doctorData= await appointmentData.getAppointmentByDoctorID(req.session.doctors)
    
     let allDoctors= {data:doctorData}
-    return res.render("doctors/my-appointments", { doctorData: allDoctors ,loggedIn:true,title:"doctors-appointments"});
+    return res.render("doctors/my-appointments", { doctorData: allDoctors ,docloggedIn:true,title:"doctors-appointments"});
    
   })
   .post(async (req, res) => {
