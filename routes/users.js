@@ -13,7 +13,7 @@ const fetchAvailableSlots=async(doctor,date)=>{
   let d = new Date();
   let h = d.getHours();
   let min = d.getMinutes();
-  let Ntime = h;
+  let Ntime = h+2;
   let availableSlots=[]
   let AllSlots = {
     slots: [
@@ -21,7 +21,13 @@ const fetchAvailableSlots=async(doctor,date)=>{
   
       { time: '10' },
       { time: '10.30' },
+      { time: '10.45' },
+      { time: '10.50' },
+      { time: '10.55' },
+
       { time: '11' },
+      { time: '11.05' },
+
       { time: '11.30' },
       { time: '12' },
       { time: '12.30' },
@@ -339,14 +345,25 @@ router
     const currentMonth = currentDate.getMonth()+1;
     const currentDay = currentDate.getDate();
     let dateNow= `${currentYear}-${currentMonth}-${currentDay}`
-    appointmentInfo.forEach(doc=>{
-          if(dateNow==doc.date){
-            if(parseFloat(timeNow)>parseFloat(doc.timeSlot)){
-              doc.fulfilled=true
-            }
-          }
-    })
-    const updateAppointment= await appointmentData.updateFulfilled(req.session.user)
+    
+
+    for(const key of appointmentInfo){
+      if(dateNow==key.date){
+        if(parseFloat(timeNow)>parseFloat(key.timeSlot)){
+          const updateAppointment= await appointmentData.updateFulfilled(req.session.user,key.date,key.timeSlot)
+                    key.fulfilled=true
+                  }
+      }
+    }
+    // appointmentInfo.forEach(async doc=>{
+    //       if(dateNow==doc.date){
+    //         if(parseFloat(timeNow)>parseFloat(doc.timeSlot)){
+    // const updateAppointment= await appointmentData.updateFulfilled(req.session.user,doc.date,doc.timeSlot)
+
+    //           doc.fulfilled=true
+    //         }
+    //       }
+    // })
 
     res.render("users/my-appointments", { appointments: appointmentInfo ,loggedIn:true,title:"users-my-appointments"});
   })
@@ -503,7 +520,7 @@ router
 
   try {
       const newReview = await reviewData.createReview(review,doctorID);
-      const changeKey= await appointmentData.updateAppointment(req.session.user)
+      const changeKey= await appointmentData.updateAppointment(req.session.user,doctorID)
       //if (!newReview.acknowledged) throw "Could not add review";
       res.status(200).redirect("/users/home");
       } catch (e) {

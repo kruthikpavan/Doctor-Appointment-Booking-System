@@ -42,10 +42,10 @@ async function rejectStatus(user){
 
 }
 
-async function rescheduleAppointment(user,newTime){
+async function rescheduleAppointment(user,newTime,oldTime){
 
   const appointmentsCollection=await appointments()
-  const appointment = await appointmentsCollection.updateOne({userID:user} ,{"$set": {rescheduleDone: 'approved',timeSlot:newTime, 
+  const appointment = await appointmentsCollection.updateOne({userID:user,timeSlot:oldTime} ,{"$set": {rescheduleDone: 'approved',timeSlot:newTime, 
   requestReschedule:false}})
   return true
 
@@ -113,18 +113,17 @@ async function checkStatus(id){
     return false
 }
 
-async function updateFulfilled(name){
+async function updateFulfilled(name,date,time){
   const appointmentsCollection=await appointments()
- const appointment = await appointmentsCollection.updateOne({userID:name} ,{"$set": {fulfilled:true}})
+ const appointment = await appointmentsCollection.updateOne({userID:name,date:date,timeSlot:time} ,{"$set": {fulfilled:true}})
  return
 
 }
 
 
-async function updateAppointment(name){
-
+async function updateAppointment(name,doctor){
   const appointmentsCollection=await appointments()
-  const appointment = await appointmentsCollection.updateOne({userID:name} ,{"$set": {"reviewGiven": true}})
+  const appointment = await appointmentsCollection.updateOne({userID:name,doctorId:doctor,reviewGiven:false} ,{"$set": {"reviewGiven": true}})
  return
 }
 

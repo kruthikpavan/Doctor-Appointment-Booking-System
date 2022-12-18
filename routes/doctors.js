@@ -15,7 +15,7 @@ const authMiddleware = (req, res, next) => {
 
 async function approveReschedule(user,doctor,time,reschedule,date,pastTime){
  
-  let updatedAppointment= await appointmentData.rescheduleAppointment(user,time)
+  let updatedAppointment= await appointmentData.rescheduleAppointment(user,time,pastTime)
   let deleteRequest= await userData.removeRequest(doctor,user,reschedule)
   let removeBlock= await userData.updateBlockedSlot(doctor,pastTime,date,time)
   return 

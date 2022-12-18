@@ -5,6 +5,33 @@
 <form method="POST" action="/users/my-appointments">
 <div class="review-card">
 
+  <div>
+{{#if this.requestReschedule}}
+  {{#unless this.fulfilled}}
+ <div><h2>You have requested for a reschedule. Please wait for the doctor's decision</h2></div>
+    
+  {{else}}
+   
+  {{/unless}}
+{{else}}
+
+{{/if}}
+
+    {{!-- ---------------------- --}}
+  {{!-- {{#if this.requestReschedule }}
+
+{{#if this.fulfilled}}
+{{#else}}
+
+
+{{/if}} --}}
+
+   
+  {{!-- {{else}}
+
+  {{/if}} --}}
+  </div>
+
 <div>
 <h3>You have an appointment at</h3> <h2>{{this.timeSlot}}</h2> <h3>on</h3> <h2>{{this.date}}</h2> <h3>with</h3> <h2>{{this.doctorId}}</h2>
 </div>
