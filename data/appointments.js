@@ -15,13 +15,17 @@ const validator = require('../validation');
 async function createAppointment(userID,doctorId,timeSlot,date){
     const status= 'pending'
     const requestReschedule= false
+    const reviewGiven= false
+    const rescheduleDone= false
     const newAppointment=  {    
         userID,
         doctorId,
         timeSlot,
         date,
         status,
-        requestReschedule
+        requestReschedule,
+        reviewGiven,
+        rescheduleDone
     }
     const appointmentsCollection=await  appointments()
     const createdAppointment = await appointmentsCollection.insertOne(newAppointment);
@@ -75,8 +79,11 @@ async function checkStatus(id){
     return false
 }
 
-async function updateAppointment(){
+async function updateAppointment(name){
 
+  const appointmentsCollection=await appointments()
+  const appointment = await appointmentsCollection.updateOne({userID:name} ,{"$set": {"reviewGiven": true}})
+ return
 }
 
 async function reqrescheduleAppointment(userId,doctorId)

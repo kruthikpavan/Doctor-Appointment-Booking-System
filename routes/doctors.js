@@ -4,6 +4,7 @@ const data = require("../data");
 const validator = require("../validation");
 const router = express.Router();
 const userData = data.doctors;
+const appointmentData= data.appointments
 const authMiddleware = (req, res, next) => {
   if (req.session.doctors) {
     next();
@@ -198,6 +199,48 @@ router.post("/profile", async (req, res) => {
   
 })
 ;
+//rescheduleRequest
+
+router
+  .route("/rescheduleRequest")
+  .get(async (req, res) => {
+    const doctor= await userData.getDoctorByID(req.session.doctors)
+    let rescheduleRequests= doctor.rescheduleRequests
+    let allRequests= {requestList:rescheduleRequests}
+    return res.render('doctors/reschedule-requests', {requests:allRequests})
+  })
+  .post(async (req, res) => {
+    const userId= req.body.hidden
+    let reschedule= undefined
+    const doctor= await userData.getDoctorByID(req.session.doctors)
+    let rescheduleRequests= doctor.rescheduleRequests
+    const allAppointments= await appointmentData.getAppointmentByID(userId)
+    rescheduleRequests.forEach(req=>{
+      if(req.userID==userId){
+        reschedule= req
+      }
+    })
+    const formattedDate = today.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+    if(reschedule.date==formattedDate){
+      const time = new Date();
+    let formattedTime = time.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+  minute: '2-digit',
+  hour12: false
+});
+  formattedTime.replace(':','.')
+  if(parseFloat(formattedTime).toFixed(2)>parseFloat(reschedule.time).toFixed(2)){
+    //cancel request
+  }
+
+
+      
+    }
+})
 
 
 
@@ -212,6 +255,8 @@ router
   .post(async (req, res) => {
     req.session.doctors=xss(req.body.hiddenReview)
     return res.redirect('/doctors/reviews')
+ 
+    
 
 })
 

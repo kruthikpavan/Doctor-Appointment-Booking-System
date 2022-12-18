@@ -473,6 +473,7 @@ router
 
   try {
       const newReview = await reviewData.createReview(review,doctorID);
+      const changeKey= await appointmentData.updateAppointment(req.session.user)
       //if (!newReview.acknowledged) throw "Could not add review";
       res.status(200).redirect("/users/home");
       } catch (e) {
