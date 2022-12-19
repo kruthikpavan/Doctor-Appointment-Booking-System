@@ -2,7 +2,7 @@ const mongoCollections = require("../config/mongoCollections");
 const doctors = mongoCollections.doctors;
 const helpers = require("../helpers");
 const bcrypt = require("bcryptjs");
-const saltRounds = 16;
+const saltRounds = 10;
 const { ObjectID } = require("bson");
 async function removeRequest(doctor,user,reschedule)
 {

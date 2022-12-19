@@ -23,7 +23,55 @@ function validDate(date) {
 
     return true;
 }
-
+function IsvalidDate(dateString)
+{
+    let dateformat = /^(0?[1-9]|1[0-2])[\/](0?[1-9]|[1-2][0-9]|3[01])[\/]\d{4}$/;      
+          
+    // Match the date format through regular expression      
+    if(dateformat.test(dateString)){      
+        let operator = dateString.split('/');      
+        // Extract the string into month, date and year      
+        let datepart = [];      
+        if (operator.length>1){      
+            datepart = dateString.split('/');      
+        }
+        if(datepart[0].length<2)
+        return false;
+        if(datepart[1].length<2)
+        return false;
+        
+        let month= parseInt(datepart[0]);      
+        let day = parseInt(datepart[1]);      
+        let year = parseInt(datepart[2]);      
+        let today=new Date();
+        let idate=new Date(dateString);
+        let diff=idate-today;
+    		if(year<1900 ||diff>0)
+        return false;
+        // Create list of days of a month      
+        let ListofDays = [31,28,31,30,31,30,31,31,30,31,30,31];      
+        if (month==1 || month>2){      
+            if (day>ListofDays[month-1]){      
+                ///This check is for Confirming that the date is not out of its range      
+                return false;      
+            }      
+        }else if (month==2){      
+            let leapYear = false;      
+            if ( (!(year % 4) && year % 100) || !(year % 400)) {      
+                leapYear = true;      
+            }      
+            if ((leapYear == false) && (day>=29)){      
+                return false;      
+            }else      
+            if ((leapYear==true) && (day>29)){      
+                return false;      
+            }      
+        }      
+    }else{      
+        return false;      
+    }      
+    return true; 
+}
 function validAge(date) {
     let today = new Date();
     let dob = new Date(date);
@@ -64,7 +112,15 @@ function validPhoneNumber(phone)
     if(phone.trim() == "") return false;
     return regex.test(phone);
 }
-
+function IsSpecialchar(val)
+{
+    var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+    return format.test(val);
+}
+function IsNumber(val)
+{
+    return /\d/.test(val);
+}
 // function validString(data){
 //     if(!string) return false;
 //     if(data.trim().length === 0) return false;
@@ -80,4 +136,7 @@ module.exports = {
     validAge,
     validPassword,
     validPhoneNumber,
+    IsNumber,
+    IsSpecialchar,
+    IsvalidDate
 }

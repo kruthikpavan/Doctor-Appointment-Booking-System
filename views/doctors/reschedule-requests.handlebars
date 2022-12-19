@@ -2,8 +2,9 @@
 
 <form action="/doctors/rescheduleRequest" method="POST">
 <div class="review-card">
-<h2>{{this.user}}</h2>
-<h2>{{this.time}}</h2>
+<h1>{{this.user}}</h1>
+<h2>previous time: {{this.pastTime}}</h2>
+<h2>wants to reschedule to:{{this.time}}</h2>
 <input type="hidden" name="hidden" value={{this.user}}>
 <h2>{{this.date}}</h2>
 <button type="submit" name="btn" value="approve"> Click here to approve</button>

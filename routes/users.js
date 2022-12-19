@@ -18,30 +18,24 @@ const fetchAvailableSlots=async(doctor,date)=>{
   let AllSlots = {
     slots: [
     
-  
       { time: '10' },
       { time: '10.30' },
-      { time: '10.45' },
-      { time: '10.50' },
-      { time: '10.55' },
-
       { time: '11' },
-      { time: '11.05' },
-
       { time: '11.30' },
       { time: '12' },
       { time: '12.30' },
       { time: '13' },
       { time: '13.30' },
-      { time: '16' },
+      { time: '16'},
       { time: '16.30' },
       { time: '17' },
       { time: '17.30' },
       { time: '18' },
       { time: '18.30' },
       { time: '19' },
-      { time: '19:30' },
-     
+      { time: '19.30' },
+
+
     ],
   };
   for (const slot of AllSlots.slots) {
@@ -156,16 +150,16 @@ router.post("/signup", async (req, res) => {
     dateOfBirth: dateOfBirthConvert,
   };
 
-  if (!validator.validString(newUser.firstName))
+  if (!validator.validString(newUser.firstName) || validator.IsSpecialchar(newUser.firstName) || validator.IsNumber(newUser.firstName))
     errors.push("Invalid first name.");
-  if (!validator.validString(newUser.lastName))
+if (!validator.validString(newUser.lastName) || validator.IsSpecialchar(newUser.lastName) || validator.IsNumber(newUser.lastName))
     errors.push("Invalid last name.");
-  if (!validator.validString(newUser.username))
+  if (!validator.validString(newUser.username) || validator.IsSpecialchar(newUser.username))
     errors.push("Invalid username.");
   if (!validator.validPassword(newUser.password))
     errors.push("Invalid password.");
   if (!validator.validEmail(newUser.email)) errors.push("Invalid email.");
-  if (!validator.validDate(newUser.dateOfBirth))
+  if (!validator.IsvalidDate(newUser.dateOfBirth))
     errors.push("Invalid Date of Birth.");
     if (!validator.validPhoneNumber(newUser.phoneNumber))
     errors.push("Invalid phone");
@@ -277,7 +271,6 @@ router
       availableSlots: allAvailableSlots, doctor: req.session.doctors,loggedIn:true,
       title:"user-select-slots"
     });
-  
    
   });
 
@@ -289,12 +282,15 @@ router
   .post(async (req, res) => {
     //to-do
     //if req.body is empty redirect to /select-slot page with error . User has to select atleast one slot
-    
+
 // !!!Pass available slots to same page.
+const availableSlots= await fetchAvailableSlots(req.session.doctors,req.session.date)
+let allAvailableSlots= {slots:availableSlots}
+ 
     if (Object.keys(req.body).length === 0) {
       return res.render("users/select-slot", {
         error: "You need to select atleast one slot to complete the booking",
-        availableSlots: req.session.availableSlots,
+        availableSlots: allAvailableSlots,
         loggedIn:true,
         title:"users-select-slot"
       });
@@ -303,7 +299,7 @@ router
       return res.render("users/select-slot", {
         error:
           "You cant select multiple slots. Please select only one available slot",
-        availableSlots: req.session.availableSlots,loggedIn:true,
+        availableSlots:allAvailableSlots,loggedIn:true,
         title:"users-select-slot"
       });
     }
@@ -374,94 +370,95 @@ router
     return res.redirect("/users/home");
   });
 
-router.get("/profile", authMiddleware,async (req, res) => {
-  if (!req.session.user) {
-    return res.redirect("login");
-  }
-  let user = await userData.getUserByUn(req.session.user.toLowerCase());
-
-  if (user === null) {
-    return res.render("error/404");
-  }
-  return res.render("users/Profile", {
-    layout: "main",
-    title: "My Profile",
-    userInfo: user,
-    loggedIn:true
-  });
-});
-router.post("/profile",authMiddleware, async (req, res) => {
-  let errors = [];
-
-  let userInfo = {
-    firstName: xss(req.body.firstName.trim()),
-    lastName: xss(req.body.lastName.trim()),
-    username: xss(req.body.username.toLowerCase().trim()),
-    email: xss(req.body.email.toLowerCase().trim()),
-    phoneNumber: xss(req.body.phoneNumber.trim()),
-    dateOfBirth: xss(req.body.dateOfBirth.trim()),
-  };
-  if (!validator.validString(userInfo.firstName))
-    errors.push("Invalid first name.");
-  if (!validator.validString(userInfo.lastName))
-    errors.push("Invalid last name.");
-  if (!validator.validString(userInfo.username))
-    errors.push("Invalid username.");
-
-  if (!validator.validEmail(userInfo.email)) errors.push("Invalid email.");
-  if (!validator.validDate(userInfo.dateOfBirth)) {
-    userInfo.dateOfBirth = req.body.dateOfBirth.trim();
-    errors.push("Invalid Date of Birth.");
-  }
-
-  if (!req.session.user) {
-    res.redirect("login");
-  }
-  if (errors.length > 0) {
-    console.log(errors);
-    return res.status(401).render("users/profile", {
+  router.get("/profile", authMiddleware,async (req, res) => {
+    if (!req.session.user) {
+      return res.redirect("login");
+    }
+    let user = await userData.getUserByUn(req.session.user.toLowerCase());
+  
+    if (user === null) {
+      return res.render("error/404",
+      { loggedIn:true});
+    }
+    return res.render("users/Profile", {
+      layout: "main",
       title: "My Profile",
-      userInfo: userInfo,
-      errors: errors,
+      userInfo: user,
       loggedIn:true
     });
-  }
-
-  try {
-    let updatedUser = await userData.updateProfile(
-      userInfo.firstName,
-      userInfo.lastName,
-      userInfo.username,
-      userInfo.email,
-      userInfo.phoneNumber,
-      userInfo.dateOfBirth
-    );
-    if (updatedUser) {
-      req.session.user = updatedUser;
-      res.status(200).render("users/profile", {
-        title: "My Profile",
-        userInfo: updatedUser,
-        errors: errors,
-        msg: "Successfully updated",
-      });
-    } else {
-      res.render("users/profile", {
+  });
+  router.post("/profile",authMiddleware, async (req, res) => {
+    let errors = [];
+  
+    let userInfo = {
+      firstName: xss(req.body.firstName.trim()),
+      lastName: xss(req.body.lastName.trim()),
+      // username: xss(req.body.username.toLowerCase().trim()),
+      email: xss(req.body.email.toLowerCase().trim()),
+      phoneNumber: xss(req.body.phoneNumber.trim()),
+      dateOfBirth: xss(req.body.dateOfBirth.trim()),
+    };
+    if (!validator.validString(userInfo.firstName) || validator.IsSpecialchar(userInfo.firstName) || validator.IsNumber(userInfo.firstName))
+      errors.push("Invalid first name.");
+      if (!validator.validString(userInfo.lastName) || validator.IsSpecialchar(userInfo.lastName) || validator.IsNumber(userInfo.lastName))
+      errors.push("Invalid last name.");
+    // if (!validator.validString(userInfo.username))
+    //   errors.push("Invalid username.");
+  
+    if (!validator.validEmail(userInfo.email)) errors.push("Invalid email.");
+    if (!validator.validDate(userInfo.dateOfBirth)) {
+      userInfo.dateOfBirth = req.body.dateOfBirth.trim();
+      errors.push("Invalid Date of Birth.");
+    }
+  
+    if (!req.session.user) {
+      res.redirect("login");
+    }
+    if (errors.length > 0) {
+      console.log(errors);
+      return res.status(401).render("users/profile", {
         title: "My Profile",
         userInfo: userInfo,
-        msg: "Could not  update your profile.",
+        errors: errors,
         loggedIn:true
       });
     }
-  } catch (e) {
-    errors.push(e);
-    res.status(403).render("users/profile", {
-      title: "My Profile",
-      userInfo: userInfo,
-      errors: errors,
-      loggedIn:true
-    });
-  }
-});
+  
+    try {
+      let updatedUser = await userData.updateProfile(
+        userInfo.firstName,
+        userInfo.lastName,
+        req.session.user.toLowerCase(),
+        userInfo.email,
+        userInfo.phoneNumber,
+        userInfo.dateOfBirth
+      );
+      if (updatedUser) {
+        res.status(200).render("users/profile", {
+          title: "My Profile",
+          userInfo: updatedUser,
+          errors: errors,
+          msg: "Successfully updated",
+          loggedIn:true
+        });
+      } else {
+        res.render("users/profile", {
+          title: "My Profile",
+          userInfo: userInfo,
+          msg: "Could not  update your profile.",
+          loggedIn:true
+        });
+      }
+    } catch (e) {
+      errors.push(e);
+      res.status(403).render("users/profile", {
+        title: "My Profile",
+        userInfo: userInfo,
+        errors: errors,
+        loggedIn:true
+      });
+    }
+  });
 
 
 router
@@ -483,13 +480,15 @@ router
   })
   .post(authMiddleware,async (req,res) =>{
     try{
-      let doctorId = undefined
+      let doctorId =  undefined
       if(req.body.hidden){
         console.log(req.body.hidden);
         doctorID= req.body.hidden
         res.redirect('/users/review')
         return
       }
+
+
      
       // let id = req.session.user._id;
       // const reviewData = req.body;
@@ -499,7 +498,14 @@ router
       // doctorID = reviewData.doctorID;
       // userID = reviewData.userID;
       review = req.body['review-form'].trim();
-      console.log(review);
+       if(/[\/#$%\^&\*;:{}=\-_`~()]/g.test(review)){
+        return res.render('review', {error: "The review is gibberish or has spelling mistake. Please try again. Don't include any unnecessary symbols in your review"});
+       }
+
+      if(review == null || review == '')
+      {
+        return res.render('review', {error: "The review is empty. Please try again."});
+      }
       // appointmentID = reviewData.appointmentID;
       // let doctorIDrate = validator.Validid(doctorID);
       // let userIDrate = validator.Validid(userID);
@@ -520,6 +526,9 @@ router
 
   try {
       const newReview = await reviewData.createReview(review,doctorID);
+      if(newReview['status'] == false){
+        return res.render('review', {error: "The review is gibberish or has spelling mistake. Please try again. Don't include any unnecessary symbols in your review"});
+      }
       const changeKey= await appointmentData.updateAppointment(req.session.user,doctorID)
       //if (!newReview.acknowledged) throw "Could not add review";
       res.status(200).redirect("/users/home");
