@@ -31,7 +31,7 @@ Upon loading the website, you will see our landing page with a little bit of inf
 #### Reviews
 + Here we can see all the reviews provided for that particular doctor, it includes what the review says along with the corresponding sentiment analysis emoji, and the date on which the review is posted
 #### My appointments
-+ Here the user can see all his apointments and will be able to cancel the appointment, reschedule the appointment, and review once the appointment time is passed.
++ Here the user can see all his apointments  and perform 3 actions - Book,Cancel and Reschedule Appointments. Note, User cannot cancel an already completed Appointment, user cannot book another appointment if he has an existing appointment, user cannot rescedule or book another appointment if he already requested foir a reschedule. He will be allowed to send review once his appointment is fulfilled.Ex IF Appointment is booked at 2pm, user can review it only after 2 pm.
 #### My profile
 + Here the user can see his details and also can update his profile
 #### Post-Review
