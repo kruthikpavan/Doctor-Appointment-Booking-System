@@ -13,7 +13,7 @@ const fetchAvailableSlots=async(doctor,date)=>{
   let d = new Date();
   let h = d.getHours();
   let min = d.getMinutes();
-  let Ntime = h;
+  let Ntime = h+2;
   let availableSlots=[]
   let AllSlots = {
     slots: [
@@ -154,7 +154,7 @@ router.post("/signup", async (req, res) => {
     errors.push("Invalid first name.");
 if (!validator.validString(newUser.lastName) || validator.IsSpecialchar(newUser.lastName) || validator.IsNumber(newUser.lastName))
     errors.push("Invalid last name.");
-  if (!validator.validString(newUser.username) || validator.IsSpecialchar(newUser.username) || validator.IsNumber(newUser.username))
+  if (!validator.validString(newUser.username) || validator.IsSpecialchar(newUser.username))
     errors.push("Invalid username.");
   if (!validator.validPassword(newUser.password))
     errors.push("Invalid password.");

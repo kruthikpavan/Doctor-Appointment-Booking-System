@@ -285,8 +285,17 @@ router
      
       }
     }
-    approveAppointment=await approveReschedule(userId,req.session.doctors,time,reschedule)
+    if(btnValue=='approve'){
+      let approveAppointment= await approveReschedule(userId,req.session.doctors,time,reschedule,resDate,pastTime)
+      // let updatedAppointment= await appointmentData.rescheduleAppointment(userId,time)
     return res.redirect('/doctors/home')
+    }
+    else{
+      rejectAppointment= await rejectReschedule(userId,req.session.doctors,time,reschedule)
+      return res.redirect('/doctors/home')
+    }
+    // approveAppointment=await approveReschedule(userId,req.session.doctors,time,reschedule)
+    // return res.redirect('/doctors/home')
 
     
    
