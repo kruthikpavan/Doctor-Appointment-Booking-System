@@ -18,31 +18,24 @@ const fetchAvailableSlots=async(doctor,date)=>{
   let AllSlots = {
     slots: [
     
-  
       { time: '10' },
       { time: '10.30' },
-      { time: '10.45' },
-      { time: '10.50' },
-      { time: '10.55' },
       { time: '11' },
-      { time: '11.05' },
       { time: '11.30' },
       { time: '12' },
       { time: '12.30' },
       { time: '13' },
-      { time: '13.21' },
       { time: '13.30' },
-      { time: '16' },
-      { time: '16.45' },
-      { time: '16.50' },
-      { time: '16.55' },
+      { time: '16'},
+      { time: '16.30' },
       { time: '17' },
       { time: '17.30' },
       { time: '18' },
       { time: '18.30' },
       { time: '19' },
-      { time: '19:30' },
-     
+      { time: '19.30' },
+
+
     ],
   };
   for (const slot of AllSlots.slots) {
@@ -278,7 +271,6 @@ router
       availableSlots: allAvailableSlots, doctor: req.session.doctors,loggedIn:true,
       title:"user-select-slots"
     });
-  
    
   });
 
@@ -290,12 +282,15 @@ router
   .post(async (req, res) => {
     //to-do
     //if req.body is empty redirect to /select-slot page with error . User has to select atleast one slot
-    
+
 // !!!Pass available slots to same page.
+const availableSlots= await fetchAvailableSlots(req.session.doctors,req.session.date)
+let allAvailableSlots= {slots:availableSlots}
+ 
     if (Object.keys(req.body).length === 0) {
       return res.render("users/select-slot", {
         error: "You need to select atleast one slot to complete the booking",
-        availableSlots: req.session.availableSlots,
+        availableSlots: allAvailableSlots,
         loggedIn:true,
         title:"users-select-slot"
       });
@@ -304,7 +299,7 @@ router
       return res.render("users/select-slot", {
         error:
           "You cant select multiple slots. Please select only one available slot",
-        availableSlots: req.session.availableSlots,loggedIn:true,
+        availableSlots:allAvailableSlots,loggedIn:true,
         title:"users-select-slot"
       });
     }
