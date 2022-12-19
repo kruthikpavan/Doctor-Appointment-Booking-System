@@ -403,9 +403,9 @@ router.post("/profile",authMiddleware, async (req, res) => {
     phoneNumber: xss(req.body.phoneNumber.trim()),
     dateOfBirth: xss(req.body.dateOfBirth.trim()),
   };
-  if (!validator.validString(userInfo.firstName))
+  if (!validator.validString(userInfo.firstName) || validator.IsSpecialchar(userInfo.firstName) || validator.IsNumber(userInfo.firstName))
     errors.push("Invalid first name.");
-  if (!validator.validString(userInfo.lastName))
+    if (!validator.validString(userInfo.lastName) || validator.IsSpecialchar(userInfo.lastName) || validator.IsNumber(userInfo.lastName))
     errors.push("Invalid last name.");
   // if (!validator.validString(userInfo.username))
   //   errors.push("Invalid username.");
