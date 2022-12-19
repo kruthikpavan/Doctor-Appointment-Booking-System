@@ -18,31 +18,24 @@ const fetchAvailableSlots=async(doctor,date)=>{
   let AllSlots = {
     slots: [
     
-  
       { time: '10' },
       { time: '10.30' },
-      { time: '10.45' },
-      { time: '10.50' },
-      { time: '10.55' },
       { time: '11' },
-      { time: '11.05' },
       { time: '11.30' },
       { time: '12' },
       { time: '12.30' },
       { time: '13' },
-      { time: '13.21' },
       { time: '13.30' },
-      { time: '16' },
-      { time: '16.45' },
-      { time: '16.50' },
-      { time: '16.55' },
+      { time: '16'},
+      { time: '16.30' },
       { time: '17' },
       { time: '17.30' },
       { time: '18' },
       { time: '18.30' },
       { time: '19' },
-      { time: '19:30' },
-     
+      { time: '19.30' },
+
+
     ],
   };
   for (const slot of AllSlots.slots) {
@@ -278,7 +271,6 @@ router
       availableSlots: allAvailableSlots, doctor: req.session.doctors,loggedIn:true,
       title:"user-select-slots"
     });
-  
    
   });
 
@@ -290,12 +282,15 @@ router
   .post(async (req, res) => {
     //to-do
     //if req.body is empty redirect to /select-slot page with error . User has to select atleast one slot
-    
+
 // !!!Pass available slots to same page.
+const availableSlots= await fetchAvailableSlots(req.session.doctors,req.session.date)
+let allAvailableSlots= {slots:availableSlots}
+ 
     if (Object.keys(req.body).length === 0) {
       return res.render("users/select-slot", {
         error: "You need to select atleast one slot to complete the booking",
-        availableSlots: req.session.availableSlots,
+        availableSlots: allAvailableSlots,
         loggedIn:true,
         title:"users-select-slot"
       });
@@ -304,7 +299,7 @@ router
       return res.render("users/select-slot", {
         error:
           "You cant select multiple slots. Please select only one available slot",
-        availableSlots: req.session.availableSlots,loggedIn:true,
+        availableSlots:allAvailableSlots,loggedIn:true,
         title:"users-select-slot"
       });
     }
@@ -382,8 +377,7 @@ router.get("/profile", authMiddleware,async (req, res) => {
   let user = await userData.getUserByUn(req.session.user.toLowerCase());
 
   if (user === null) {
-    return res.render("error/404",
-    { loggedIn:true});
+    return res.render("error/404");
   }
   return res.render("users/Profile", {
     layout: "main",
@@ -398,7 +392,7 @@ router.post("/profile",authMiddleware, async (req, res) => {
   let userInfo = {
     firstName: xss(req.body.firstName.trim()),
     lastName: xss(req.body.lastName.trim()),
-    // username: xss(req.body.username.toLowerCase().trim()),
+    username: xss(req.body.username.toLowerCase().trim()),
     email: xss(req.body.email.toLowerCase().trim()),
     phoneNumber: xss(req.body.phoneNumber.trim()),
     dateOfBirth: xss(req.body.dateOfBirth.trim()),
@@ -411,11 +405,8 @@ router.post("/profile",authMiddleware, async (req, res) => {
   //   errors.push("Invalid username.");
 
   if (!validator.validEmail(userInfo.email)) errors.push("Invalid email.");
-  if (!validator.validDate(userInfo.dateOfBirth)) {
-    userInfo.dateOfBirth = req.body.dateOfBirth.trim();
+  if (!validator.IsvalidDate(userInfo.dateOfBirth))
     errors.push("Invalid Date of Birth.");
-  }
-
   if (!req.session.user) {
     res.redirect("login");
   }
@@ -433,18 +424,18 @@ router.post("/profile",authMiddleware, async (req, res) => {
     let updatedUser = await userData.updateProfile(
       userInfo.firstName,
       userInfo.lastName,
-      req.session.user.toLowerCase(),
+      userInfo.username,
       userInfo.email,
       userInfo.phoneNumber,
       userInfo.dateOfBirth
     );
     if (updatedUser) {
+      req.session.user = updatedUser;
       res.status(200).render("users/profile", {
         title: "My Profile",
         userInfo: updatedUser,
         errors: errors,
         msg: "Successfully updated",
-        loggedIn:true
       });
     } else {
       res.render("users/profile", {
