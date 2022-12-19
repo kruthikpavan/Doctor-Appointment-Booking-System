@@ -138,8 +138,13 @@ const checkUser = async (username, password) => {
       username= username.toLowerCase();
       email= email.toLowerCase();
       const userCollection  = await users();
-      let userData = await userCollection.findOne({email: email});
-      if((userData != null || userData != undefined) && userData.username!=username)
+      let multiEmailCheck = await userCollection.find({email: email})
+      let emailCheck = await userCollection.findOne({email: email})
+      let userData = await userCollection.findOne({username: username});
+      if(multiEmailCheck > 1){
+        throw 'There exist another user with this email, you can login with that details or edit the email above.'
+      }else if(!emailCheck){
+        if((userData != null || userData != undefined))
       {
         let updateUser = {
             firstName:firstName,
@@ -154,8 +159,33 @@ const checkUser = async (username, password) => {
         return await this.getUserByUn(username);
       }
       else{
-        throw 'You cant have same username';
+        throw 'Please try again';
       } 
+
+      }else if(emailCheck.username != username){
+        throw 'There exist another user with this email, you can login with that details or edit the email above.'
+
+      }else{
+        if((userData != null || userData != undefined))
+      {
+        let updateUser = {
+            firstName:firstName,
+            lastName:lastName,
+            username:username,
+            email:email,
+            phoneNumber:phoneNumber,
+            dateOfBirth:dateOfBirth,
+        }
+        const updatedInfo = await userCollection.updateOne({ _id: ObjectID(userData._id) }, { $set: updateUser });
+        if (updatedInfo.modifiedCount === 0) return null;
+        return await this.getUserByUn(username);
+      }
+      else{
+        throw 'Please try again';
+      } 
+      }
+     
+      
 
       } catch (e) {
           console.log(e);
