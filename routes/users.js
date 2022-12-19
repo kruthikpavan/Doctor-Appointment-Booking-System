@@ -370,91 +370,95 @@ router
     return res.redirect("/users/home");
   });
 
-router.get("/profile", authMiddleware,async (req, res) => {
-  if (!req.session.user) {
-    return res.redirect("login");
-  }
-  let user = await userData.getUserByUn(req.session.user.toLowerCase());
-
-  if (user === null) {
-    return res.render("error/404");
-  }
-  return res.render("users/Profile", {
-    layout: "main",
-    title: "My Profile",
-    userInfo: user,
-    loggedIn:true
-  });
-});
-router.post("/profile",authMiddleware, async (req, res) => {
-  let errors = [];
-
-  let userInfo = {
-    firstName: xss(req.body.firstName.trim()),
-    lastName: xss(req.body.lastName.trim()),
-    username: xss(req.body.username.toLowerCase().trim()),
-    email: xss(req.body.email.toLowerCase().trim()),
-    phoneNumber: xss(req.body.phoneNumber.trim()),
-    dateOfBirth: xss(req.body.dateOfBirth.trim()),
-  };
-  if (!validator.validString(userInfo.firstName) || validator.IsSpecialchar(userInfo.firstName) || validator.IsNumber(userInfo.firstName))
-    errors.push("Invalid first name.");
-    if (!validator.validString(userInfo.lastName) || validator.IsSpecialchar(userInfo.lastName) || validator.IsNumber(userInfo.lastName))
-    errors.push("Invalid last name.");
-  // if (!validator.validString(userInfo.username))
-  //   errors.push("Invalid username.");
-
-  if (!validator.validEmail(userInfo.email)) errors.push("Invalid email.");
-  if (!validator.IsvalidDate(userInfo.dateOfBirth))
-    errors.push("Invalid Date of Birth.");
-  if (!req.session.user) {
-    res.redirect("login");
-  }
-  if (errors.length > 0) {
-    console.log(errors);
-    return res.status(401).render("users/profile", {
+  router.get("/profile", authMiddleware,async (req, res) => {
+    if (!req.session.user) {
+      return res.redirect("login");
+    }
+    let user = await userData.getUserByUn(req.session.user.toLowerCase());
+  
+    if (user === null) {
+      return res.render("error/404",
+      { loggedIn:true});
+    }
+    return res.render("users/Profile", {
+      layout: "main",
       title: "My Profile",
-      userInfo: userInfo,
-      errors: errors,
+      userInfo: user,
       loggedIn:true
     });
-  }
-
-  try {
-    let updatedUser = await userData.updateProfile(
-      userInfo.firstName,
-      userInfo.lastName,
-      userInfo.username,
-      userInfo.email,
-      userInfo.phoneNumber,
-      userInfo.dateOfBirth
-    );
-    if (updatedUser) {
-      req.session.user = updatedUser;
-      res.status(200).render("users/profile", {
-        title: "My Profile",
-        userInfo: updatedUser,
-        errors: errors,
-        msg: "Successfully updated",
-      });
-    } else {
-      res.render("users/profile", {
+  });
+  router.post("/profile",authMiddleware, async (req, res) => {
+    let errors = [];
+  
+    let userInfo = {
+      firstName: xss(req.body.firstName.trim()),
+      lastName: xss(req.body.lastName.trim()),
+      // username: xss(req.body.username.toLowerCase().trim()),
+      email: xss(req.body.email.toLowerCase().trim()),
+      phoneNumber: xss(req.body.phoneNumber.trim()),
+      dateOfBirth: xss(req.body.dateOfBirth.trim()),
+    };
+    if (!validator.validString(userInfo.firstName) || validator.IsSpecialchar(userInfo.firstName) || validator.IsNumber(userInfo.firstName))
+      errors.push("Invalid first name.");
+      if (!validator.validString(userInfo.lastName) || validator.IsSpecialchar(userInfo.lastName) || validator.IsNumber(userInfo.lastName))
+      errors.push("Invalid last name.");
+    // if (!validator.validString(userInfo.username))
+    //   errors.push("Invalid username.");
+  
+    if (!validator.validEmail(userInfo.email)) errors.push("Invalid email.");
+    if (!validator.validDate(userInfo.dateOfBirth)) {
+      userInfo.dateOfBirth = req.body.dateOfBirth.trim();
+      errors.push("Invalid Date of Birth.");
+    }
+  
+    if (!req.session.user) {
+      res.redirect("login");
+    }
+    if (errors.length > 0) {
+      console.log(errors);
+      return res.status(401).render("users/profile", {
         title: "My Profile",
         userInfo: userInfo,
-        msg: "Could not  update your profile.",
+        errors: errors,
         loggedIn:true
       });
     }
-  } catch (e) {
-    errors.push(e);
-    res.status(403).render("users/profile", {
-      title: "My Profile",
-      userInfo: userInfo,
-      errors: errors,
-      loggedIn:true
-    });
-  }
-});
+  
+    try {
+      let updatedUser = await userData.updateProfile(
+        userInfo.firstName,
+        userInfo.lastName,
+        req.session.user.toLowerCase(),
+        userInfo.email,
+        userInfo.phoneNumber,
+        userInfo.dateOfBirth
+      );
+      if (updatedUser) {
+        res.status(200).render("users/profile", {
+          title: "My Profile",
+          userInfo: updatedUser,
+          errors: errors,
+          msg: "Successfully updated",
+          loggedIn:true
+        });
+      } else {
+        res.render("users/profile", {
+          title: "My Profile",
+          userInfo: userInfo,
+          msg: "Could not  update your profile.",
+          loggedIn:true
+        });
+      }
+    } catch (e) {
+      errors.push(e);
+      res.status(403).render("users/profile", {
+        title: "My Profile",
+        userInfo: userInfo,
+        errors: errors,
+        loggedIn:true
+      });
+    }
+  });
 
 
 router
