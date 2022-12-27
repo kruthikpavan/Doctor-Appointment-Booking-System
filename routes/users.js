@@ -238,6 +238,9 @@ router
       }
     }
     const date = req.body.date;
+    if(!date){
+      return  res.redirect("/users/book-appointment");
+    }
     const checkIfBooked = await appointmentData.checkStatus(req.session.user)
     if(checkIfBooked) {
       return res.render("users/book-appointment", {
@@ -311,6 +314,15 @@ let allAvailableSlots= {slots:availableSlots}
     //to-do
     //store this timeslot and date from req.session.date as appointment info in database
     const doctorId = req.session.doctors;
+    const check= await appointmentData.checkActiveAppointment(req.session.user)
+    if(check){
+      return res.render("users/select-slot", {
+        error:
+          "You already selected a slot . You can't have duplicate slots",
+        availableSlots:allAvailableSlots,loggedIn:true,
+        title:"users-select-slot"
+      });
+    }
     const appointment = await appointmentData.createAppointment(
       req.session.user,
       doctorId,
