@@ -12,6 +12,15 @@ const validator = require('../validation');
 //         "status": 'pending'
 //     } 
 
+async function checkActiveAppointment(user){
+  const appointmentsCollection=await  appointments()
+    const found=  await appointmentsCollection.findOne({userID: user,fulfilled: false})
+    if(found) return true
+    else return false
+}
+
+
+
 async function createAppointment(userID,doctorId,timeSlot,date){
     const fulfilled= false
     const requestReschedule= false
@@ -158,5 +167,6 @@ module.exports = {
     rescheduleAppointment,
     rejectStatus,
     getAppointmentByDoctorID,
-    updateFulfilled
+    updateFulfilled,
+    checkActiveAppointment
 }
